@@ -1,0 +1,58 @@
+.admin-create-post {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+}
+
+.admin-create-post .custom-button {
+  align-self: flex-start;
+  /* To align button to the start */
+  margin-bottom: 20px;
+  /* To add some space below the button */
+}
+
+.admin-create-post h2 {
+  margin-bottom: 20px;
+}
+
+.admin-create-post form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+}
+
+.admin-create-post form div {
+  margin-bottom: 15px;
+}
+
+.admin-create-post form label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.admin-create-post form button,
+.admin-create-post .submit-button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  background-color: #28a745;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.admin-create-post form input,
+.admin-create-post form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.admin-create-post form button:hover,
+.admin-create-post .submit-button:hover {
+  background-color: #218838;
+}

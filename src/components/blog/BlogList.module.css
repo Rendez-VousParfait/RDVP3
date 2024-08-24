@@ -1,0 +1,147 @@
+.blog-list {
+  padding: 20px;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.custom-button {
+  padding: 10px 20px;
+  background: #f0f0f0;
+  color: #333;
+  border: none;
+  border-radius: 25px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.custom-button:hover {
+  background: #e0e0e0;
+}
+
+.custom-button.active {
+  background: #333;
+  color: #fff;
+}
+
+.my-masonry-grid {
+  display: flex;
+  margin-left: -20px;
+  width: auto;
+}
+
+.my-masonry-grid_column {
+  padding-left: 20px;
+  background-clip: padding-box;
+}
+
+.blog-post-preview {
+  margin-bottom: 20px;
+  break-inside: avoid;
+  position: relative;
+}
+
+.blog-post-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.blog-post-image-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.blog-post-image-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.blog-post-image {
+  width: 100%;
+  height: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease;
+}
+
+.blog-post-image-container:hover .blog-post-image {
+  transform: scale(1.05);
+}
+
+.blog-post-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+  padding: 20px;
+  transition: opacity 0.3s ease;
+}
+
+.blog-post-content h3 {
+  margin: 0 0 5px;
+  font-size: 1.4em;
+  font-weight: bold;
+  color: white;
+  font-family: 'Playfair Display', serif;
+}
+
+.blog-post-author {
+  margin: 0;
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.blog-post-tag {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #333;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.8em;
+  font-weight: bold;
+  z-index: 1;
+}
+
+.delete-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #333;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.blog-post-preview:hover .delete-button {
+  opacity: 1;
+}
+
+.delete-button:hover {
+  background-color: #fff;
+  transform: scale(1.1);
+}

@@ -1,0 +1,100 @@
+/* Styles généraux pour les boutons */
+.custom-button {
+  background-color: white;
+  border: 2px solid black;
+  color: black;
+  padding: 12px 25px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-button:hover {
+  background-color: #d4d4d4;
+}
+
+.custom-button.selected,
+.custom-button:active {
+  background-color: #791a3e;
+  color: white;
+  border-color: #791a3e;
+  transform: scale(1.05);
+}
+
+/* Styles spécifiques pour les boutons de navigation */
+.button-nav {
+  width: auto;
+  min-width: 200px;
+  padding: 1.5rem;
+  background: #008CBA !important;
+  color: white !important;
+  border: none;
+  border-radius: 15px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease-out, transform 0.3s ease-out;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.button-nav:hover {
+  background: #006688 !important;
+  transform: translateY(-3px);
+}
+
+.button-nav:disabled {
+  background: #ccc !important;
+  cursor: not-allowed;
+}
+
+/* Styles spécifiques pour les boutons de la page d'accueil */
+.auth-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #ffb5af, #d9cafe);
+  color: black !important;
+  border: 2px solid black;
+  padding: 12px 25px;
+  border-radius: 12px;
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 16px;
+  transition: background 0.3s ease, color 0.3s ease, transform 0.3s;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.auth-link.login-btn {
+  margin-right: 15px;
+}
+
+.auth-link.signup-btn {
+  margin-left: 15px;
+}
+
+/* Styles spécifiques pour les boutons du blog */
+.create-post-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.create-post-button {
+  padding: 10px 15px;
+  background-color: #7c2a00;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 16px;
+  text-align: center;
+  display: inline-block;
+}
+
+.create-post-button:hover {
+  background-color: #218838;
+}

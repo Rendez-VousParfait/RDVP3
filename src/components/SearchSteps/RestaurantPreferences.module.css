@@ -1,0 +1,94 @@
+.searchStep {
+  background-color: #ffffff;
+  padding: 25px 35px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  font-size: 28px;
+  margin-bottom: 25px;
+  color: #4a4a4a;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #555;
+}
+
+.cuisineTypes,
+.equipments {
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.label {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 10px;
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkboxLabel::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid #4CAF50;
+  border-radius: 4px;
+  background-color: #ffffff;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.checkbox:checked + .label::before {
+  background-color: #4CAF50;
+  border-color: #4CAF50;
+}
+
+.checkbox:checked + .label::after {
+  content: '✔';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+@media (max-width: 480px) {
+  .searchStep {
+    padding: 20px 25px;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  .buttonNav {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}

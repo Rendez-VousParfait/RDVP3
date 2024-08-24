@@ -1,0 +1,160 @@
+/* Styles généraux */
+.App {
+  text-align: center;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.7;
+  color: #3d3d3d;
+  background-color: #fafafa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Amélioration de la lisibilité */
+body {
+  font-size: 16px;
+  background-color: #ebebeb;
+  line-height: 1.8;
+  color: #4a4a4a;
+}
+
+/* Contenu principal */
+.main-content {
+  min-height: calc(100vh - 120px);
+  padding: 40px;
+  max-width: 1100px;
+  margin: 20px auto;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* En-tête */
+.App-header {
+  background-color: #24292e;
+  padding: 30px;
+  color: white;
+  border-bottom: 5px solid #e36209;
+}
+
+/* Liens */
+.App-link, a {
+  color: #0366d6;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.App-link:hover, a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* Focus visible pour l'accessibilité */
+:focus {
+  outline: 3px solid #0366d6;
+  outline-offset: 3px;
+}
+
+/* Contraste amélioré pour le texte */
+h1, h2, h3, h4, h5, h6 {
+  color: #333;
+  margin-bottom: 15px;
+  font-family: 'Georgia', serif;
+}
+
+/* Espacement pour une meilleure lisibilité */
+p {
+  margin-bottom: 20px;
+  line-height: 1.8;
+}
+
+/* Formulaires accessibles */
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+/* Boutons standards */
+.custom-button {
+  background-color: white;
+  border: 2px solid black;
+  color: black;
+  padding: 12px 25px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s;
+}
+
+.custom-button:hover {
+  background-color: #d4d4d4;
+}
+
+.custom-button.selected,
+.custom-button:active {
+  background-color: blue;
+  color: white;
+  border-color: blue;
+  transform: scale(1.05);
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+  .main-content {
+    padding: 15px;
+    margin: 10px;
+    border-radius: 8px;
+  }
+
+  body {
+    font-size: 14px;
+  }
+}
+
+/* Accessibilité: cacher visuellement mais garder accessible pour les lecteurs d'écran */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.important-text {
+  color: #c62828;
+  font-weight: bold;
+}
+
+/* Style pour les messages d'erreur */
+.error-message {
+  color: #c62828;
+  background-color: #ffebee;
+  border: 1px solid #c62828;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+/* Style pour les messages de succès */
+.success-message {
+  color: #2e7d32;
+  background-color: #e8f5e9;
+  border: 1px solid #2e7d32;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}

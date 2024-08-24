@@ -1,0 +1,71 @@
+.search-step {
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 2.5rem;
+  background: linear-gradient(135deg, #fff, #e9ecef);
+  border-radius: 25px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s ease-out;
+}
+
+.search-step h2 {
+  font-size: 2.7rem;
+  color: #444;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.trip-type-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.trip-type-options button {
+  flex: 0 1 calc(50% - 1rem);
+  max-width: 200px;
+}
+
+@media (min-width: 768px) {
+  .trip-type-options button {
+    flex: 0 1 calc(25% - 1rem);
+  }
+}
+
+.next-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+@media (max-width: 480px) {
+  .search-step h2 {
+    font-size: 2.2rem;
+  }
+  .search-step {
+    padding: 1.5rem;
+  }
+}
+.person-count-container {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.person-count-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.person-count-container input {
+  width: 100%;
+  max-width: 200px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

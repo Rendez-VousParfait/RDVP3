@@ -1,0 +1,120 @@
+.search-step {
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 2.5rem;
+  background: linear-gradient(135deg, #fff, #e9ecef);
+  border-radius: 25px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s ease-out;
+}
+
+.search-step h2 {
+  font-size: 2.7rem;
+  color: #444;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.personalization-type {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 2rem;
+}
+
+.ambiance-options,
+.activity-options,
+.personalization-options,
+.accessibility-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.search-step button {
+  padding: 1rem;
+  background-color: white;
+  color: #008CBA;
+  border: 2px solid #008CBA;
+  border-radius: 15px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.search-step button:hover {
+  background-color: #008CBA;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.search-step button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-step button.selected {
+  background-color: #008CBA;
+  color: white;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+.buttons button {
+  width: 48%;
+}
+
+.button-nav {
+  background-color: #008CBA;
+  color: white;
+  padding: 10px 25px;
+  margin: 10px 5px 0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.2s;
+  position: relative;
+  z-index: 2;
+}
+
+.button-nav:hover {
+  background-color: #007bb5;
+  transform: scale(1.05);
+}
+
+.button-nav:active {
+  transform: scale(1);
+}
+
+@media (max-width: 480px) {
+  .search-step {
+    padding: 1.5rem;
+  }
+
+  .search-step h2 {
+    font-size: 2.2rem;
+  }
+
+  .personalization-options,
+  .accessibility-options {
+    grid-template-columns: 1fr;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  .buttons button {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
