@@ -49,7 +49,7 @@ const About = () => {
         <h2 className={styles['section-title']}>Notre Histoire</h2>
         <div className={styles['story-content']}>
           <div className={styles['story-text']}>
-            <p>Fondée en 2023 par Sophie Durand, Rendez-Vous Parfait est née d'une vision audacieuse : révolutionner la façon dont les gens se rencontrent et explorent le monde ensemble. Notre plateforme innovante combine technologie de pointe et compréhension profonde des désirs humains pour créer des expériences sur mesure.</p>
+            <p>Fondée en 2024 par 4 jeunes Bordelais, Rendez-Vous Parfait est née d'une vision audacieuse : révolutionner la reservation grâce à la personnalisation. Notre plateforme innovante combine technologie de pointe et compréhension profonde des désirs humains pour créer des expériences sur mesure.</p>
           </div>
           <div className={styles['story-image']}>
             <img src={tourEiffelImage} alt="Tour Eiffel" className={styles['story-image-content']} />
@@ -61,7 +61,7 @@ const About = () => {
         <div className={styles['value-card']}>
           <FaUsers className={styles['value-icon']} />
           <h2 className={styles['value-title']}>Connexion</h2>
-          <p>Nous croyons au pouvoir des rencontres authentiques et des liens profonds.</p>
+          <p>Limitez les multiples plateformes, et centralisez l'ensemble de vos recherches.</p>
         </div>
 
         <div className={styles['value-card']}>
@@ -73,7 +73,7 @@ const About = () => {
         <div className={styles['value-card']}>
           <FaHeart className={styles['value-icon']} />
           <h2 className={styles['value-title']}>Passion</h2>
-          <p>Chaque détail de notre service est imprégné de notre amour pour les voyages et les rencontres.</p>
+          <p>Chaque détail de notre service est imprégné de notre amour pour le parcours client.</p>
         </div>
       </div>
 
@@ -85,7 +85,7 @@ const About = () => {
               <FaRocket />
             </div>
             <div className={styles['timeline-content']}>
-              <h3>2023</h3>
+              <h3>2024</h3>
               <p>Lancement de Rendez-Vous Parfait</p>
             </div>
           </div>
@@ -94,7 +94,7 @@ const About = () => {
               <FaMapMarkedAlt />
             </div>
             <div className={styles['timeline-content']}>
-              <h3>2024</h3>
+              <h3>2026</h3>
               <p>Expansion dans 10 nouvelles villes</p>
             </div>
           </div>
@@ -103,7 +103,7 @@ const About = () => {
               <FaMobileAlt />
             </div>
             <div className={styles['timeline-content']}>
-              <h3>2025</h3>
+              <h3>2028</h3>
               <p>Lancement de notre application mobile</p>
             </div>
           </div>
@@ -112,7 +112,7 @@ const About = () => {
               <FaGlobe />
             </div>
             <div className={styles['timeline-content']}>
-              <h3>2026</h3>
+              <h3>2030</h3>
               <p>Expansion internationale</p>
             </div>
           </div>

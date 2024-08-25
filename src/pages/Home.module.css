@@ -8,26 +8,6 @@
   --border-radius: 10px;
 }
 
-body,
-html {
-    margin: 0;
-    padding: 0;
-    font-family: 'Josefin Sans', sans-serif;
-    background-color: var(--background-color);
-    color: var(--text-color);
-    line-height: 1.6;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Josefin Sans', sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
-h1 { font-size: 3rem; }
-h2 { font-size: 2.5rem; }
-h3 { font-size: 1.5rem; }
-
 .home {
     padding: 20px;
 }
@@ -46,7 +26,7 @@ h3 { font-size: 1.5rem; }
     margin-bottom: 60px;
 }
 
-.hero-content {
+.heroContent {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -65,20 +45,20 @@ h3 { font-size: 1.5rem; }
     to { opacity: 1; }
 }
 
-.hero-title {
+.heroTitle {
     font-size: 3rem;
     margin-bottom: 20px;
     letter-spacing: 1px;
     color: white;
 }
 
-.hero-subtitle {
+.heroSubtitle {
     font-size: 1.3rem;
     margin-bottom: 30px;
     font-weight: 300;
 }
 
-.cta-button {
+.ctaButton {
     display: inline-block;
     padding: 15px 30px;
     font-size: 1.1rem;
@@ -92,7 +72,7 @@ h3 { font-size: 1.5rem; }
     text-align: center;
 }
 
-.cta-button:hover {
+.ctaButton:hover {
     transform: translateY(-3px) scale(1.05);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
@@ -108,13 +88,13 @@ h3 { font-size: 1.5rem; }
     color: var(--text-color);
 }
 
-.feature-list {
+.featureList {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
 }
 
-.feature-item {
+.featureItem {
     background-color: white;
     padding: 30px;
     border-radius: var(--border-radius);
@@ -123,39 +103,39 @@ h3 { font-size: 1.5rem; }
     transition: all 0.3s ease;
 }
 
-.feature-item:hover {
+.featureItem:hover {
     transform: translateY(-10px) rotate(2deg);
 }
 
-.feature-item svg {
+.featureItem svg {
     font-size: 3rem;
     color: var(--primary-color);
     margin-bottom: 20px;
 }
 
-.feature-item h3 {
+.featureItem h3 {
     font-size: 1.5rem;
     margin-bottom: 15px;
 }
 
-.popular-destinations {
+.popularDestinations {
     margin-bottom: 80px;
 }
 
-.popular-destinations h2 {
+.popularDestinations h2 {
     text-align: center;
     font-size: 2.5rem;
     margin-bottom: 40px;
     color: var(--text-color);
 }
 
-.destination-list {
+.destinationList {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
 }
 
-.destination-item {
+.destinationItem {
     flex-basis: calc(25% - 20px);
     background-color: white;
     border-radius: var(--border-radius);
@@ -164,23 +144,23 @@ h3 { font-size: 1.5rem; }
     transition: all 0.3s ease;
 }
 
-.destination-item:hover {
+.destinationItem:hover {
     transform: translateY(-10px);
 }
 
-.destination-item img {
+.destinationItem img {
     width: 100%;
     height: 200px;
     object-fit: cover;
 }
 
-.destination-item h3 {
+.destinationItem h3 {
     padding: 20px;
     margin: 0;
     font-size: 1.2rem;
 }
 
-.destination-link {
+.destinationLink {
     display: block;
     padding: 15px;
     background-color: var(--primary-color);
@@ -190,7 +170,7 @@ h3 { font-size: 1.5rem; }
     transition: background-color 0.3s ease;
 }
 
-.destination-link:hover {
+.destinationLink:hover {
     background-color: var(--secondary-color);
 }
 
@@ -208,13 +188,13 @@ h3 { font-size: 1.5rem; }
     color: var(--text-color);
 }
 
-.testimonial-list {
+.testimonialList {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
 }
 
-.testimonial-item {
+.testimonialItem {
     flex-basis: calc(50% - 30px);
     background-color: white;
     padding: 30px;
@@ -223,17 +203,41 @@ h3 { font-size: 1.5rem; }
     margin-bottom: 30px;
 }
 
-.login-button {
-    background: linear-gradient(135deg, #ffb5af, #a777e3);
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 50px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(214, 214, 214, 0.4);
+.newsletter {
+    text-align: center;
+    margin-bottom: 80px;
 }
 
-.login-button:
+.newsletter h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.newsletterForm {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.newsletterInput {
+    padding: 15px;
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 5px 0 0 5px;
+    font-size: 1rem;
+}
+
+.newsletterButton {
+    padding: 15px 30px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.newsletterButton:hover {
+    background-color: var(--secondary-color);
+}

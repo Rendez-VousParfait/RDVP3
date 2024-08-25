@@ -15,7 +15,7 @@ import BlogPost from "./components/blog/BlogPost";
 import BlogForm from "./components/blog/BlogForm";
 import PrivateRoute from "./components/PrivateRoute";
 import "./App.module.css";
-import "./pages/Home.css";
+import "./pages/Home.module.css";
 
 console.log("App.js is being executed");
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "./Home.css";
+import styles from "./Home.module.css";
 import heroImage from "../assets/selon-une-etude-voici-combien-fois-par-semaine-nous-devrions-voir-nos-amis-pour-etre-heureux.jpeg";
 import parisImage from "../assets/toureiffel-intro-shutterstock.jpg";
 
@@ -28,9 +28,9 @@ function Home() {
   };
 
   return (
-    <div className="home" style={{ minHeight: "100vh" }}>
+    <div className={styles.home} style={{ minHeight: "100vh" }}>
       <header
-        className="hero"
+        className={styles.hero}
         style={{
           backgroundImage: `url(${heroImage})`,
           backgroundSize: "cover",
@@ -38,23 +38,23 @@ function Home() {
           minHeight: "var(--vh, 1vh) * 100",
         }}
       >
-        <div className="hero-content">
-          <h1 className="hero-title">
+        <div className={styles.heroContent}>
+          <h1 className={styles.heroTitle}>
             La solution sur-mesure pour une expérience inoubliable
           </h1>
-          <p className="hero-subtitle">
+          <p className={styles.heroSubtitle}>
             Personnalisez vos sorties en fonction de vos goûts et préférences
           </p>
-          <Link to="/search" className="cta-button">
+          <Link to="/search" className={styles.ctaButton}>
             Commencer l'aventure
           </Link>
         </div>
       </header>
 
-      <section className="features">
+      <section className={styles.features}>
         <h2>Pourquoi choisir Rendez-Vous Parfait ?</h2>
-        <div className="feature-list">
-          <div className="feature-item">
+        <div className={styles.featureList}>
+          <div className={styles.featureItem}>
             <FontAwesomeIcon
               icon="map-marked-alt"
               size="2x"
@@ -68,7 +68,7 @@ function Home() {
               perdre de temps.
             </p>
           </div>
-          <div className="feature-item">
+          <div className={styles.featureItem}>
             <FontAwesomeIcon
               icon="piggy-bank"
               size="2x"
@@ -82,7 +82,7 @@ function Home() {
               que vous aimez.
             </p>
           </div>
-          <div className="feature-item">
+          <div className={styles.featureItem}>
             <FontAwesomeIcon
               icon="users"
               size="2x"
@@ -96,7 +96,7 @@ function Home() {
               expérience unique et harmonieuse pour tous.
             </p>
           </div>
-          <div className="feature-item">
+          <div className={styles.featureItem}>
             <FontAwesomeIcon
               icon="users"
               size="2x"
@@ -113,24 +113,24 @@ function Home() {
         </div>
       </section>
 
-      <section className="popular-destinations">
+      <section className={styles.popularDestinations}>
         <h2>Inspirations pour votre prochaine escapade</h2>
-        <div className="destination-list">
-          <div className="destination-item">
-            <img src={parisImage} alt="Paris" className="destination-image" />
+        <div className={styles.destinationList}>
+          <div className={styles.destinationItem}>
+            <img src={parisImage} alt="Paris" className={styles.destinationImage} />
             <h3>Paris</h3>
             <p>
               Découvrez la ville de l'amour avec nos itinéraires spécial couples
             </p>
-            <Link to="/search?destination=Paris" className="destination-link">
+            <Link to="/search?destination=Paris" className={styles.destinationLink}>
               Explorer
             </Link>
           </div>
-          <div className="destination-item">
+          <div className={styles.destinationItem}>
             <img
               src="https://www.wonderbox.fr/blog/wp-content/uploads/sites/4/2020/02/Visiter-Marseille-en-10-lieux-marseille-scaled-1-1.jpeg"
               alt="Marseille"
-              className="destination-image"
+              className={styles.destinationImage}
             />
             <h3>Marseille</h3>
             <p>
@@ -139,16 +139,16 @@ function Home() {
             </p>
             <Link
               to="/search?destination=Marseille"
-              className="destination-link"
+              className={styles.destinationLink}
             >
               Explorer
             </Link>
           </div>
-          <div className="destination-item">
+          <div className={styles.destinationItem}>
             <img
               src="https://www.bordeaux-tourisme.com/sites/bordeaux_tourisme/files/styles/widget_slide/public/medias/widgets/misc/bourse-mobile.jpg.webp?itok=n-Cx_Wiy"
               alt="Bordeaux"
-              className="destination-image"
+              className={styles.destinationImage}
             />
             <h3>Bordeaux</h3>
             <p>
@@ -157,66 +157,63 @@ function Home() {
             </p>
             <Link
               to="/search?destination=Bordeaux"
-              className="destination-link"
+              className={styles.destinationLink}
             >
               Explorer
             </Link>
           </div>
-          <div className="destination-item">
+          <div className={styles.destinationItem}>
             <img
               src="https://lessortiesdunelilloise.fr/wp-content/uploads/2020/07/grand-place-lille-scaled.jpg"
               alt="Lille"
-              className="destination-image"
+              className={styles.destinationImage}
             />
             <h3>Lille</h3>
             <p>Explorez les charmes du Nord avec nos itinéraires spéciaux</p>
-            <Link to="/search?destination=Lille" className="destination-link">
+            <Link to="/search?destination=Lille" className={styles.destinationLink}>
               Explorer
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="testimonials">
+      <section className={styles.testimonials}>
         <h2>Ce que disent nos voyageurs</h2>
-        <div className="testimonial-list">
-          <div className="testimonial-item">
-            <p className="testimonial-text">
+        <div className={styles.testimonialList}>
+          <div className={styles.testimonialItem}>
+            <p className={styles.testimonialText}>
               "Grâce à Rendez-Vous Parfait, notre week-end en amoureux à Paris
               était magique. Chaque activité correspondait parfaitement à nos
               goûts !"
             </p>
-            <span className="testimonial-author">
+            <span className={styles.testimonialAuthor}>
               - Marie et Thomas, 28 ans
             </span>
           </div>
-          <div className="testimonial-item">
-            <p className="testimonial-text">
+          <div className={styles.testimonialItem}>
+            <p className={styles.testimonialText}>
               "J'ai découvert des endroits incroyables à Bordeaux que je
               n'aurais jamais trouvés seul. Merci pour cette expérience unique
               !"
             </p>
-            <span className="testimonial-author">- Lucas, 35 ans</span>
+            <span className={styles.testimonialAuthor}>- Lucas, 35 ans</span>
           </div>
         </div>
       </section>
 
-      <section className="newsletter">
-        <h2>Restez informé de nos meilleures offres</h2>
-        <p>
-          Recevez des inspirations de voyage et des offres exclusives
-          directement dans votre boîte mail
-        </p>
-        <form onSubmit={handleSubmit} className="newsletter-form">
+      <section className={styles.newsletter}>
+        <h2>Restez informé de nos dernières offres</h2>
+        <p>Inscrivez-vous à notre newsletter pour ne rien manquer !</p>
+        <form onSubmit={handleSubmit} className={styles.newsletterForm}>
           <input
             type="email"
-            placeholder="Votre adresse email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="Votre adresse e-mail"
             required
-            className="newsletter-input"
+            className={styles.newsletterInput}
           />
-          <button type="submit" className="newsletter-button">
+          <button type="submit" className={styles.newsletterButton}>
             S'inscrire
           </button>
         </form>
