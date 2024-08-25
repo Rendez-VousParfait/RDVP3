@@ -103,7 +103,7 @@ const About = () => {
               <FaMobileAlt />
             </div>
             <div className={styles['timeline-content']}>
-              <h3>2028</h3>
+              <h3>2026</h3>
               <p>Lancement de notre application mobile</p>
             </div>
           </div>
@@ -112,7 +112,7 @@ const About = () => {
               <FaGlobe />
             </div>
             <div className={styles['timeline-content']}>
-              <h3>2030</h3>
+              <h3>2028</h3>
               <p>Expansion internationale</p>
             </div>
           </div>

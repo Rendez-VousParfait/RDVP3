@@ -17,7 +17,6 @@ function BlogForm({ onPostCreated }) {
         imageUrl,
         tag, // Ajout du tag
         createdAt: new Date(),
-        author: "Auteur anonyme",
         categories: [],
       });
       onPostCreated({
