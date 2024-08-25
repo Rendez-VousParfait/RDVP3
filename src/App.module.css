@@ -158,3 +158,20 @@ input, textarea, select {
   border-radius: 6px;
   margin-bottom: 20px;
 }
+/* Ajout de styles pour la transition */
+.website-container,
+.app-container {
+  transition: opacity 0.3s ease-in-out;
+}
+.fade-enter {
+  opacity: 0;
+}
+.fade-enter-active {
+  opacity: 1;
+}
+.fade-exit {
+  opacity: 1;
+}
+.fade-exit-active {
+  opacity: 0;
+}

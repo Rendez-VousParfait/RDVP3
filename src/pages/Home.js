@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapMarkerAlt, faCalendarAlt, faUsers, faStar, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faMapMarkerAlt, faCalendarAlt, faUsers, faStar, faChevronLeft, faChevronRight, faPencil } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Home.module.css";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -52,17 +52,23 @@ function Home() {
     slidesToScroll: 1,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
+    centerMode: true,
+    centerPadding: '60px',
     responsive: [
       {
         breakpoint: 1024,
         settings: {
           slidesToShow: 2,
+          centerMode: true,
+          centerPadding: '40px',
         }
       },
       {
         breakpoint: 600,
         settings: {
           slidesToShow: 1,
+          centerMode: true,
+          centerPadding: '40px',
         }
       }
     ]
@@ -85,71 +91,61 @@ function Home() {
           <source src={heroVideo} type="video/mp4" />
         </video>
         <div className={styles.heroContent}>
-          <h1 className={styles.heroTitle}>Découvrez votre prochaine aventure</h1>
-          <p className={styles.heroSubtitle}>Personnalisez vos voyages selon vos envies</p>
-          <Link to="/search" className={styles.ctaButton}>Commencer l'aventure</Link>
+          <h1 className={styles.heroTitle}>Découvrez Rendez-Vous Parfait</h1>
+          <p className={styles.heroSubtitle}>Individuellement ou en Groupe, créez vos Expériences Sur Mesure selon vos envies du moment</p>
+          <Link to="/search" className={styles.ctaButton}>Démarrez l'Aventure</Link>
         </div>
       </header>
 
       <section className={styles.howItWorks}>
-        <h2>Comment ça marche</h2>
+        <h2>Notre Processus en 3 Étapes</h2>
         <div className={styles.steps}>
           <div className={styles.step}>
-            <FontAwesomeIcon icon={faMapMarkerAlt} className={styles.stepIcon} />
-            <h3>Choisissez votre destination</h3>
-            <p>Sélectionnez parmi nos nombreuses destinations</p>
+            <FontAwesomeIcon icon={faPencil} className={styles.stepIcon} />
+            <h3>Personnalisez Votre Profil</h3>
+            <p>Exprimez vos Envies et Goûts Personnels, en Solo ou en Groupe</p>
           </div>
           <div className={styles.step}>
             <FontAwesomeIcon icon={faCalendarAlt} className={styles.stepIcon} />
-            <h3>Sélectionnez vos dates</h3>
-            <p>Choisissez les dates qui vous conviennent le mieux</p>
+            <h3>Choisissez Vos Dates</h3>
+            <p>Sélectionnez les Dates qui Correspondent Parfaitement à Votre Planning</p>
           </div>
           <div className={styles.step}>
-            <FontAwesomeIcon icon={faUsers} className={styles.stepIcon} />
-            <h3>Personnalisez votre voyage</h3>
-            <p>Adaptez votre itinéraire selon vos préférences</p>
+            <FontAwesomeIcon icon={faStar} className={styles.stepIcon} />
+            <h3>Fixez Vos Préférences</h3>
+            <p>Définissez Vos Préférences en Quelques Clics</p>
           </div>
         </div>
       </section>
 
       <section className={styles.popularDestinations}>
-        <h2>Destinations populaires</h2>
+        <h2>Destinations Incontournables</h2>
         <div className={styles.sliderContainer}>
           <Slider {...destinationSettings}>
-            <div className={styles.destinationItem}>
-              <img src={parisImage} alt="Paris" className={styles.destinationImage} />
-              <h3>Paris</h3>
-              <p>Découvrez la ville de l'amour</p>
-              <Link to="/search?destination=Paris" className={styles.destinationLink}>Explorer</Link>
-            </div>
-            <div className={styles.destinationItem}>
-              <img src={marseilleImage} alt="Marseille" className={styles.destinationImage} />
-              <h3>Marseille</h3>
-              <p>Plongez dans les eaux turquoises du sud</p>
-              <Link to="/search?destination=Marseille" className={styles.destinationLink}>Explorer</Link>
-            </div>
-            <div className={styles.destinationItem}>
-              <img src={bordeauxImage} alt="Bordeaux" className={styles.destinationImage} />
-              <h3>Bordeaux</h3>
-              <p>Vivez l'énergie des vignobles</p>
-              <Link to="/search?destination=Bordeaux" className={styles.destinationLink}>Explorer</Link>
-            </div>
-            <div className={styles.destinationItem}>
-              <img src={lilleImage} alt="Lille" className={styles.destinationImage} />
-              <h3>Lille</h3>
-              <p>Explorez les charmes du Nord</p>
-              <Link to="/search?destination=Lille" className={styles.destinationLink}>Explorer</Link>
-            </div>
+            {[
+              { name: "Paris", image: parisImage, description: "Vivez la Magie de la Ville de l'Amour" },
+              { name: "Marseille", image: marseilleImage, description: "Plongez dans les Eaux Turquoises du Sud" },
+              { name: "Bordeaux", image: bordeauxImage, description: "Profitez de l'Énergie des Vignobles" },
+              { name: "Lille", image: lilleImage, description: "Découvrez les Charmes du Nord" }
+            ].map((destination, index) => (
+              <div key={index} className={styles.destinationItem}>
+                <Link to={`/search?destination=${destination.name}`} className={styles.destinationLink}>
+                  <img src={destination.image} alt={destination.name} className={styles.destinationImage} />
+                  <h3>{destination.name}</h3>
+                  <p>{destination.description}</p>
+                </Link>
+              </div>
+            ))}
           </Slider>
         </div>
       </section>
 
       <section className={styles.testimonials}>
-        <h2>Ce que disent nos voyageurs</h2>
+        <h2>Ce que Disent nos Voyageurs</h2>
         <Slider {...testimonialSettings}>
           <div className={styles.testimonialItem}>
             <p className={styles.testimonialText}>
-              "Grâce à Rendez-Vous Parfait, notre week-end en amoureux à Paris était magique. Chaque activité correspondait parfaitement à nos goûts !"
+              "Rendez-Vous Parfait a rendu notre escapade romantique à Paris inoubliable. Chaque activité était parfaitement adaptée à nos goûts !"
             </p>
             <div className={styles.testimonialAuthor}>
               <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Marie et Thomas" className={styles.authorImage} />
@@ -165,7 +161,7 @@ function Home() {
           </div>
           <div className={styles.testimonialItem}>
             <p className={styles.testimonialText}>
-              "J'ai découvert des endroits incroyables à Bordeaux que je n'aurais jamais trouvés seul. Merci pour cette expérience unique !"
+              "J'ai découvert des trésors cachés à Bordeaux que je n'aurais jamais trouvés seul. Merci pour cette aventure unique !"
             </p>
             <div className={styles.testimonialAuthor}>
               <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Lucas" className={styles.authorImage} />
@@ -183,31 +179,31 @@ function Home() {
       </section>
 
       <section className={styles.blogSection}>
-        <h2>Inspirations de voyage</h2>
+        <h2>Idées de Voyages Inspirantes</h2>
         <div className={styles.blogPosts}>
           <div className={styles.blogPost}>
             <img src="https://images.pexels.com/photos/705764/pexels-photo-705764.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Blog post 1" />
-            <h3>10 lieux incontournables à Paris</h3>
-            <p>Découvrez les secrets cachés de la Ville Lumière...</p>
-            <Link to="/blog/post1" className={styles.readMore}>Lire plus</Link>
+            <h3>Les 10 Lieux Incontournables à Paris</h3>
+            <p>Explorez les Trésors Cachés de la Ville Lumière...</p>
+            <Link to="/blog/post1" className={styles.readMore}>Découvrir Plus</Link>
           </div>
           <div className={styles.blogPost}>
             <img src="https://images.pexels.com/photos/1573471/pexels-photo-1573471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Blog post 2" />
-            <h3>Les meilleures plages de Marseille</h3>
-            <p>Explorez les criques paradisiaques de la côte méditerranéenne...</p>
-            <Link to="/blog/post2" className={styles.readMore}>Lire plus</Link>
+            <h3>Les Plus Belles Plages de Marseille</h3>
+            <p>Plongez dans les Criques Paradisiaques de la Côte Méditerranéenne...</p>
+            <Link to="/blog/post2" className={styles.readMore}>Découvrir Plus</Link>
           </div>
           <div className={styles.blogPost}>
             <img src="https://images.pexels.com/photos/2702805/pexels-photo-2702805.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Blog post 3" />
-            <h3>Guide des vins de Bordeaux</h3>
-            <p>Initiez-vous à l'art de la dégustation dans la capitale du vin...</p>
-            <Link to="/blog/post3" className={styles.readMore}>Lire plus</Link>
+            <h3>Guide des Vins de Bordeaux</h3>
+            <p>Initiez-vous à l'Art de la Dégustation dans la Capitale du Vin...</p>
+            <Link to="/blog/post3" className={styles.readMore}>Découvrir Plus</Link>
           </div>
         </div>
       </section>
 
       <section className={styles.partners}>
-        <h2>Nos partenaires de confiance</h2>
+        <h2>Nos Partenaires de Confiance</h2>
         <div className={styles.partnerLogos}>
           <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/e/e7/Logo_big_mamma.png/640px-Logo_big_mamma.png" alt="Accor" />
           <img src="https://logos-world.net/wp-content/uploads/2020/03/Ryanair-Logo-700x394.png" alt="Ryanair" />
@@ -217,26 +213,26 @@ function Home() {
       </section>
 
       <section className={styles.newsletter}>
-        <h2>Restez informé de nos dernières offres</h2>
-        <p>Inscrivez-vous à notre newsletter pour ne rien manquer !</p>
+        <h2>Restez Informé de nos Dernières Offres</h2>
+        <p>Abonnez-vous à notre Newsletter pour ne Rien Manquer !</p>
         <form onSubmit={handleSubmit} className={styles.newsletterForm}>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Votre adresse e-mail"
+            placeholder="Votre Adresse E-mail"
             required
             className={styles.newsletterInput}
           />
           <button type="submit" className={styles.newsletterButton}>
-            S'inscrire
+            S'abonner
           </button>
         </form>
       </section>
 
       <div className={styles.floatingCTA}>
         <Link to="/search" className={styles.ctaButton}>
-          Planifier mon voyage
+          Réservation Personnalisée
         </Link>
       </div>
     </div>

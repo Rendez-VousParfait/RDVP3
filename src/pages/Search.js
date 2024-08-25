@@ -14,7 +14,9 @@ import ActivityPreferences from '../components/SearchSteps/ActivityPreferences';
 import SearchResults from '../components/SearchResults';
 import GroupCreationStep from '../components/GroupCreationStep';
 import { bordeauxData } from '../data/bordeauxData';
-import './Search.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import styles from './Search.module.css';
 
 console.log("Search.js is being executed");
 
@@ -47,11 +49,11 @@ const Search = () => {
   }, [user, loading, navigate]);
 
   if (loading) {
-    return <div>Chargement...</div>;
+    return <div className={styles.loading}>Chargement...</div>;
   }
 
   if (!user) {
-    return <div>Veuillez vous connecter pour accéder à la recherche.</div>;
+    return <div className={styles.error}>Veuillez vous connecter pour accéder à la recherche.</div>;
   }
 
   const nextStep = () => setStep(step + 1);
@@ -164,9 +166,24 @@ const Search = () => {
   };
 
   return (
-    <div className="search-page">
-      <h1>Planifiez votre séjour à Bordeaux</h1>
+    <div className={styles.searchPage}>
+      <h1 className={styles.pageTitle}>Planifiez votre séjour à Bordeaux</h1>
+      <div className={styles.stepIndicator}>
+        Étape {step + 1} sur 8
+      </div>
       {renderStep()}
+      <div className={styles.navigationButtons}>
+        {step > 0 && (
+          <button onClick={prevStep} className={styles.navButton}>
+            <FontAwesomeIcon icon={faArrowLeft} /> Précédent
+          </button>
+        )}
+        {step < 7 && (
+          <button onClick={nextStep} className={styles.navButton}>
+            Suivant <FontAwesomeIcon icon={faArrowRight} />
+          </button>
+        )}
+      </div>
     </div>
   );
 };
