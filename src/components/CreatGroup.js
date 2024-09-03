@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import styles from "./CreatGroup.module.css";
 import "../style/buttons.css";
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../firebase'; // Assurez-vous que le chemin est correct
 
 const CreateGroup = ({ onGroupCreated, groupName, setGroupName }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -12,12 +10,7 @@ const CreateGroup = ({ onGroupCreated, groupName, setGroupName }) => {
     if (groupName.trim()) {
       setIsLoading(true);
       try {
-        const groupRef = await addDoc(collection(db, "groups"), {
-          name: groupName.trim(),
-          createdAt: new Date(),
-          members: [] // Initialement vide
-        });
-        onGroupCreated({ id: groupRef.id, name: groupName.trim() });
+        await onGroupCreated({ name: groupName.trim() });
       } catch (error) {
         console.error("Error creating group: ", error);
       } finally {
@@ -38,7 +31,7 @@ const CreateGroup = ({ onGroupCreated, groupName, setGroupName }) => {
           required
         />
         <button type="submit" className="custom-button" disabled={isLoading}>
-          {isLoading ? 'Création...' : 'Créer le groupe'}
+          {isLoading ? "Création..." : "Créer le groupe"}
         </button>
       </form>
     </div>

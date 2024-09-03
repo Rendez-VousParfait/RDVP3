@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
 
 a,
 a:visited,
@@ -23,7 +23,7 @@ a:active {
   top: 0;
   z-index: 1000;
   transition: all 0.4s ease;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   height: 80px; /* Augmentation de la hauteur */
 }
 
@@ -93,7 +93,7 @@ nav ul li a:hover {
 }
 
 nav ul li a::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -244,7 +244,9 @@ auth-link {
   text-decoration: none;
   margin: 0 15px;
   font-size: 16px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
   display: inline-block;
 }
 
@@ -277,7 +279,7 @@ auth-link {
     top: 100%;
     left: 0;
     right: 0;
-    background: linear-gradient(135deg, #622B3A, #BF6B6B);
+    background: linear-gradient(135deg, #622b3a, #bf6b6b);
     border-top: 1px solid rgba(255, 255, 255, 0.18);
     display: none;
   }

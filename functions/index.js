@@ -2,12 +2,11 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const nodemailer = require('nodemailer');
 
+// Initialisation de l'application Firebase Admin
 admin.initializeApp();
 
-// Configuration de l'expéditeur de l'e-mail (utilisez un service comme SendGrid ou votre propre serveur SMTP)
+// Configuration du transporteur d'e-mail
 const transporter = nodemailer.createTransport({
-  // Configurez votre service d'e-mail ici
-  // Par exemple, pour Gmail (moins recommandé pour la production) :
   service: 'gmail',
   auth: {
     user: functions.config().gmail.email,
@@ -15,13 +14,14 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+// Fonction de test Hello World
 exports.helloWorld = functions.https.onRequest((request, response) => {
   response.send("Hello from Firebase!");
 });
 
-// Exemple de fonction pour créer un utilisateur
+// Fonction pour créer un utilisateur
 exports.createUser = functions.https.onCall((data, context) => {
-  // Vérifiez l'authentification si nécessaire
+  // Vérification de l'authentification
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -31,7 +31,7 @@ exports.createUser = functions.https.onCall((data, context) => {
 
   const { name, email } = data;
 
-  // Logique pour créer un utilisateur dans Firestore
+  // Création de l'utilisateur dans Firestore
   return admin
     .firestore()
     .collection("users")
@@ -44,13 +44,14 @@ exports.createUser = functions.https.onCall((data, context) => {
       return { success: true, message: "User created successfully" };
     })
     .catch((error) => {
+      console.error("Error creating user:", error);
       throw new functions.https.HttpsError("internal", error.message);
     });
 });
 
-// Nouvelle fonction pour envoyer un e-mail d'invitation
+// Fonction pour envoyer un e-mail d'invitation
 exports.sendInvitationEmail = functions.https.onCall(async (data, context) => {
-  // Vérifiez l'authentification si nécessaire
+  // Vérification de l'authentification
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -60,13 +61,21 @@ exports.sendInvitationEmail = functions.https.onCall(async (data, context) => {
 
   const { email, groupName, invitationLink } = data;
 
+  // Vérification des données requises
+  if (!email || !groupName || !invitationLink) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Email, group name, and invitation link are required."
+    );
+  }
+
   const mailOptions = {
-    from: 'Votre App <noreply@votreapp.com>',
+    from: 'Rendez-Vous Parfait <noreply@rendez-vous-parfait.com>',
     to: email,
     subject: `Invitation à rejoindre le groupe "${groupName}"`,
     html: `
       <h1>Vous avez été invité à rejoindre un groupe de voyage !</h1>
-      <p>Vous avez été invité à rejoindre le groupe "${groupName}" sur notre application de planification de voyage.</p>
+      <p>Vous avez été invité à rejoindre le groupe "${groupName}" sur Rendez-Vous Parfait, notre application de planification de voyage.</p>
       <p>Pour accepter l'invitation, cliquez sur le lien suivant :</p>
       <a href="${invitationLink}">Rejoindre le groupe</a>
     `
@@ -74,6 +83,7 @@ exports.sendInvitationEmail = functions.https.onCall(async (data, context) => {
 
   try {
     await transporter.sendMail(mailOptions);
+    console.log(`Invitation email sent successfully to ${email}`);
     return { success: true, message: "Invitation email sent successfully" };
   } catch (error) {
     console.error('Erreur lors de l'envoi de l'e-mail:', error);

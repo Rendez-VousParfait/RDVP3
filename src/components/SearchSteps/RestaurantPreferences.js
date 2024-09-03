@@ -11,14 +11,17 @@ const RestaurantPreferences = ({
   const equipments = ["Roof-top", "Musique", "Enfants bas-âge"];
 
   const handleCheckboxChange = (category, value) => {
-    const isSelected = formData.restaurantPreferences[category]?.includes(value);
+    const isSelected =
+      formData.restaurantPreferences[category]?.includes(value);
     const updatedValues = isSelected
-      ? formData.restaurantPreferences[category].filter((item) => item !== value)
+      ? formData.restaurantPreferences[category].filter(
+          (item) => item !== value,
+        )
       : [...(formData.restaurantPreferences[category] || []), value];
 
-    handleInputChange('restaurantPreferences', { 
-      ...formData.restaurantPreferences, 
-      [category]: updatedValues 
+    handleInputChange("restaurantPreferences", {
+      ...formData.restaurantPreferences,
+      [category]: updatedValues,
     });
   };
 
@@ -31,8 +34,10 @@ const RestaurantPreferences = ({
           <label key={type} className={styles.label}>
             <input
               type="checkbox"
-              checked={formData.restaurantPreferences.cuisineTypes?.includes(type)}
-              onChange={() => handleCheckboxChange('cuisineTypes', type)}
+              checked={formData.restaurantPreferences.cuisineTypes?.includes(
+                type,
+              )}
+              onChange={() => handleCheckboxChange("cuisineTypes", type)}
               className={styles.checkbox}
             />
             {type}
@@ -45,8 +50,10 @@ const RestaurantPreferences = ({
           <label key={equipment} className={styles.label}>
             <input
               type="checkbox"
-              checked={formData.restaurantPreferences.equipments?.includes(equipment)}
-              onChange={() => handleCheckboxChange('equipments', equipment)}
+              checked={formData.restaurantPreferences.equipments?.includes(
+                equipment,
+              )}
+              onChange={() => handleCheckboxChange("equipments", equipment)}
               className={styles.checkbox}
             />
             {equipment}
@@ -54,8 +61,12 @@ const RestaurantPreferences = ({
         ))}
       </div>
       <div className={styles.buttons}>
-        <button className="custom-button button-nav" onClick={prevStep}>Précédent</button>
-        <button className="custom-button button-nav" onClick={nextStep}>Suivant</button>
+        <button className="custom-button button-nav" onClick={prevStep}>
+          Précédent
+        </button>
+        <button className="custom-button button-nav" onClick={nextStep}>
+          Suivant
+        </button>
       </div>
     </div>
   );

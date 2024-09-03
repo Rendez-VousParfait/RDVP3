@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import './SearchForm.css';
+import React, { useState } from "react";
+import "./SearchForm.css";
 
 const SearchForm = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    destination: '',
-    dateFrom: '',
-    dateTo: '',
+    destination: "",
+    dateFrom: "",
+    dateTo: "",
     guests: 1,
-    budget: '',
-    interests: []
+    budget: "",
+    interests: [],
   });
 
   const handleInputChange = (e) => {
@@ -19,11 +19,11 @@ const SearchForm = () => {
 
   const handleInterestChange = (e) => {
     const { value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
       interests: prevState.interests.includes(value)
-        ? prevState.interests.filter(interest => interest !== value)
-        : [...prevState.interests, value]
+        ? prevState.interests.filter((interest) => interest !== value)
+        : [...prevState.interests, value],
     }));
   };
 
@@ -32,12 +32,12 @@ const SearchForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    console.log("Form submitted:", formData);
     // Ici, vous pouvez ajouter la logique pour envoyer les données à votre backend
   };
 
   const renderStep = () => {
-    switch(step) {
+    switch (step) {
       case 1:
         return (
           <div className="form-step">
@@ -105,7 +105,14 @@ const SearchForm = () => {
           <div className="form-step">
             <h2>Quels sont vos centres d'intérêt ?</h2>
             <div className="interests-grid">
-              {['Culture', 'Nature', 'Gastronomie', 'Sport', 'Détente', 'Shopping'].map(interest => (
+              {[
+                "Culture",
+                "Nature",
+                "Gastronomie",
+                "Sport",
+                "Détente",
+                "Shopping",
+              ].map((interest) => (
                 <label key={interest}>
                   <input
                     type="checkbox"
@@ -129,9 +136,15 @@ const SearchForm = () => {
     <form onSubmit={handleSubmit} className="search-form">
       {renderStep()}
       <div className="form-navigation">
-        {step > 1 && <button type="button" onClick={prevStep}>Précédent</button>}
+        {step > 1 && (
+          <button type="button" onClick={prevStep}>
+            Précédent
+          </button>
+        )}
         {step < 5 ? (
-          <button type="button" onClick={nextStep}>Suivant</button>
+          <button type="button" onClick={nextStep}>
+            Suivant
+          </button>
         ) : (
           <button type="submit">Rechercher</button>
         )}

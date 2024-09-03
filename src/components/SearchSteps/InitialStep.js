@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import '../Swiper.module.css';
+import React, { useState } from "react";
+import "../Swiper.module.css";
 
 const InitialStep = ({ formData, handleInputChange, nextStep }) => {
   const [showNextStep, setShowNextStep] = useState(false);

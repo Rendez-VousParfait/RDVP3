@@ -81,11 +81,6 @@ function Header() {
               Accueil
             </Link>
           </li>
-          <li className={location.pathname === "/search" ? "selected" : ""}>
-            <Link to="/search" onClick={toggleMenu} aria-label="Recherche">
-              Recherche
-            </Link>
-          </li>
           <li className={location.pathname === "/blog" ? "selected" : ""}>
             <Link to="/blog" onClick={toggleMenu} aria-label="Blog">
               Blog
@@ -154,7 +149,7 @@ function Header() {
         ) : (
           <div className="auth-links">
             <Link to="/login" className="auth-link login-btn">
-              Connexion
+              Run App
             </Link>
             <Link to="/signup" className="auth-link signup-btn">
               Inscription

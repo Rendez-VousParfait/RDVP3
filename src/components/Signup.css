@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css");
 
 .signup-container {
   display: flex;
@@ -8,7 +8,7 @@
   min-height: 100vh;
   background: #f5f5f5;
   padding: 20px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .signup-card {
@@ -113,7 +113,7 @@
 
 .separator::before,
 .separator::after {
-  content: '';
+  content: "";
   flex: 1;
   border-bottom: 1px solid #ddd;
 }
@@ -151,12 +151,12 @@
 }
 
 .google-button {
-  background-color: #DB4437;
+  background-color: #db4437;
   margin-right: 10px;
 }
 
 .facebook-button {
-  background-color: #4267B2;
+  background-color: #4267b2;
 }
 
 .social-button:hover {

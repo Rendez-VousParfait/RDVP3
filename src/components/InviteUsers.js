@@ -1,28 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import styles from './InviteUsers.module.css';
-import '../style/buttons.css';
+import React, { useState, useEffect } from "react";
+import styles from "./InviteUsers.module.css";
+import "../style/buttons.css";
 
 const InviteUsers = ({ groupId, onInviteSent, personCount }) => {
   const [invitedUsers, setInvitedUsers] = useState([]);
 
   useEffect(() => {
     const count = Math.max(0, parseInt(personCount) - 1);
-    setInvitedUsers(Array(count).fill(''));
+    setInvitedUsers(Array(count).fill(""));
   }, [personCount]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    invitedUsers.forEach(email => {
-      if (email.trim()) {
-        onInviteSent({ groupId, email: email.trim() });
-      }
-    });
+
+    const validEmails = invitedUsers.filter(email => email.trim());
+    console.log("Valid emails to invite:", validEmails);
+
+    for (const email of validEmails) {
+      await onInviteSent({ groupId, email: email.trim() });
+    }
   };
 
   const handleEmailChange = (index, value) => {
     const newInvitedUsers = [...invitedUsers];
     newInvitedUsers[index] = value;
     setInvitedUsers(newInvitedUsers);
+    console.log("Updated invited users:", newInvitedUsers);
   };
 
   return (
@@ -39,7 +42,9 @@ const InviteUsers = ({ groupId, onInviteSent, personCount }) => {
           />
         ))}
         {invitedUsers.length > 0 && (
-          <button type="submit" className="custom-button">Inviter</button>
+          <button type="submit" className="custom-button">
+            Inviter
+          </button>
         )}
       </form>
     </div>

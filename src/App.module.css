@@ -1,7 +1,7 @@
 /* Styles généraux */
 .App {
   text-align: center;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   line-height: 1.7;
   color: #3d3d3d;
   background-color: #fafafa;
@@ -38,13 +38,15 @@ body {
 }
 
 /* Liens */
-.App-link, a {
+.App-link,
+a {
   color: #0366d6;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
-.App-link:hover, a:hover {
+.App-link:hover,
+a:hover {
   color: #0056b3;
   text-decoration: underline;
 }
@@ -56,10 +58,15 @@ body {
 }
 
 /* Contraste amélioré pour le texte */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: #333;
   margin-bottom: 15px;
-  font-family: 'Georgia', serif;
+  font-family: "Georgia", serif;
 }
 
 /* Espacement pour une meilleure lisibilité */
@@ -75,7 +82,9 @@ label {
   font-weight: bold;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   width: 100%;
   padding: 12px;
   margin-bottom: 20px;
@@ -93,7 +102,10 @@ input, textarea, select {
   font-size: 16px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.2s;
 }
 
 .custom-button:hover {

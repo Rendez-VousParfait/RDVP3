@@ -56,7 +56,12 @@
   left: 0;
   right: 0;
   padding: 20px;
-  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 100%);
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
   color: white;
 }
 
@@ -65,14 +70,14 @@
   margin-bottom: 10px;
   font-weight: bold;
   color: #ffffff;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .offer-description {
   font-size: 16px;
   margin-bottom: 15px;
   line-height: 1.4;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .offer-details {
@@ -82,11 +87,12 @@
   margin-top: 10px;
 }
 
-.offer-type, .offer-price {
+.offer-type,
+.offer-price {
   display: flex;
   align-items: center;
   font-size: 18px;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .offer-icon {
@@ -101,7 +107,8 @@
   margin-top: 30px;
 }
 
-.like-button, .dislike-button {
+.like-button,
+.dislike-button {
   width: 80px;
   height: 80px;
   border-radius: 50%;
@@ -115,7 +122,8 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.like-button:hover, .dislike-button:hover {
+.like-button:hover,
+.dislike-button:hover {
   transform: scale(1.1);
 }
 

@@ -7,7 +7,10 @@
   font-size: 16px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.2s;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,14 +33,16 @@
   width: auto;
   min-width: 200px;
   padding: 1.5rem;
-  background: #008CBA !important;
+  background: #008cba !important;
   color: white !important;
   border: none;
   border-radius: 15px;
   font-size: 1.3rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s ease-out, transform 0.3s ease-out;
+  transition:
+    background 0.3s ease-out,
+    transform 0.3s ease-out;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -64,7 +69,10 @@
   text-decoration: none;
   margin: 0 15px;
   font-size: 16px;
-  transition: background 0.3s ease, color 0.3s ease, transform 0.3s;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease,
+    transform 0.3s;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 

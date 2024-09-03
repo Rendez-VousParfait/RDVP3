@@ -13,14 +13,19 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(58, 28, 113, 0.3), rgba(215, 109, 119, 0.3), rgba(255, 175, 123, 0.3));
+  background: linear-gradient(
+    135deg,
+    rgba(58, 28, 113, 0.3),
+    rgba(215, 109, 119, 0.3),
+    rgba(255, 175, 123, 0.3)
+  );
   opacity: 0.5;
   transform: translateZ(-50px) scale(1.5);
   filter: blur(5px);
 }
 
 .footer::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50px;
   left: 0;
@@ -112,7 +117,7 @@
 }
 
 .links ul li a::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -2px;
   left: 0;
@@ -176,7 +181,7 @@
 }
 
 .social-icon::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -5px;
   left: -5px;

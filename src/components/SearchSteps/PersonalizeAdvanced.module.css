@@ -36,8 +36,8 @@
 .search-step button {
   padding: 1rem;
   background-color: white;
-  color: #008CBA;
-  border: 2px solid #008CBA;
+  color: #008cba;
+  border: 2px solid #008cba;
   border-radius: 15px;
   font-size: 1rem;
   font-weight: bold;
@@ -46,7 +46,7 @@
 }
 
 .search-step button:hover {
-  background-color: #008CBA;
+  background-color: #008cba;
   color: white;
   transform: translateY(-3px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -58,7 +58,7 @@
 }
 
 .search-step button.selected {
-  background-color: #008CBA;
+  background-color: #008cba;
   color: white;
 }
 
@@ -73,7 +73,7 @@
 }
 
 .button-nav {
-  background-color: #008CBA;
+  background-color: #008cba;
   color: white;
   padding: 10px 25px;
   margin: 10px 5px 0;
@@ -81,7 +81,9 @@
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s ease, transform 0.2s;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s;
   position: relative;
   z-index: 2;
 }

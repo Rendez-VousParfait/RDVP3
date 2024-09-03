@@ -4,7 +4,9 @@
   background: linear-gradient(145deg, #ffffff, #f0f0f0);
   padding: 2.5rem;
   border-radius: 20px;
-  box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
+  box-shadow:
+    20px 20px 60px #d9d9d9,
+    -20px -20px 60px #ffffff;
 }
 
 .form-step {
@@ -73,7 +75,7 @@ input[type="number"]:focus {
 }
 
 .interests-grid input[type="checkbox"]:checked::before {
-  content: '✓';
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;

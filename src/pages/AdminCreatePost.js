@@ -20,10 +20,7 @@ const AdminCreatePost = () => {
 
   return (
     <div className="admin-create-post">
-      <button 
-        onClick={() => navigate('/blog')} 
-        className="custom-button"
-      >
+      <button onClick={() => navigate("/blog")} className="custom-button">
         Retour aux Posts
       </button>
       <h2>Créer un nouveau post</h2>
@@ -47,7 +44,9 @@ const AdminCreatePost = () => {
             required
           />
         </div>
-        <button type="submit" className="submit-button">Créer le post</button>
+        <button type="submit" className="submit-button">
+          Créer le post
+        </button>
       </form>
     </div>
   );

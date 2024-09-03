@@ -1,124 +1,230 @@
-.contactPage {
+.dashboard {
+  max-width: 100%;
+  margin: 0 auto;
+  font-family: 'Arial', sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.locationWeather {
+  display: flex;
+  align-items: center;
+}
+
+.locationButton {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #333;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+.weather {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.subscribeButton {
+  padding: 0.5rem 1rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.subscribeButton:hover {
+  background-color: #45a049;
+}
+
+.mapOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 80px);
-  background-color: #f0f2f5;
-  padding: 2rem;
-  box-sizing: border-box;
+  z-index: 1000;
 }
 
-.contactContainer {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  background-color: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  box-sizing: border-box;
+.map {
+  width: 80%;
+  height: 80%;
+  border-radius: 10px;
 }
 
-.contactTitle {
-  font-size: 2.5rem;
-  color: #622B3A;
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.contactDescription {
-  text-align: center;
-  color: #666;
-  margin-bottom: 2rem;
-}
-
-.contactForm {
-  display: flex;
-  flex-direction: column;
-}
-
-.formGroup {
-  position: relative;
-  margin-bottom: 1.5rem;
-  width: 100%;
-}
-
-.inputIcon {
+.closeMapButton {
   position: absolute;
-  left: 10px;
-  top: 12px; /* Aligné avec le haut du champ de saisie */
-  color: #622B3A;
-  pointer-events: none;
-}
-
-.formGroup input,
-.formGroup textarea {
-  width: 100%;
-  padding: 10px 10px 10px 35px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-
-.formGroup textarea {
-  height: 150px;
-  resize: vertical;
-}
-
-.formGroup input:focus,
-.formGroup textarea:focus {
-  outline: none;
-  border-color: #622B3A;
-  box-shadow: 0 0 0 2px rgba(98, 43, 58, 0.2);
-}
-
-.submitBtn {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  background-color: #622B3A;
+  top: 10px;
+  right: 10px;
+  padding: 0.5rem 1rem;
+  background-color: #f44336;
   color: white;
   border: none;
   border-radius: 5px;
-  font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.submitBtn:hover {
-  background-color: #7a3649;
+.heroSection {
+  position: relative;
+  height: 60vh;
+  overflow: hidden;
 }
 
-.contactInfo {
-  margin-top: 2rem;
-  text-align: left;
-  color: #333;
+.heroVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.contactInfo h2 {
-  color: #622B3A;
+.heroContent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+}
+
+.heroContent h2 {
+  font-size: 2.5rem;
   margin-bottom: 1rem;
-  font-size: 1.5rem;
 }
 
-.contactInfo p {
+.newEscapeButton {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.newEscapeButton:hover {
+  background-color: #45a049;
+}
+
+.exclusivities,
+.catalog,
+.events {
+  padding: 2rem;
+}
+
+.cardContainer {
   display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 1rem 0;
 }
 
-.contactInfo p svg {
-  margin-right: 10px;
-  color: #622B3A;
+.card {
+  flex: 0 0 300px;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.cardContent {
+  padding: 1rem;
+}
+
+.heartIcon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.catalogGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+}
+
+.catalogButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.catalogButton:hover {
+  background-color: #e0e0e0;
+}
+
+.bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  background-color: white;
+  padding: 1rem;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #333;
+  text-decoration: none;
+}
+
+.navItem span {
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
 }
 
 @media (max-width: 768px) {
-  .contactContainer {
-    padding: 1.5rem;
+  .heroContent h2 {
+    font-size: 2rem;
   }
 
-  .contactTitle {
-    font-size: 2rem;
+  .newEscapeButton {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .cardContainer {
+    flex-direction: column;
+  }
+
+  .card {
+    flex: 0 0 auto;
   }
 }
