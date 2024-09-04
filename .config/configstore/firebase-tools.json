@@ -1,0 +1,53 @@
+{
+	"motd": {
+		"cloudBuildErrorAfter": 1594252800000,
+		"cloudBuildWarnAfter": 1590019200000,
+		"defaultNode10After": 1594252800000,
+		"minVersion": "3.0.5",
+		"node8DeploysDisabledAfter": 1613390400000,
+		"node8RuntimeDisabledAfter": 1615809600000,
+		"node8WarnAfter": 1600128000000,
+		"fetched": 1724619539981
+	},
+	"usage": true,
+	"analytics-uuid": "36c8d376-2a65-494d-8e4d-1bc8f87705b8",
+	"user": {
+		"iss": "accounts.google.com",
+		"azp": "563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com",
+		"aud": "563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com",
+		"sub": "106088529429496534301",
+		"email": "rendezvousparfaitfr@gmail.com",
+		"email_verified": true,
+		"at_hash": "MlJ08qJm9BfCAztxhEDJIA",
+		"iat": 1724172247,
+		"exp": 1724175847
+	},
+	"tokens": {
+		"expires_at": 1724623138934,
+		"refresh_token": "1//06F_SzRshBeMJCgYIARAAGAYSNwF-L9IrDB0XR3xwrS18LeqrkUbTGyDSmZjFL-lLBkpDk8msFbXUbNqAYI6XJBH582yBU9z36Ag",
+		"scopes": [],
+		"access_token": "ya29.a0AcM612wdHOCdX9rczFvb1NcdH32jwhUkM0GsOYU9-8eMNmNxrhvqf912XCmuisWpmDXjSi6xh0lypM-yn0d92T7LFAb61BJwSHTDkuK46h7zKBpPSFIK8JQ0i-KtDdYpzrsqcDmWUlBaQzkzkMOLn8NV1S3h17HZSCj9GgXkXjkOXuIaCgYKAbISARASFQHGX2Mi3h7_IqXw0pUYTyJGPObqtQ0182",
+		"expires_in": 3599,
+		"scope": "https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/userinfo.email openid https://www.googleapis.com/auth/firebase",
+		"token_type": "Bearer",
+		"id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImE0OTM5MWJmNTJiNThjMWQ1NjAyNTVjMmYyYTA0ZTU5ZTIyYTdiNjUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXpwIjoiNTYzNTg0MzM1ODY5LWZncmhnbWQ0N2JxbmVraWo1aThiNXByMDNobzg0OWU2LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiYXVkIjoiNTYzNTg0MzM1ODY5LWZncmhnbWQ0N2JxbmVraWo1aThiNXByMDNobzg0OWU2LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA2MDg4NTI5NDI5NDk2NTM0MzAxIiwiZW1haWwiOiJyZW5kZXp2b3VzcGFyZmFpdGZyQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoiakIwLXJRQTlXQ0FRdUgxYk9paElwQSIsImlhdCI6MTcyNDYxOTUzOSwiZXhwIjoxNzI0NjIzMTM5fQ.O8bKhYVM22NVgJUz-oskT0T6kZ7OdLqmXwrlP6kAx2oaf82YULLGrelI44PcK4WbEBwBUFCVc9nVRQgL3pasME898xbaMvCnGhAnMknubTxyuHOn3VB9zE_vb8Ckxstn6PIFau7S1Vn_tMXtV9YyD2d30c0dTG8-uGwelbnxPsRz6pNa1lGVeoyloSQyjOV3OffFDjUb4SyO2e3891-U8E05SVl1Kx4cfSsibxzKaWLhLqfxcZfnBZG33xlBeu4Cb1lsgnwH9RI6uTMhlC4wkMnyvL5g7ONeY6qeTYlk3n_hZDY4QleNnx-Tvi-CjMJhiQsiid5VMwFEN59v67DGQA"
+	},
+	"loginScopes": [
+		"email",
+		"openid",
+		"https://www.googleapis.com/auth/cloudplatformprojects.readonly",
+		"https://www.googleapis.com/auth/firebase",
+		"https://www.googleapis.com/auth/cloud-platform"
+	],
+	"activeProjects": {
+		"/home/runner/RDVPARFAIT": "rdvp3-2a363"
+	},
+	"emulator-analytics-clientId": "78ea4dda-bd6b-4eb8-9a36-158c91b5c078",
+	"adminsdkconfig": {
+		"rdvp3-2a363": {
+			"projectId": "rdvp3-2a363",
+			"storageBucket": "rdvp3-2a363.appspot.com",
+			"locationId": "europe-west"
+		}
+	}
+}
