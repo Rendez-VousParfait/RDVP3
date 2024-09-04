@@ -1,23 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styles from "./InviteUsers.module.css";
 import "../style/buttons.css";
 
-const InviteUsers = ({ groupId, onInviteSent, personCount }) => {
-  const [invitedUsers, setInvitedUsers] = useState([]);
+const MAX_INVITES = 20;
 
-  useEffect(() => {
-    const count = Math.max(0, parseInt(personCount) - 1);
-    setInvitedUsers(Array(count).fill(""));
-  }, [personCount]);
+const InviteUsers = ({ groupId, onInviteSent, onClose }) => {
+  const [invitedUsers, setInvitedUsers] = useState([""]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const validEmails = invitedUsers.filter(email => email.trim());
-    console.log("Valid emails to invite:", validEmails);
-
-    for (const email of validEmails) {
-      await onInviteSent({ groupId, email: email.trim() });
+  const addEmailField = () => {
+    if (invitedUsers.length < MAX_INVITES) {
+      setInvitedUsers([...invitedUsers, ""]);
     }
   };
 
@@ -25,28 +17,60 @@ const InviteUsers = ({ groupId, onInviteSent, personCount }) => {
     const newInvitedUsers = [...invitedUsers];
     newInvitedUsers[index] = value;
     setInvitedUsers(newInvitedUsers);
-    console.log("Updated invited users:", newInvitedUsers);
+  };
+
+  const removeEmailField = (index) => {
+    const newInvitedUsers = invitedUsers.filter((_, i) => i !== index);
+    setInvitedUsers(newInvitedUsers);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validEmails = invitedUsers.filter(email => email.trim());
+    if (validEmails.length > 0) {
+      onInviteSent({ groupId, emails: validEmails });
+    }
   };
 
   return (
     <div className={styles.inviteUsersContainer}>
-      <h3>Inviter des membres</h3>
+      <h3>Inviter des membres (max {MAX_INVITES})</h3>
       <form onSubmit={handleSubmit} className={styles.inviteForm}>
         {invitedUsers.map((email, index) => (
-          <input
-            key={index}
-            type="email"
-            value={email}
-            onChange={(e) => handleEmailChange(index, e.target.value)}
-            placeholder={`Email de l'invité ${index + 1}`}
-          />
+          <div key={index} className={styles.emailInputGroup}>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => handleEmailChange(index, e.target.value)}
+              placeholder={`Email de l'invité ${index + 1}`}
+            />
+            {invitedUsers.length > 1 && (
+              <button 
+                type="button" 
+                onClick={() => removeEmailField(index)}
+                className={styles.removeButton}
+              >
+                X
+              </button>
+            )}
+          </div>
         ))}
-        {invitedUsers.length > 0 && (
-          <button type="submit" className="custom-button">
-            Inviter
+        {invitedUsers.length < MAX_INVITES && (
+          <button 
+            type="button" 
+            onClick={addEmailField}
+            className={styles.addButton}
+          >
+            Ajouter un autre email
           </button>
         )}
+        <button type="submit" className={styles.inviteButton}>
+          Inviter
+        </button>
       </form>
+      <button onClick={onClose} className={styles.closeButton}>
+        Fermer
+      </button>
     </div>
   );
 };

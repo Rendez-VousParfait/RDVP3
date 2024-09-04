@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -27,11 +27,26 @@ const lilleImage =
   "https://images.pexels.com/photos/16140703/pexels-photo-16140703.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
 
 function Dashboard() {
+  const [showBetaPopup, setShowBetaPopup] = useState(false);
+
+  const handleBetaClick = () => {
+    setShowBetaPopup(true);
+    setTimeout(() => setShowBetaPopup(false), 3000);
+  };
+
   return (
     <div className={styles.dashboard}>
       <header className={styles.header}>
         <h1>Bordeaux, France</h1>
-        <button className={styles.subscribeButton}>S'abonner</button>
+        <div className={styles.headerButtons}>
+          <Link to="/profile" className={styles.iconButton}>
+            <FontAwesomeIcon icon={faUser} />
+          </Link>
+          <Link to="/blog" className={styles.iconButton}>
+            <FontAwesomeIcon icon={faBlog} />
+          </Link>
+          <button onClick={handleBetaClick} className={styles.betaButton}>Beta Test</button>
+        </div>
       </header>
 
       <main>
@@ -115,24 +130,11 @@ function Dashboard() {
         </section>
       </main>
 
-      <nav className={styles.bottomNav}>
-        <Link to="/" className={styles.navItem}>
-          <FontAwesomeIcon icon={faHome} />
-          <span>Accueil</span>
-        </Link>
-        <Link to="/search" className={styles.navItem}>
-          <FontAwesomeIcon icon={faSearch} />
-          <span>Rechercher</span>
-        </Link>
-        <Link to="/blog" className={styles.navItem}>
-          <FontAwesomeIcon icon={faBlog} />
-          <span>Blog</span>
-        </Link>
-        <Link to="/profile" className={styles.navItem}>
-          <FontAwesomeIcon icon={faUser} />
-          <span>Profil</span>
-        </Link>
-      </nav>
+      {showBetaPopup && (
+        <div className={styles.betaPopup}>
+          Beta Test en cours...
+        </div>
+      )}
     </div>
   );
 }

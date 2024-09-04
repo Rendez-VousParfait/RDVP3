@@ -1,45 +1,50 @@
 import React, { useState } from "react";
 import styles from "./ComposeTrip.module.css";
-import "../../style/buttons.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUsers,
+  faBed,
+  faUtensils,
+  faRunning,
+  faCalendarAlt,
+  faWallet,
+} from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "../../style/datepicker-custom.css";
 
-const ComposeTrip = ({ formData, handleInputChange, nextStep, prevStep }) => {
-  const [selectedActivities, setSelectedActivities] = useState(
-    formData.activities || [],
-  );
-
-  const toggleActivity = (activity) => {
-    setSelectedActivities((prevActivities) => {
-      if (prevActivities.includes(activity)) {
-        return prevActivities.filter((a) => a !== activity);
-      } else {
-        return [...prevActivities, activity];
-      }
-    });
-  };
-
-  const handleActivityChange = () => {
-    handleInputChange("activities", selectedActivities);
-  };
-
+const ComposeTrip = ({
+  formData,
+  handleInputChange,
+  nextStep,
+  prevStep,
+  currentStep,
+  totalSteps,
+}) => {
   const handleDateChange = (dates) => {
     const [start, end] = dates;
     handleInputChange("tripStartDate", start);
     handleInputChange("tripEndDate", end);
   };
 
+  const toggleService = (service) => {
+    const updatedServices = formData.mainServices.includes(service)
+      ? formData.mainServices.filter((s) => s !== service)
+      : [...formData.mainServices, service];
+    handleInputChange("mainServices", updatedServices);
+  };
+
   return (
     <div className={styles["search-step"]}>
-      <h2>
-        <FontAwesomeIcon icon={faUsers} />
-        Compose ton séjour
+      <div className={styles["progress-indicator"]}>
+        Étape {currentStep} sur {totalSteps}
+      </div>
+      <h2 className={styles["step-title"]}>
+        <FontAwesomeIcon icon={faUsers} /> Compose ton séjour
       </h2>
       <div className={styles["date-selector"]}>
-        <label>Dates du séjour</label>
+        <label>
+          <FontAwesomeIcon icon={faCalendarAlt} /> Dates du séjour
+        </label>
         <DatePicker
           selected={formData.tripStartDate}
           onChange={handleDateChange}
@@ -62,22 +67,26 @@ const ComposeTrip = ({ formData, handleInputChange, nextStep, prevStep }) => {
           <p>Sélectionnez vos dates de séjour</p>
         )}
       </div>
-      <div className={styles["activity-selector"]}>
-        {["activité", "repas", "hébergement"].map((activity) => (
+      <div className={styles["service-selector"]}>
+        {[
+          { id: "hébergement", icon: faBed, label: "Hébergement" },
+          { id: "repas", icon: faUtensils, label: "Repas" },
+          { id: "activité", icon: faRunning, label: "Activité" },
+        ].map(({ id, icon, label }) => (
           <button
-            key={activity}
-            className={`custom-button ${selectedActivities.includes(activity) ? "selected" : ""}`}
-            onClick={() => {
-              toggleActivity(activity);
-              handleActivityChange();
-            }}
+            key={id}
+            className={`${styles["service-button"]} ${formData.mainServices.includes(id) ? styles["selected"] : ""}`}
+            onClick={() => toggleService(id)}
           >
-            {activity.charAt(0).toUpperCase() + activity.slice(1)}
+            <FontAwesomeIcon icon={icon} className={styles["service-icon"]} />
+            <span>{label}</span>
           </button>
         ))}
       </div>
       <div className={styles["budget-selector"]}>
-        <label htmlFor="budget">Budget par personne</label>
+        <label htmlFor="budget">
+          <FontAwesomeIcon icon={faWallet} /> Budget par personne
+        </label>
         <input
           id="budget"
           type="number"
@@ -87,11 +96,11 @@ const ComposeTrip = ({ formData, handleInputChange, nextStep, prevStep }) => {
           required
         />
       </div>
-      <div className={styles["buttons"]}>
-        <button className="custom-button button-nav" onClick={prevStep}>
+      <div className={styles["next-button-container"]}>
+        <button className={styles["prev-button"]} onClick={prevStep}>
           Précédent
         </button>
-        <button className="custom-button button-nav" onClick={nextStep}>
+        <button className={styles["next-button"]} onClick={nextStep}>
           Suivant
         </button>
       </div>

@@ -1,16 +1,40 @@
+/* Le conteneur principal du module */
 .search-step {
+  width: 90%;
   max-width: 800px;
-  margin: 3rem auto;
   padding: 2.5rem;
-  background: linear-gradient(135deg, #fff, #e9ecef);
+  background-color: rgba(255, 255, 255, 0.9);
+  /* Fond clair pour faire ressortir le module */
   border-radius: 25px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
   transition: all 0.4s ease-out;
+  animation: fadeIn 0.5s ease-out;
 }
 
-.search-step h2 {
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.progress-indicator {
+  text-align: center;
+  color: #333;
+  /* Couleur plus sombre pour contraster avec le fond clair */
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.step-title {
   font-size: 2.7rem;
-  color: #444;
+  color: #333;
+  /* Couleur plus sombre pour contraster avec le fond clair */
   margin-bottom: 2rem;
   text-align: center;
   font-weight: bold;
@@ -25,31 +49,38 @@
   margin-bottom: 2rem;
 }
 
-.trip-type-options button {
+.trip-type-button {
   flex: 0 1 calc(50% - 1rem);
   max-width: 200px;
-}
-
-@media (min-width: 768px) {
-  .trip-type-options button {
-    flex: 0 1 calc(25% - 1rem);
-  }
-}
-
-.next-button-container {
+  background-color: rgba(0, 0, 0, 0.1);
+  /* Légèrement transparent pour un effet subtil */
+  color: #333;
+  border: none;
+  border-radius: 20px;
+  padding: 2rem 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  margin-top: 2rem;
 }
 
-@media (max-width: 480px) {
-  .search-step h2 {
-    font-size: 2.2rem;
-  }
-  .search-step {
-    padding: 1.5rem;
-  }
+.trip-type-button:hover,
+.trip-type-button.selected {
+  background-color: rgba(0, 0, 0, 0.2);
+  /* Légèrement plus foncé au hover */
+  transform: translateY(-5px);
 }
+
+.trip-type-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
 .person-count-container {
   margin-top: 1rem;
   text-align: center;
@@ -59,6 +90,8 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: bold;
+  color: #333;
+  /* Couleur plus sombre pour contraster avec le fond clair */
 }
 
 .person-count-container input {
@@ -66,6 +99,56 @@
   max-width: 200px;
   padding: 0.5rem;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: none;
+  border-radius: 30px;
+  background-color: rgba(0, 0, 0, 0.1);
+  /* Légèrement transparent */
+  color: #333;
+  text-align: center;
+}
+
+.next-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.next-button {
+  background-color: #6B66FF;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 1rem 3rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.next-button:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.2);
+}
+
+.next-button:disabled {
+  background-color: rgba(107, 102, 255, 0.5);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+}
+
+@media (min-width: 768px) {
+  .trip-type-button {
+    flex: 0 1 calc(25% - 1rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .step-title {
+    font-size: 2.2rem;
+  }
+
+  .search-step {
+    padding: 1.5rem;
+  }
 }

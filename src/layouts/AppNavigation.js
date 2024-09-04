@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
   faSearch,
-  faUser,
-  faBlog,
+  faSwatchbook,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./AppNavigation.module.css";
 
@@ -27,18 +27,18 @@ function AppNavigation() {
         <span>Recherche</span>
       </NavLink>
       <NavLink
-        to="/blog"
+        to="/swiper"
         className={({ isActive }) => (isActive ? styles.active : "")}
       >
-        <FontAwesomeIcon icon={faBlog} />
-        <span>Blog</span>
+        <FontAwesomeIcon icon={faSwatchbook} />
+        <span>Swiper</span>
       </NavLink>
       <NavLink
-        to="/profile"
+        to="/groups"
         className={({ isActive }) => (isActive ? styles.active : "")}
       >
-        <FontAwesomeIcon icon={faUser} />
-        <span>Profil</span>
+        <FontAwesomeIcon icon={faUsers} />
+        <span>Groupes</span>
       </NavLink>
     </nav>
   );

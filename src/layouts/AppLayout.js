@@ -6,6 +6,9 @@ import Search from "../pages/Search";
 import Profile from "../pages/Profile";
 import BlogList from "../components/blog/BlogList";
 import BlogPost from "../components/blog/BlogPost";
+import SwiperPage from "../pages/SwiperPage";
+import GroupManagement from "../components/GroupManagement";
+import GroupDetails from "../components/GroupDetails"; // Nouveau import
 import styles from "./AppLayout.module.css";
 
 function AppLayout() {
@@ -18,6 +21,9 @@ function AppLayout() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/blog" element={<BlogList />} />
           <Route path="/blog/:id" element={<BlogPost />} />
+          <Route path="/swiper" element={<SwiperPage />} />
+          <Route path="/groups" element={<GroupManagement />} />
+          <Route path="/groups/:groupId" element={<GroupDetails />} /> {/* Nouvelle route */}
         </Routes>
       </main>
       <AppNavigation />

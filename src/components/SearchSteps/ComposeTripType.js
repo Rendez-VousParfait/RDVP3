@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from "react";
 import styles from "./ComposeTripType.module.css";
-import "../../style/buttons.css";
+import { FaUsers, FaHome, FaHeart, FaUserAlt } from "react-icons/fa";
 
-const ComposeTripType = ({ formData, handleInputChange, nextStep }) => {
-  const tripTypes = ["amis", "famille", "couple", "solo"];
+const ComposeTripType = ({
+  formData,
+  handleInputChange,
+  nextStep,
+  currentStep,
+  totalSteps,
+}) => {
+  const tripTypes = [
+    { id: "amis", icon: FaUsers, label: "Amis" },
+    { id: "famille", icon: FaHome, label: "Famille" },
+    { id: "couple", icon: FaHeart, label: "Couple" },
+    { id: "solo", icon: FaUserAlt, label: "Solo" },
+  ];
   const [showPersonCount, setShowPersonCount] = useState(false);
 
   useEffect(() => {
@@ -14,8 +25,8 @@ const ComposeTripType = ({ formData, handleInputChange, nextStep }) => {
 
   const handleTripTypeClick = (type) => {
     handleInputChange("tripType", type);
-    handleInputChange("personCount", ""); // Reset person count when changing trip type
-    handleInputChange("needsGroupCreation", type !== "solo"); // Set needsGroupCreation based on trip type
+    handleInputChange("personCount", "");
+    handleInputChange("needsGroupCreation", type !== "solo");
   };
 
   const handlePersonCountChange = (e) => {
@@ -31,16 +42,19 @@ const ComposeTripType = ({ formData, handleInputChange, nextStep }) => {
 
   return (
     <div className={styles["search-step"]}>
-      <h2>Vous êtes :</h2>
+      <div className={styles["progress-indicator"]}>
+        Étape {currentStep} sur {totalSteps}
+      </div>
+      <h2 className={styles["step-title"]}>Vous êtes :</h2>
       <div className={styles["trip-type-options"]}>
-        {tripTypes.map((type) => (
+        {tripTypes.map(({ id, icon: Icon, label }) => (
           <button
-            key={type}
-            onClick={() => handleTripTypeClick(type)}
-            className={`custom-button ${formData.tripType === type ? "selected" : ""}`}
+            key={id}
+            onClick={() => handleTripTypeClick(id)}
+            className={`${styles["trip-type-button"]} ${formData.tripType === id ? styles["selected"] : ""}`}
           >
-            <i className={`icon-${type}`}></i>
-            {type.charAt(0).toUpperCase() + type.slice(1)}
+            <Icon className={styles["trip-type-icon"]} />
+            <span>{label}</span>
           </button>
         ))}
       </div>
@@ -59,7 +73,7 @@ const ComposeTripType = ({ formData, handleInputChange, nextStep }) => {
       )}
       <div className={styles["next-button-container"]}>
         <button
-          className="custom-button button-nav"
+          className={styles["next-button"]}
           onClick={handleNext}
           disabled={
             !formData.tripType || (showPersonCount && !formData.personCount)

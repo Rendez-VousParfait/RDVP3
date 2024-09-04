@@ -1,0 +1,38 @@
+/* UserGroups.module.css */
+.userGroups {
+  margin-top: 2rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 1.5rem;
+}
+
+.groupItem {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.groupItem h4 {
+  margin-top: 0;
+  color: #fff;
+}
+
+.groupItem p {
+  margin: 0.5rem 0;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.groupItem button {
+  background-color: #FF6B6B;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.groupItem button:hover {
+  background-color: #FF4F4F;
+}

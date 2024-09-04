@@ -21,7 +21,7 @@
     "firebase": "^10.13.0",
     "firebase-admin": "^12.3.1",
     "firebase-functions": "^4.0.0",
-    "framer-motion": "^11.3.30",
+    "framer-motion": "^11.5.2",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "leaflet": "^1.9.4",
@@ -43,6 +43,7 @@
     "react-swipeable": "^7.0.1",
     "react-tinder-card": "^1.6.4",
     "slick-carousel": "^1.8.1",
+    "swiper": "^11.1.12",
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {

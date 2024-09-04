@@ -2,15 +2,26 @@ import React, { useState } from "react";
 import styles from "./CreatGroup.module.css";
 import "../style/buttons.css";
 
-const CreateGroup = ({ onGroupCreated, groupName, setGroupName }) => {
+/**
+ * Composant pour la création d'un groupe
+ * @param {Object} props - Les propriétés du composant
+ * @param {Function} props.onGroupCreated - Fonction appelée lors de la création du groupe
+ * @param {string} props.groupName - Le nom du groupe
+ * @param {Function} props.setGroupName - Fonction pour mettre à jour le nom du groupe
+ */
+const CreatGroup = ({ onGroupCreated, groupName, setGroupName }) => {
   const [isLoading, setIsLoading] = useState(false);
 
+  /**
+   * Gère la soumission du formulaire de création de groupe
+   * @param {Event} e - L'événement de soumission du formulaire
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (groupName.trim()) {
       setIsLoading(true);
       try {
-        await onGroupCreated({ name: groupName.trim() });
+        await onGroupCreated(groupName.trim());
       } catch (error) {
         console.error("Error creating group: ", error);
       } finally {
@@ -38,4 +49,4 @@ const CreateGroup = ({ onGroupCreated, groupName, setGroupName }) => {
   );
 };
 
-export default CreateGroup;
+export default CreatGroup;

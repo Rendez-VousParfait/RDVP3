@@ -3,7 +3,6 @@ import { collection, addDoc, updateDoc, doc, serverTimestamp } from "firebase/fi
 import { db } from "../firebase";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import Swiper from "../components/Swiper";
 import ComposeTripType from "../components/SearchSteps/ComposeTripType";
 import ComposeTrip from "../components/SearchSteps/ComposeTrip";
 import PersonalizeAdvanced from "../components/SearchSteps/PersonalizeAdvanced";
@@ -22,7 +21,6 @@ const Search = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
-    swiperPreferences: { liked: {}, disliked: {} },
     tripType: "",
     dates: [],
     budget: "",
@@ -35,6 +33,8 @@ const Search = () => {
     groupName: "",
     invitedUsers: [],
     personCount: 1,
+    mainServices: [],
+    ambiance: "",
   });
   const [searchResults, setSearchResults] = useState(null);
   const [searchId, setSearchId] = useState(null);
@@ -60,14 +60,13 @@ const Search = () => {
         processedValue = value.toString() || "0";
       } else if (name === 'dates' || name === 'activities' || name === 'invitedUsers') {
         processedValue = Array.isArray(value) ? value : [];
+      } else if (name === 'mainServices') {
+        const updatedServices = prevData.mainServices.includes(value)
+          ? prevData.mainServices.filter(service => service !== value)
+          : [...prevData.mainServices, value];
+        processedValue = updatedServices;
       } else if (typeof value === 'object' && value !== null) {
         processedValue = { ...prevData[name], ...value };
-      }
-
-      if (name === 'swiperPreferences') {
-        if (processedValue.liked && processedValue.liked.undefined) {
-          delete processedValue.liked.undefined;
-        }
       }
 
       const newData = {
@@ -75,8 +74,25 @@ const Search = () => {
         [name]: processedValue,
       };
       console.log("New formData:", newData);
+
+      updateFirebaseData(name, processedValue);
+
       return newData;
     });
+  };
+
+  const updateFirebaseData = async (field, value) => {
+    if (searchId) {
+      try {
+        await updateDoc(doc(db, "searches", searchId), {
+          [field]: value,
+          lastUpdated: serverTimestamp(),
+        });
+        console.log(`Firebase updated for ${field}`);
+      } catch (error) {
+        console.error("Error updating Firebase:", error);
+      }
+    }
   };
 
   const saveSearchData = async (includeGroup = false) => {
@@ -96,29 +112,38 @@ const Search = () => {
         setSearchId(docRef.id);
         console.log("Search data saved with ID: ", docRef.id);
       }
-
-      if (includeGroup && formData.needsGroupCreation) {
-        const groupData = {
-          name: formData.groupName,
-          createdAt: serverTimestamp(),
-          createdBy: user.uid,
-          members: [user.email],
-          searchId: searchId,
-          tripDetails: formData,
-        };
-        const groupRef = await addDoc(collection(db, "groups"), groupData);
-        handleInputChange("groupId", groupRef.id);
-        console.log("Group created with ID: ", groupRef.id);
-      }
     } catch (error) {
       console.error("Error saving data: ", error);
+    }
+  };
+
+  const handleGroupCreated = async (groupName) => {
+    try {
+      handleInputChange("groupName", groupName);
+
+      const groupData = {
+        name: groupName,
+        createdAt: serverTimestamp(),
+        createdBy: user.uid,
+        members: [user.email],
+        searchId: searchId,
+        tripDetails: formData,
+      };
+
+      const groupRef = await addDoc(collection(db, "groups"), groupData);
+      handleInputChange("groupId", groupRef.id);
+      console.log("Group created with ID: ", groupRef.id);
+
+      await saveSearchData(true);
+    } catch (error) {
+      console.error("Error creating group: ", error);
     }
   };
 
   const nextStep = () => {
     console.log(`Moving to next step. Current step: ${step}`);
     setStep(step + 1);
-    saveSearchData(step === 2); // Créer le groupe à l'étape 2 si nécessaire
+    saveSearchData(step === 1);
   };
 
   const prevStep = () => {
@@ -126,28 +151,38 @@ const Search = () => {
     setStep(step - 1);
   };
 
-  const handleGroupCreated = (newGroup) => {
-    handleInputChange("groupName", newGroup.name);
-    saveSearchData(true);
-  };
+  const handleInviteSent = async ({ groupId, emails }) => {
+    console.log("Emails to invite:", emails);
 
-  const handleInviteSent = async ({ email }) => {
-    const updatedInvitedUsers = [...formData.invitedUsers, email];
-    handleInputChange("invitedUsers", updatedInvitedUsers);
-    await saveSearchData();
+    setFormData(prevData => {
+      const updatedInvitedUsers = [...new Set([...prevData.invitedUsers, ...emails])];
+      console.log("Updated invited users:", updatedInvitedUsers);
 
-    // Mise à jour du document du groupe
-    if (formData.groupId) {
-      try {
-        await updateDoc(doc(db, "groups", formData.groupId), {
-          members: updatedInvitedUsers,
-          lastUpdated: serverTimestamp(),
-        });
-        console.log("Group updated with new member");
-      } catch (error) {
-        console.error("Error updating group: ", error);
-      }
-    }
+      const newData = {
+        ...prevData,
+        invitedUsers: updatedInvitedUsers
+      };
+
+      const updateFirebase = async () => {
+        try {
+          await updateDoc(doc(db, "searches", searchId), newData);
+          console.log("Search data updated with new invited users");
+
+          if (groupId) {
+            await updateDoc(doc(db, "groups", groupId), {
+              members: updatedInvitedUsers,
+              lastUpdated: serverTimestamp(),
+            });
+            console.log("Group updated with new members");
+          }
+        } catch (error) {
+          console.error("Error updating data: ", error);
+        }
+      };
+      updateFirebase();
+
+      return newData;
+    });
   };
 
   const performSearch = () => {
@@ -184,21 +219,13 @@ const Search = () => {
     switch (step) {
       case 0:
         return (
-          <Swiper
-            formData={formData}
-            handleInputChange={handleInputChange}
-            nextStep={nextStep}
-          />
-        );
-      case 1:
-        return (
           <ComposeTripType
             formData={formData}
             handleInputChange={handleInputChange}
             nextStep={nextStep}
           />
         );
-      case 2:
+      case 1:
         return formData.needsGroupCreation ? (
           <GroupCreationStep
             formData={formData}
@@ -216,7 +243,7 @@ const Search = () => {
             prevStep={prevStep}
           />
         );
-      case 3:
+      case 2:
         return (
           <ComposeTrip
             formData={formData}
@@ -225,7 +252,7 @@ const Search = () => {
             prevStep={prevStep}
           />
         );
-      case 4:
+      case 3:
         return (
           <PersonalizeAdvanced
             formData={formData}
@@ -234,7 +261,7 @@ const Search = () => {
             prevStep={prevStep}
           />
         );
-      case 5:
+      case 4:
         return (
           <RestaurantPreferences
             formData={formData}
@@ -243,7 +270,7 @@ const Search = () => {
             prevStep={prevStep}
           />
         );
-      case 6:
+      case 5:
         return (
           <AccommodationPreferences
             formData={formData}
@@ -252,7 +279,7 @@ const Search = () => {
             prevStep={prevStep}
           />
         );
-      case 7:
+      case 6:
         return (
           <ActivityPreferences
             formData={formData}
@@ -261,7 +288,7 @@ const Search = () => {
             prevStep={prevStep}
           />
         );
-      case 8:
+      case 7:
         return <SearchResults results={searchResults} />;
       default:
         return null;
@@ -271,7 +298,7 @@ const Search = () => {
   return (
     <div className={styles.searchPage}>
       <h1 className={styles.pageTitle}>Planifiez votre séjour à Bordeaux</h1>
-      <div className={styles.stepIndicator}>Étape {step + 1} sur 8</div>
+      <div className={styles.stepIndicator}>Étape {step + 1} sur 7</div>
       {renderStep()}
       <div className={styles.navigationButtons}>
         {step > 0 && (
@@ -279,7 +306,7 @@ const Search = () => {
             <FontAwesomeIcon icon={faArrowLeft} /> Précédent
           </button>
         )}
-        {step < 7 && (
+        {step < 6 && (
           <button onClick={nextStep} className={styles.navButton}>
             Suivant <FontAwesomeIcon icon={faArrowRight} />
           </button>
