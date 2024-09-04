@@ -1,18 +1,7 @@
+// Dashboard.js
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSearch,
-  faUser,
-  faBlog,
-  faHome,
-  faHeart,
-  faFlag,
-  faGlassMartini,
-  faPaintBrush,
-  faCamera,
-  faMicrophone,
-} from "@fortawesome/free-solid-svg-icons";
+import { User, Newspaper, Flag, Beer, PaintBrush, Camera, Microphone, Heart } from "phosphor-react";
 import styles from "./Dashboard.module.css";
 
 const heroVideo =
@@ -40,10 +29,10 @@ function Dashboard() {
         <h1>Bordeaux, France</h1>
         <div className={styles.headerButtons}>
           <Link to="/profile" className={styles.iconButton}>
-            <FontAwesomeIcon icon={faUser} />
+            <User size={24} />
           </Link>
           <Link to="/blog" className={styles.iconButton}>
-            <FontAwesomeIcon icon={faBlog} />
+            <Newspaper size={24} />
           </Link>
           <button onClick={handleBetaClick} className={styles.betaButton}>Beta Test</button>
         </div>
@@ -67,7 +56,7 @@ function Dashboard() {
           <div className={styles.cardContainer}>
             <div className={styles.card}>
               <img src={parisImage} alt="Paris" />
-              <FontAwesomeIcon icon={faHeart} className={styles.heartIcon} />
+              <Heart size={24} className={styles.heartIcon} />
               <div className={styles.cardContent}>
                 <h4>Paris</h4>
                 <p>Vivez la Magie de la Ville de l'Amour</p>
@@ -75,7 +64,7 @@ function Dashboard() {
             </div>
             <div className={styles.card}>
               <img src={marseilleImage} alt="Marseille" />
-              <FontAwesomeIcon icon={faHeart} className={styles.heartIcon} />
+              <Heart size={24} className={styles.heartIcon} />
               <div className={styles.cardContent}>
                 <h4>Marseille</h4>
                 <p>Plongez dans les Eaux Turquoises du Sud</p>
@@ -88,14 +77,14 @@ function Dashboard() {
           <h3>Consulter notre catalogue</h3>
           <div className={styles.catalogGrid}>
             {[
-              { icon: faFlag, label: "Sensation" },
-              { icon: faGlassMartini, label: "Fêtes" },
-              { icon: faPaintBrush, label: "Musée" },
-              { icon: faCamera, label: "Exposition" },
-              { icon: faMicrophone, label: "Karaoké" },
+              { icon: Flag, label: "Sensation" },
+              { icon: Beer, label: "Fêtes" },
+              { icon: PaintBrush, label: "Musée" },
+              { icon: Camera, label: "Exposition" },
+              { icon: Microphone, label: "Karaoké" },
             ].map((item, index) => (
               <button key={index} className={styles.catalogButton}>
-                <FontAwesomeIcon icon={item.icon} />
+                <item.icon size={32} />
                 <span>{item.label}</span>
               </button>
             ))}
@@ -112,7 +101,7 @@ function Dashboard() {
           <div className={styles.cardContainer}>
             <div className={styles.card}>
               <img src={bordeauxImage} alt="Bordeaux" />
-              <FontAwesomeIcon icon={faHeart} className={styles.heartIcon} />
+              <Heart size={24} className={styles.heartIcon} />
               <div className={styles.cardContent}>
                 <h4>Bordeaux</h4>
                 <p>Profitez de l'Énergie des Vignobles</p>
@@ -120,7 +109,7 @@ function Dashboard() {
             </div>
             <div className={styles.card}>
               <img src={lilleImage} alt="Lille" />
-              <FontAwesomeIcon icon={faHeart} className={styles.heartIcon} />
+              <Heart size={24} className={styles.heartIcon} />
               <div className={styles.cardContent}>
                 <h4>Lille</h4>
                 <p>Découvrez les Charmes du Nord</p>
