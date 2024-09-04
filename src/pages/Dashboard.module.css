@@ -1,32 +1,8 @@
-/* Dashboard.module.css */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap');
-
-:root {
-  --primary-color: #6c5ce7;
-  --secondary-color: #a29bfe;
-  --text-color: #2d3436;
-  --background-color: #dfe6e9;
-  --gradient-start: #81ecec;
-  --gradient-end: #6c5ce7;
-  --background-gradient: linear-gradient(135deg, #81ecec, #a29bfe);
-}
-
-body {
-  background: var(--background-gradient);
-  font-family: 'Space Grotesk', sans-serif;
-  color: var(--text-color);
-  line-height: 1.6;
-}
-
 .dashboard {
-  font-family: 'Space Grotesk', sans-serif;
-  color: var(--text-color);
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+  background-color: #f5f5f5;
   padding-bottom: 70px;
-  border-radius: 20px;
-  margin: 20px;
-  overflow: hidden;
 }
 
 .header {
@@ -34,12 +10,11 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
-  border-radius: 20px 20px 0 0;
 }
 
 .headerButtons {
@@ -51,20 +26,19 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(5px);
+  background-color: #f0f0f0;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-right: 15px;
-  color: var(--text-color);
+  color: #333;
   text-decoration: none;
   transition: all 0.3s ease;
 }
 
 .iconButton:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px) scale(1.05);
+  background-color: #e0e0e0;
+  transform: translateY(-2px);
 }
 
 .heroSection {
@@ -72,7 +46,6 @@ body {
   height: 50vh;
   overflow: hidden;
   margin-bottom: 30px;
-  border-radius: 20px;
 }
 
 .heroVideo {
@@ -94,14 +67,13 @@ body {
 .heroContent h2 {
   font-size: 36px;
   margin-bottom: 20px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
 .newEscapeButton {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: #4ecdc4;
   color: white;
+  border: none;
   padding: 15px 30px;
   border-radius: 30px;
   font-size: 18px;
@@ -111,20 +83,19 @@ body {
 }
 
 .newEscapeButton:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px) scale(1.05);
+  background-color: #45b7ac;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
 }
 
-.exclusivities,
-.catalog,
-.events {
+.exclusivities, .catalog {
   padding: 20px;
 }
 
 h3 {
   font-size: 24px;
   margin-bottom: 20px;
-  color: var(--text-color);
+  color: #333;
   position: relative;
   padding-bottom: 10px;
 }
@@ -136,7 +107,7 @@ h3::after {
   left: 0;
   width: 50px;
   height: 3px;
-  background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+  background-color: #4ecdc4;
 }
 
 .cardContainer {
@@ -149,18 +120,17 @@ h3::after {
 
 .card {
   flex: 0 0 280px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: white;
   border-radius: 15px;
   overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
   scroll-snap-align: start;
 }
 
 .card:hover {
-  transform: translateY(-5px) rotateX(5deg);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
 .card img {
@@ -180,7 +150,7 @@ h3::after {
 }
 
 .heartIcon:hover {
-  color: #e74c3c;
+  color: #ff6b6b;
   transform: scale(1.2);
 }
 
@@ -195,7 +165,7 @@ h3::after {
 
 .cardContent p {
   font-size: 14px;
-  color: rgba(45, 52, 54, 0.8);
+  color: #666;
 }
 
 .catalogGrid {
@@ -208,9 +178,8 @@ h3::after {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: white;
+  border: none;
   border-radius: 15px;
   padding: 20px;
   cursor: pointer;
@@ -218,14 +187,15 @@ h3::after {
 }
 
 .catalogButton:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-3px) scale(1.05);
+  background-color: #f0f0f0;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .catalogButton svg {
   font-size: 32px;
   margin-bottom: 10px;
-  color: var(--primary-color);
+  color: #4ecdc4;
 }
 
 .catalogButton span {
@@ -241,45 +211,14 @@ h3::after {
 }
 
 .seeMoreLink {
-  color: var(--primary-color);
+  color: #4ecdc4;
   text-decoration: none;
   font-weight: bold;
   transition: color 0.3s ease;
 }
 
 .seeMoreLink:hover {
-  color: var(--secondary-color);
-}
-
-.betaPopup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(255, 107, 107, 0.9);
-  backdrop-filter: blur(10px);
-  color: white;
-  padding: 20px;
-  border-radius: 10px;
-  z-index: 1000;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.betaButton {
-  background: rgba(231, 76, 60, 0.8);
-  backdrop-filter: blur(5px);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.betaButton:hover {
-  background: rgba(231, 76, 60, 1);
-  transform: translateY(-2px) scale(1.05);
+  color: #45b7ac;
 }
 
 @media (max-width: 768px) {
@@ -295,4 +234,34 @@ h3::after {
   .catalogGrid {
     grid-template-columns: repeat(3, 1fr);
   }
+}
+
+.betaPopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 107, 107, 0.9);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.betaButton {
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.betaButton:hover {
+  background-color: #ff5252;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
 }

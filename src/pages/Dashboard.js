@@ -1,40 +1,82 @@
-// Dashboard.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { User, Newspaper, Flag, Beer, PaintBrush, Camera, Microphone, Heart } from "phosphor-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUser,
+  faBlog,
+  faHeart,
+  faFlag,
+  faGlassMartini,
+  faPaintBrush,
+  faCamera,
+  faMicrophone,
+  faChevronRight,
+  faMapMarkerAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import styles from "./Dashboard.module.css";
 
-const heroVideo =
-  "https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-the-beach-1089-large.mp4";
-const parisImage =
-  "https://images.pexels.com/photos/699466/pexels-photo-699466.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-const marseilleImage =
-  "https://images.pexels.com/photos/4353229/pexels-photo-4353229.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-const bordeauxImage =
-  "https://images.pexels.com/photos/6033986/pexels-photo-6033986.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-const lilleImage =
-  "https://images.pexels.com/photos/16140703/pexels-photo-16140703.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+// Définition des constantes pour les médias
+const heroVideo = "https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-the-beach-1089-large.mp4";
+const parisImage = "https://images.pexels.com/photos/699466/pexels-photo-699466.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const marseilleImage = "https://images.pexels.com/photos/4353229/pexels-photo-4353229.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const bordeauxImage = "https://images.pexels.com/photos/6033986/pexels-photo-6033986.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const lilleImage = "https://images.pexels.com/photos/16140703/pexels-photo-16140703.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const lyonImage = "https://images.pexels.com/photos/13538314/pexels-photo-13538314.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const strasbourgImage = "https://images.pexels.com/photos/6143037/pexels-photo-6143037.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
 
 function Dashboard() {
   const [showBetaPopup, setShowBetaPopup] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [likedCards, setLikedCards] = useState({});
+  const [selectedLocation, setSelectedLocation] = useState("Bordeaux");
+
+  const locations = ["Bordeaux", "Paris", "Marseille", "Lyon", "Lille", "Strasbourg"];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollPosition(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleBetaClick = () => {
     setShowBetaPopup(true);
     setTimeout(() => setShowBetaPopup(false), 3000);
   };
 
+  const handleLikeClick = (cardId) => {
+    setLikedCards((prev) => ({ ...prev, [cardId]: !prev[cardId] }));
+  };
+
   return (
     <div className={styles.dashboard}>
-      <header className={styles.header}>
-        <h1>Bordeaux, France</h1>
+      <header className={`${styles.header} ${scrollPosition > 50 ? styles.headerScrolled : ""}`}>
+        <div className={styles.locationSelector}>
+          <FontAwesomeIcon icon={faMapMarkerAlt} className={styles.locationIcon} />
+          <select
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
+            className={styles.locationSelect}
+          >
+            {locations.map((location) => (
+              <option key={location} value={location}>
+                {location}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className={styles.headerButtons}>
           <Link to="/profile" className={styles.iconButton}>
-            <User size={24} />
+            <FontAwesomeIcon icon={faUser} />
           </Link>
           <Link to="/blog" className={styles.iconButton}>
-            <Newspaper size={24} />
+            <FontAwesomeIcon icon={faBlog} />
           </Link>
-          <button onClick={handleBetaClick} className={styles.betaButton}>Beta Test</button>
+          <button onClick={handleBetaClick} className={styles.betaButton}>
+            Beta
+          </button>
         </div>
       </header>
 
@@ -44,47 +86,52 @@ function Dashboard() {
             <source src={heroVideo} type="video/mp4" />
           </video>
           <div className={styles.heroContent}>
-            <h2>Une envie d'évasion ?</h2>
+            <h2>Découvrez {selectedLocation}</h2>
+            <p>Vivez des expériences uniques</p>
             <button className={styles.newEscapeButton}>
-              Ma nouvelle escapade
+              Planifier mon escapade
+              <FontAwesomeIcon icon={faChevronRight} className={styles.buttonIcon} />
             </button>
           </div>
         </section>
 
         <section className={styles.exclusivities}>
-          <h3>Les exclusivités du moment</h3>
+          <h3>Exclusivités</h3>
           <div className={styles.cardContainer}>
-            <div className={styles.card}>
-              <img src={parisImage} alt="Paris" />
-              <Heart size={24} className={styles.heartIcon} />
-              <div className={styles.cardContent}>
-                <h4>Paris</h4>
-                <p>Vivez la Magie de la Ville de l'Amour</p>
+            {[
+              { id: "paris", img: parisImage, title: "Paris", desc: "La Ville de l'Amour" },
+              { id: "marseille", img: marseilleImage, title: "Marseille", desc: "Eaux Turquoises du Sud" },
+              { id: "lyon", img: lyonImage, title: "Lyon", desc: "Capitale Gastronomique" },
+            ].map((card) => (
+              <div key={card.id} className={styles.card}>
+                <img src={card.img} alt={card.title} />
+                <FontAwesomeIcon
+                  icon={faHeart}
+                  className={`${styles.heartIcon} ${likedCards[card.id] ? styles.liked : ""}`}
+                  onClick={() => handleLikeClick(card.id)}
+                />
+                <div className={styles.cardContent}>
+                  <h4>{card.title}</h4>
+                  <p>{card.desc}</p>
+                  <button className={styles.cardButton}>Réserver</button>
+                </div>
               </div>
-            </div>
-            <div className={styles.card}>
-              <img src={marseilleImage} alt="Marseille" />
-              <Heart size={24} className={styles.heartIcon} />
-              <div className={styles.cardContent}>
-                <h4>Marseille</h4>
-                <p>Plongez dans les Eaux Turquoises du Sud</p>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
 
         <section className={styles.catalog}>
-          <h3>Consulter notre catalogue</h3>
+          <h3>Nos activités</h3>
           <div className={styles.catalogGrid}>
             {[
-              { icon: Flag, label: "Sensation" },
-              { icon: Beer, label: "Fêtes" },
-              { icon: PaintBrush, label: "Musée" },
-              { icon: Camera, label: "Exposition" },
-              { icon: Microphone, label: "Karaoké" },
+              { icon: faFlag, label: "Aventures" },
+              { icon: faGlassMartini, label: "Vie nocturne" },
+              { icon: faPaintBrush, label: "Arts & Culture" },
+              { icon: faCamera, label: "Photographie" },
+              { icon: faMicrophone, label: "Musique live" },
             ].map((item, index) => (
               <button key={index} className={styles.catalogButton}>
-                <item.icon size={32} />
+                <FontAwesomeIcon icon={item.icon} />
                 <span>{item.label}</span>
               </button>
             ))}
@@ -93,36 +140,47 @@ function Dashboard() {
 
         <section className={styles.events}>
           <div className={styles.sectionHeader}>
-            <h3>Les évènements du moment</h3>
+            <h3>Événements à venir</h3>
             <Link to="/events" className={styles.seeMoreLink}>
               Voir plus
+              <FontAwesomeIcon icon={faChevronRight} className={styles.linkIcon} />
             </Link>
           </div>
           <div className={styles.cardContainer}>
-            <div className={styles.card}>
-              <img src={bordeauxImage} alt="Bordeaux" />
-              <Heart size={24} className={styles.heartIcon} />
-              <div className={styles.cardContent}>
-                <h4>Bordeaux</h4>
-                <p>Profitez de l'Énergie des Vignobles</p>
+            {[
+              { id: "bordeaux", img: bordeauxImage, title: "Festival du Vin", desc: "Meilleurs crus de la région" },
+              { id: "lille", img: lilleImage, title: "Braderie de Lille", desc: "Plus grand marché aux puces" },
+              { id: "strasbourg", img: strasbourgImage, title: "Marché de Noël", desc: "Magie des fêtes" },
+            ].map((card) => (
+              <div key={card.id} className={styles.card}>
+                <img src={card.img} alt={card.title} />
+                <FontAwesomeIcon
+                  icon={faHeart}
+                  className={`${styles.heartIcon} ${likedCards[card.id] ? styles.liked : ""}`}
+                  onClick={() => handleLikeClick(card.id)}
+                />
+                <div className={styles.cardContent}>
+                  <h4>{card.title}</h4>
+                  <p>{card.desc}</p>
+                  <button className={styles.cardButton}>En savoir plus</button>
+                </div>
               </div>
-            </div>
-            <div className={styles.card}>
-              <img src={lilleImage} alt="Lille" />
-              <Heart size={24} className={styles.heartIcon} />
-              <div className={styles.cardContent}>
-                <h4>Lille</h4>
-                <p>Découvrez les Charmes du Nord</p>
-              </div>
-            </div>
+            ))}
           </div>
+        </section>
+
+        <section className={styles.newsletter}>
+          <h3>Restez informé</h3>
+          <p>Recevez nos meilleures offres</p>
+          <form className={styles.newsletterForm}>
+            <input type="email" placeholder="Votre e-mail" required />
+            <button type="submit" className={styles.subscribeButton}>S'abonner</button>
+          </form>
         </section>
       </main>
 
       {showBetaPopup && (
-        <div className={styles.betaPopup}>
-          Beta Test en cours...
-        </div>
+        <div className={styles.betaPopup}>Beta Test en cours...</div>
       )}
     </div>
   );
