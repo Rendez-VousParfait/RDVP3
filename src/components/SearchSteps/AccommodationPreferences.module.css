@@ -14,7 +14,6 @@
     opacity: 0;
     transform: translateY(20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -37,54 +36,49 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.preferences-section {
+.preference-section {
   margin-bottom: 2rem;
 }
 
-.section-title {
-  font-size: 1.8rem;
+.preference-section h3 {
   color: #fff;
+  font-size: 1.5rem;
   margin-bottom: 1rem;
-  text-align: center;
 }
 
-.preferences-options {
+.option-buttons {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 1rem;
+  justify-content: center;
 }
 
-.preference-button {
-  flex: 0 1 calc(50% - 1rem);
+.option-button {
+  flex: 1 1 calc(33% - 1rem);
   max-width: 200px;
   background-color: rgba(255, 255, 255, 0.2);
   color: #fff;
   border: 2px solid #fff;
   border-radius: 20px;
-  padding: 1.5rem 1rem;
-  font-size: 1.2rem;
+  padding: 1rem;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.preference-button:hover,
-.preference-button.selected {
+.option-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
+}
+
+.option-button.selected {
   background-color: #6B66FF;
   color: #fff;
   border-color: #6B66FF;
-  transform: translateY(-5px);
-}
-
-.preference-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
 }
 
 .navigation-buttons {
@@ -98,7 +92,7 @@
   color: #6B66FF;
   border: none;
   border-radius: 30px;
-  padding: 1rem 2rem;
+  padding: 1rem 3rem;
   font-size: 1.2rem;
   font-weight: bold;
   cursor: pointer;
@@ -111,9 +105,31 @@
   box-shadow: 0 7px 20px rgba(0, 0, 0, 0.2);
 }
 
-@media (max-width: 600px) {
-  .preference-button {
-    flex: 0 1 100%;
+@media (max-width: 768px) {
+  .search-step {
+    padding: 2rem;
+  }
+
+  .step-title {
+    font-size: 2.2rem;
+  }
+
+  .option-button {
+    flex: 1 1 calc(50% - 1rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .search-step {
+    padding: 1.5rem;
+  }
+
+  .step-title {
+    font-size: 2rem;
+  }
+
+  .option-button {
+    flex: 1 1 100%;
   }
 
   .navigation-buttons {

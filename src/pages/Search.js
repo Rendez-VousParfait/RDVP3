@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useCallback, useMemo } from "react";
 import { collection, addDoc, updateDoc, doc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
 import { AuthContext } from "../context/AuthContext";
@@ -10,10 +10,8 @@ import RestaurantPreferences from "../components/SearchSteps/RestaurantPreferenc
 import AccommodationPreferences from "../components/SearchSteps/AccommodationPreferences";
 import ActivityPreferences from "../components/SearchSteps/ActivityPreferences";
 import SearchResults from "../components/SearchResults";
-import GroupCreationStep from "../components/GroupCreationStep";
+import TripOrganizationChoice from "../components/TripOrganizationChoice";
 import { bordeauxData } from "../data/bordeauxData";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Search.module.css";
 
 const Search = () => {
@@ -22,7 +20,7 @@ const Search = () => {
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
     tripType: "",
-    dates: [],
+    dates: { start: null, end: null },
     budget: "",
     activities: [],
     personalization: {},
@@ -46,10 +44,37 @@ const Search = () => {
   }, [user, loading, navigate]);
 
   useEffect(() => {
-    console.log("Current formData:", JSON.stringify(formData, null, 2));
+    console.log("Search formData updated:", formData);
   }, [formData]);
 
-  const handleInputChange = (name, value) => {
+  const memoizedFormData = useMemo(() => formData, [formData]);
+
+  const updateFirebaseData = useCallback(
+    (() => {
+      let timeoutId = null;
+      return (field, value) => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+        timeoutId = setTimeout(async () => {
+          if (searchId) {
+            try {
+              await updateDoc(doc(db, "searches", searchId), {
+                [field]: value,
+                lastUpdated: serverTimestamp(),
+              });
+              console.log(`Firebase updated for ${field}`);
+            } catch (error) {
+              console.error("Error updating Firebase:", error);
+            }
+          }
+        }, 1000);
+      };
+    })(),
+    [searchId]
+  );
+
+  const handleInputChange = useCallback((name, value) => {
     console.log(`Updating ${name} with value:`, value);
     setFormData((prevData) => {
       let processedValue = value;
@@ -57,14 +82,16 @@ const Search = () => {
       if (name === 'personCount') {
         processedValue = parseInt(value, 10) || 1;
       } else if (name === 'budget') {
-        processedValue = value.toString() || "0";
-      } else if (name === 'dates' || name === 'activities' || name === 'invitedUsers') {
+        processedValue = value === null || value === undefined || value === "" ? null : value.toString();
+      } else if (name === 'activities' || name === 'invitedUsers') {
         processedValue = Array.isArray(value) ? value : [];
       } else if (name === 'mainServices') {
-        const updatedServices = prevData.mainServices.includes(value)
-          ? prevData.mainServices.filter(service => service !== value)
-          : [...prevData.mainServices, value];
-        processedValue = updatedServices;
+        processedValue = typeof value === 'function' ? value(prevData.mainServices) : value;
+      } else if (name === 'dates') {
+        processedValue = {
+          start: value.start instanceof Date ? value.start : new Date(value.start),
+          end: value.end instanceof Date ? value.end : (value.end ? new Date(value.end) : null)
+        };
       } else if (typeof value === 'object' && value !== null) {
         processedValue = { ...prevData[name], ...value };
       }
@@ -79,23 +106,9 @@ const Search = () => {
 
       return newData;
     });
-  };
+  }, [updateFirebaseData]);
 
-  const updateFirebaseData = async (field, value) => {
-    if (searchId) {
-      try {
-        await updateDoc(doc(db, "searches", searchId), {
-          [field]: value,
-          lastUpdated: serverTimestamp(),
-        });
-        console.log(`Firebase updated for ${field}`);
-      } catch (error) {
-        console.error("Error updating Firebase:", error);
-      }
-    }
-  };
-
-  const saveSearchData = async (includeGroup = false) => {
+  const saveSearchData = useCallback(async (includeGroup = false) => {
     try {
       const searchData = {
         userId: user.uid,
@@ -115,77 +128,28 @@ const Search = () => {
     } catch (error) {
       console.error("Error saving data: ", error);
     }
-  };
+  }, [formData, searchId, user.uid]);
 
-  const handleGroupCreated = async (groupName) => {
-    try {
-      handleInputChange("groupName", groupName);
-
-      const groupData = {
-        name: groupName,
-        createdAt: serverTimestamp(),
-        createdBy: user.uid,
-        members: [user.email],
-        searchId: searchId,
-        tripDetails: formData,
-      };
-
-      const groupRef = await addDoc(collection(db, "groups"), groupData);
-      handleInputChange("groupId", groupRef.id);
-      console.log("Group created with ID: ", groupRef.id);
-
-      await saveSearchData(true);
-    } catch (error) {
-      console.error("Error creating group: ", error);
-    }
-  };
-
-  const nextStep = () => {
-    console.log(`Moving to next step. Current step: ${step}`);
-    setStep(step + 1);
-    saveSearchData(step === 1);
-  };
-
-  const prevStep = () => {
-    console.log(`Moving to previous step. Current step: ${step}`);
-    setStep(step - 1);
-  };
-
-  const handleInviteSent = async ({ groupId, emails }) => {
-    console.log("Emails to invite:", emails);
-
-    setFormData(prevData => {
-      const updatedInvitedUsers = [...new Set([...prevData.invitedUsers, ...emails])];
-      console.log("Updated invited users:", updatedInvitedUsers);
-
-      const newData = {
-        ...prevData,
-        invitedUsers: updatedInvitedUsers
-      };
-
-      const updateFirebase = async () => {
-        try {
-          await updateDoc(doc(db, "searches", searchId), newData);
-          console.log("Search data updated with new invited users");
-
-          if (groupId) {
-            await updateDoc(doc(db, "groups", groupId), {
-              members: updatedInvitedUsers,
-              lastUpdated: serverTimestamp(),
-            });
-            console.log("Group updated with new members");
-          }
-        } catch (error) {
-          console.error("Error updating data: ", error);
-        }
-      };
-      updateFirebase();
-
-      return newData;
+  const nextStep = useCallback(() => {
+    console.log("Next step called");
+    setStep((prevStep) => {
+      const newStep = prevStep + 1;
+      console.log(`Moving to next step. New step: ${newStep}`);
+      saveSearchData(newStep === 1);
+      return newStep;
     });
-  };
+  }, [saveSearchData]);
 
-  const performSearch = () => {
+  const prevStep = useCallback(() => {
+    console.log("Previous step called");
+    setStep((prevStep) => {
+      const newStep = prevStep - 1;
+      console.log(`Moving to previous step. New step: ${newStep}`);
+      return newStep;
+    });
+  }, []);
+
+  const performSearch = useCallback(() => {
     console.log("Performing search with formData:", formData);
     const results = {
       hotels: bordeauxData.hotels.filter(
@@ -212,50 +176,42 @@ const Search = () => {
     setSearchResults(results);
     saveSearchData();
     nextStep();
-  };
+  }, [formData, saveSearchData, nextStep]);
 
-  const renderStep = () => {
+  const renderStep = useCallback(() => {
     console.log(`Rendering step ${step}`);
     switch (step) {
       case 0:
         return (
           <ComposeTripType
-            formData={formData}
+            formData={memoizedFormData}
             handleInputChange={handleInputChange}
             nextStep={nextStep}
           />
         );
       case 1:
-        return formData.needsGroupCreation ? (
-          <GroupCreationStep
-            formData={formData}
-            handleInputChange={handleInputChange}
-            handleGroupCreated={handleGroupCreated}
-            handleInviteSent={handleInviteSent}
+        return (
+          <TripOrganizationChoice
             nextStep={nextStep}
-            prevStep={prevStep}
-          />
-        ) : (
-          <ComposeTrip
-            formData={formData}
-            handleInputChange={handleInputChange}
-            nextStep={nextStep}
-            prevStep={prevStep}
+            currentStep={step + 1}
+            totalSteps={7}
           />
         );
       case 2:
         return (
           <ComposeTrip
-            formData={formData}
+            formData={memoizedFormData}
             handleInputChange={handleInputChange}
             nextStep={nextStep}
             prevStep={prevStep}
+            currentStep={step + 1}
+            totalSteps={7}
           />
         );
       case 3:
         return (
           <PersonalizeAdvanced
-            formData={formData}
+            formData={memoizedFormData}
             handleInputChange={handleInputChange}
             nextStep={nextStep}
             prevStep={prevStep}
@@ -264,7 +220,7 @@ const Search = () => {
       case 4:
         return (
           <RestaurantPreferences
-            formData={formData}
+            formData={memoizedFormData}
             handleInputChange={handleInputChange}
             nextStep={nextStep}
             prevStep={prevStep}
@@ -273,7 +229,7 @@ const Search = () => {
       case 5:
         return (
           <AccommodationPreferences
-            formData={formData}
+            formData={memoizedFormData}
             handleInputChange={handleInputChange}
             nextStep={nextStep}
             prevStep={prevStep}
@@ -282,7 +238,7 @@ const Search = () => {
       case 6:
         return (
           <ActivityPreferences
-            formData={formData}
+            formData={memoizedFormData}
             handleInputChange={handleInputChange}
             nextStep={performSearch}
             prevStep={prevStep}
@@ -293,25 +249,11 @@ const Search = () => {
       default:
         return null;
     }
-  };
+  }, [step, memoizedFormData, handleInputChange, nextStep, prevStep, performSearch, searchResults]);
 
   return (
     <div className={styles.searchPage}>
-      <h1 className={styles.pageTitle}>Planifiez votre séjour à Bordeaux</h1>
-      <div className={styles.stepIndicator}>Étape {step + 1} sur 7</div>
       {renderStep()}
-      <div className={styles.navigationButtons}>
-        {step > 0 && (
-          <button onClick={prevStep} className={styles.navButton}>
-            <FontAwesomeIcon icon={faArrowLeft} /> Précédent
-          </button>
-        )}
-        {step < 6 && (
-          <button onClick={nextStep} className={styles.navButton}>
-            Suivant <FontAwesomeIcon icon={faArrowRight} />
-          </button>
-        )}
-      </div>
     </div>
   );
 };

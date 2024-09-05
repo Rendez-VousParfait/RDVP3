@@ -14,7 +14,6 @@
     opacity: 0;
     transform: translateY(20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -51,11 +50,23 @@
   margin-bottom: 1rem;
 }
 
-.datepicker-calendar {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  border-radius: 15px !important;
-  border: none !important;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+.date-picker-container {
+  display: flex;
+  gap: 10px;
+}
+
+.date-picker {
+  width: 120px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.date-picker::placeholder {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .selected-dates {
@@ -76,9 +87,9 @@
 .service-button {
   flex: 0 1 calc(33% - 1rem);
   max-width: 200px;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: none;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 2px solid #fff;
   border-radius: 20px;
   padding: 1.5rem 1rem;
   font-size: 1.2rem;
@@ -92,10 +103,15 @@
   justify-content: center;
 }
 
-.service-button:hover,
-.service-button.selected {
-  background-color: rgba(255, 255, 255, 0.2);
+.service-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-5px);
+}
+
+.service-button.selected {
+  background-color: #6B66FF;
+  color: #fff;
+  border-color: #6B66FF;
 }
 
 .service-icon {
@@ -186,5 +202,15 @@
   .prev-button,
   .next-button {
     width: 100%;
+  }
+
+  .date-picker-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .date-picker {
+    width: 100%;
+    max-width: 200px;
   }
 }

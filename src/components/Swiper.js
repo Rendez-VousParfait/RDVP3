@@ -10,82 +10,76 @@ import {
   FaBed,
   FaWalking,
 } from "react-icons/fa";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
 
 const Swiper = ({ formData, handleInputChange, nextStep }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [offers, setOffers] = useState([]);
-  const [likedTypes, setLikedTypes] = useState({});
-  const [dislikedTypes, setDislikedTypes] = useState({});
+  const [userPreferences, setUserPreferences] = useState({});
   const [swipeCount, setSwipeCount] = useState(0);
   const [direction, setDirection] = useState("");
 
   useEffect(() => {
+    loadOffers();
+    loadUserPreferences();
+  }, []);
+
+  const loadOffers = () => {
     const allOffers = [
       ...bordeauxData.hotels,
       ...bordeauxData.restaurants,
       ...bordeauxData.activities,
     ].sort(() => Math.random() - 0.5);
     setOffers(allOffers);
-  }, []);
+  };
+
+  const loadUserPreferences = async () => {
+    if (auth.currentUser) {
+      const userPreferencesRef = doc(db, "userPreferences", auth.currentUser.uid);
+      const userPreferencesDoc = await getDoc(userPreferencesRef);
+      if (userPreferencesDoc.exists()) {
+        setUserPreferences(userPreferencesDoc.data());
+      } else {
+        setUserPreferences({});
+      }
+    }
+  };
 
   const handleSwipe = useCallback(
     async (isLike) => {
       setDirection(isLike ? "right" : "left");
       setTimeout(async () => {
         const currentOffer = offers[currentIndex];
-        const newLikedTypes = { ...likedTypes };
-        const newDislikedTypes = { ...dislikedTypes };
+        const newPreferences = { ...userPreferences };
 
-        if (isLike) {
-          newLikedTypes[currentOffer.type] =
-            (newLikedTypes[currentOffer.type] || 0) + 1;
-        } else {
-          newDislikedTypes[currentOffer.type] =
-            (newDislikedTypes[currentOffer.type] || 0) + 1;
+        if (!newPreferences[currentOffer.type]) {
+          newPreferences[currentOffer.type] = { likes: 0, dislikes: 0 };
         }
 
-        setLikedTypes(newLikedTypes);
-        setDislikedTypes(newDislikedTypes);
-        setCurrentIndex((prevIndex) => prevIndex + 1);
+        if (isLike) {
+          newPreferences[currentOffer.type].likes += 1;
+        } else {
+          newPreferences[currentOffer.type].dislikes += 1;
+        }
+
+        setUserPreferences(newPreferences);
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % offers.length);
         setSwipeCount((prevCount) => prevCount + 1);
         setDirection("");
 
         if (auth.currentUser) {
-          const userPreferencesRef = doc(
-            db,
-            "userPreferences",
-            auth.currentUser.uid
-          );
-          await setDoc(
-            userPreferencesRef,
-            {
-              likedTypes: newLikedTypes,
-              dislikedTypes: newDislikedTypes,
-            },
-            { merge: true }
-          );
+          const userPreferencesRef = doc(db, "userPreferences", auth.currentUser.uid);
+          await setDoc(userPreferencesRef, newPreferences, { merge: true });
         }
 
-        if (swipeCount + 1 >= 5) {
-          handleInputChange("swiperPreferences", {
-            liked: newLikedTypes,
-            disliked: newDislikedTypes,
-          });
-          nextStep();
+        // Si on arrive à la fin de la liste, recharger de nouvelles offres
+        if (currentIndex === offers.length - 1) {
+          loadOffers();
         }
       }, 300);
     },
-    [
-      currentIndex,
-      offers,
-      swipeCount,
-      likedTypes,
-      dislikedTypes,
-      handleInputChange,
-      nextStep,
-    ]
+    [currentIndex, offers, userPreferences]
   );
 
   const handlers = useSwipeable({
@@ -95,8 +89,8 @@ const Swiper = ({ formData, handleInputChange, nextStep }) => {
     trackMouse: true,
   });
 
-  if (currentIndex >= offers.length) {
-    return <div>Vous avez vu toutes les offres !</div>;
+  if (offers.length === 0) {
+    return <div>Chargement des offres...</div>;
   }
 
   const currentOffer = offers[currentIndex];
@@ -123,7 +117,6 @@ const Swiper = ({ formData, handleInputChange, nextStep }) => {
 
   return (
     <div className={styles["search-step"]}>
-      <h2 className={styles["swiper-title"]}>Découvrez Bordeaux</h2>
       <div className={styles["swiper-container"]} {...handlers}>
         <div className={`${styles["offer-card"]} ${styles[direction]}`}>
           <img
@@ -163,14 +156,8 @@ const Swiper = ({ formData, handleInputChange, nextStep }) => {
           <FaHeart />
         </button>
       </div>
-      <div className={styles["swipe-progress"]}>
-        <div
-          className={styles["swipe-progress-bar"]}
-          style={{ width: `${(swipeCount / 5) * 100}%` }}
-        ></div>
-      </div>
       <p className={styles["swipe-count"]}>
-        Swipes restants : {5 - swipeCount}
+        Nombre de swipes : {swipeCount}
       </p>
     </div>
   );

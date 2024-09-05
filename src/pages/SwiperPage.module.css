@@ -1,32 +1,22 @@
 .swiperPage {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
+  min-height: 100vh;
   padding: 20px;
-  max-width: 800px;
   margin: 0 auto;
-}
-
-.swiperPage h1 {
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 20px;
-  text-align: center;
+  width: 100%; /* Nouvelle ligne ajoutée */
 }
 
 .swiperContainer {
   width: 100%;
-  max-width: 500px;
+  max-width: 800px; /* Modifié de 550px à 800px */
   margin: 0 auto;
 }
 
 @media (max-width: 768px) {
   .swiperPage {
     padding: 10px;
-  }
-
-  .swiperPage h1 {
-    font-size: 2rem;
   }
 
   .swiperContainer {

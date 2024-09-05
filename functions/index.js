@@ -86,7 +86,7 @@ exports.sendInvitationEmail = functions.https.onCall(async (data, context) => {
     console.log(`Invitation email sent successfully to ${email}`);
     return { success: true, message: "Invitation email sent successfully" };
   } catch (error) {
-    console.error('Erreur lors de l'envoi de l'e-mail:', error);
-    throw new functions.https.HttpsError('internal', 'Impossible d'envoyer l'e-mail d'invitation.');
+    console.error("Erreur lors de l'envoi de l'e-mail:", error);
+    throw new functions.https.HttpsError('internal', "Impossible d'envoyer l'e-mail d'invitation.");
   }
 });

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./ComposeTripType.module.css";
-import { FaUsers, FaHome, FaHeart, FaUserAlt } from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUsers, faHome, faHeart, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 
 const ComposeTripType = ({
   formData,
@@ -10,10 +11,10 @@ const ComposeTripType = ({
   totalSteps,
 }) => {
   const tripTypes = [
-    { id: "amis", icon: FaUsers, label: "Amis" },
-    { id: "famille", icon: FaHome, label: "Famille" },
-    { id: "couple", icon: FaHeart, label: "Couple" },
-    { id: "solo", icon: FaUserAlt, label: "Solo" },
+    { id: "amis", icon: faUsers, label: "Amis" },
+    { id: "famille", icon: faHome, label: "Famille" },
+    { id: "couple", icon: faHeart, label: "Couple" },
+    { id: "solo", icon: faUserAlt, label: "Solo" },
   ];
   const [showPersonCount, setShowPersonCount] = useState(false);
 
@@ -47,13 +48,13 @@ const ComposeTripType = ({
       </div>
       <h2 className={styles["step-title"]}>Vous êtes :</h2>
       <div className={styles["trip-type-options"]}>
-        {tripTypes.map(({ id, icon: Icon, label }) => (
+        {tripTypes.map(({ id, icon, label }) => (
           <button
             key={id}
             onClick={() => handleTripTypeClick(id)}
             className={`${styles["trip-type-button"]} ${formData.tripType === id ? styles["selected"] : ""}`}
           >
-            <Icon className={styles["trip-type-icon"]} />
+            <FontAwesomeIcon icon={icon} className={styles["trip-type-icon"]} />
             <span>{label}</span>
           </button>
         ))}

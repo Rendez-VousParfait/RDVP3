@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
 import styles from "./ComposeTrip.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,7 +12,7 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const ComposeTrip = ({
+const ComposeTrip = React.memo(({
   formData,
   handleInputChange,
   nextStep,
@@ -20,18 +20,48 @@ const ComposeTrip = ({
   currentStep,
   totalSteps,
 }) => {
-  const handleDateChange = (dates) => {
-    const [start, end] = dates;
-    handleInputChange("tripStartDate", start);
-    handleInputChange("tripEndDate", end);
-  };
+  const [localBudget, setLocalBudget] = useState(formData.budget || "");
 
-  const toggleService = (service) => {
-    const updatedServices = formData.mainServices.includes(service)
-      ? formData.mainServices.filter((s) => s !== service)
-      : [...formData.mainServices, service];
-    handleInputChange("mainServices", updatedServices);
-  };
+  useEffect(() => {
+    setLocalBudget(formData.budget || "");
+  }, [formData.budget]);
+
+  const handleDateChange = useCallback((dates) => {
+    const [start, end] = dates;
+    handleInputChange("dates", { start, end });
+  }, [handleInputChange]);
+
+  const toggleService = useCallback((service) => {
+    handleInputChange("mainServices", (prevServices) => {
+      if (prevServices.includes(service)) {
+        return prevServices.filter((s) => s !== service);
+      } else {
+        return [...prevServices, service];
+      }
+    });
+  }, [handleInputChange]);
+
+  const handleBudgetChange = useCallback((e) => {
+    const value = e.target.value;
+    setLocalBudget(value);
+    handleInputChange("budget", value === "" ? null : value);
+  }, [handleInputChange]);
+
+  const handleNext = useCallback((e) => {
+    e.preventDefault();
+    nextStep();
+  }, [nextStep]);
+
+  const handlePrev = useCallback((e) => {
+    e.preventDefault();
+    prevStep();
+  }, [prevStep]);
+
+  const services = useMemo(() => [
+    { id: "hébergement", icon: faBed, label: "Hébergement" },
+    { id: "repas", icon: faUtensils, label: "Repas" },
+    { id: "activité", icon: faRunning, label: "Activité" },
+  ], []);
 
   return (
     <div className={styles["search-step"]}>
@@ -45,37 +75,49 @@ const ComposeTrip = ({
         <label>
           <FontAwesomeIcon icon={faCalendarAlt} /> Dates du séjour
         </label>
-        <DatePicker
-          selected={formData.tripStartDate}
-          onChange={handleDateChange}
-          startDate={formData.tripStartDate}
-          endDate={formData.tripEndDate}
-          selectsRange
-          inline
-          minDate={new Date()}
-          dateFormat="dd/MM/yyyy"
-          calendarClassName={styles["datepicker-calendar"]}
-        />
+        <div className={styles["date-picker-container"]}>
+          <DatePicker
+            selected={formData.dates.start}
+            onChange={(date) => handleDateChange([date, formData.dates.end])}
+            selectsStart
+            startDate={formData.dates.start}
+            endDate={formData.dates.end}
+            minDate={new Date()}
+            dateFormat="dd/MM/yyyy"
+            placeholderText="Date de début"
+            className={styles["date-picker"]}
+          />
+          <DatePicker
+            selected={formData.dates.end}
+            onChange={(date) => handleDateChange([formData.dates.start, date])}
+            selectsEnd
+            startDate={formData.dates.start}
+            endDate={formData.dates.end}
+            minDate={formData.dates.start}
+            dateFormat="dd/MM/yyyy"
+            placeholderText="Date de fin"
+            className={styles["date-picker"]}
+          />
+        </div>
       </div>
       <div className={styles["selected-dates"]}>
-        {formData.tripStartDate && formData.tripEndDate ? (
+        {formData.dates.start ? (
           <p>
-            Du {formData.tripStartDate.toLocaleDateString()} au{" "}
-            {formData.tripEndDate.toLocaleDateString()}
+            Du {formData.dates.start.toLocaleDateString()}
+            {formData.dates.end ? ` au ${formData.dates.end.toLocaleDateString()}` : ''}
           </p>
         ) : (
           <p>Sélectionnez vos dates de séjour</p>
         )}
       </div>
       <div className={styles["service-selector"]}>
-        {[
-          { id: "hébergement", icon: faBed, label: "Hébergement" },
-          { id: "repas", icon: faUtensils, label: "Repas" },
-          { id: "activité", icon: faRunning, label: "Activité" },
-        ].map(({ id, icon, label }) => (
+        {services.map(({ id, icon, label }) => (
           <button
             key={id}
-            className={`${styles["service-button"]} ${formData.mainServices.includes(id) ? styles["selected"] : ""}`}
+            type="button"
+            className={`${styles["service-button"]} ${
+              formData.mainServices.includes(id) ? styles["selected"] : ""
+            }`}
             onClick={() => toggleService(id)}
           >
             <FontAwesomeIcon icon={icon} className={styles["service-icon"]} />
@@ -90,22 +132,23 @@ const ComposeTrip = ({
         <input
           id="budget"
           type="number"
-          value={formData.budget || ""}
-          onChange={(e) => handleInputChange("budget", e.target.value)}
+          value={localBudget}
+          onChange={handleBudgetChange}
           min="0"
+          placeholder="Entrez votre budget"
           required
         />
       </div>
       <div className={styles["next-button-container"]}>
-        <button className={styles["prev-button"]} onClick={prevStep}>
+        <button type="button" className={styles["prev-button"]} onClick={handlePrev}>
           Précédent
         </button>
-        <button className={styles["next-button"]} onClick={nextStep}>
+        <button type="button" className={styles["next-button"]} onClick={handleNext}>
           Suivant
         </button>
       </div>
     </div>
   );
-};
+});
 
 export default ComposeTrip;

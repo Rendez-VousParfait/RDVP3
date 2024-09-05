@@ -1,118 +1,85 @@
 import React from "react";
+import styles from "./AccommodationPreferences.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBed, faStar, faDoorOpen } from "@fortawesome/free-solid-svg-icons";
 
 const AccommodationPreferences = ({
   formData,
   handleInputChange,
   nextStep,
   prevStep,
+  currentStep,
+  totalSteps,
 }) => {
   const accommodationTypes = ["Hôtel", "Appart Hôtel", "Chambres d'hôtes"];
+  const standings = ["Économique", "Standard", "Luxe"];
   const roomTypes = ["Chambre simple", "Chambre double", "Suite"];
-  const equipments = ["Spa", "Piscine", "Salle de sport", "Hammam"];
 
   return (
-    <div className="search-step">
-      <h2>Préférences Hébergement</h2>
-      <div className="accommodation-types">
-        <h3>Choix du type d'hébergement</h3>
-        {accommodationTypes.map((type) => (
-          <label key={type}>
-            <input
-              type="checkbox"
-              checked={formData.accommodationPreferences.types?.includes(type)}
-              onChange={() => {
-                const updatedTypes =
-                  formData.accommodationPreferences.types?.includes(type)
-                    ? formData.accommodationPreferences.types.filter(
-                        (t) => t !== type,
-                      )
-                    : [
-                        ...(formData.accommodationPreferences.types || []),
-                        type,
-                      ];
-                handleInputChange("accommodationPreferences", {
-                  ...formData.accommodationPreferences,
-                  types: updatedTypes,
-                });
+    <div className={styles["search-step"]}>
+      <div className={styles["progress-indicator"]}>
+        Étape {currentStep} sur {totalSteps}
+      </div>
+      <h2 className={styles["step-title"]}>Préférences Hébergement</h2>
+
+      <div className={styles["preference-section"]}>
+        <h3><FontAwesomeIcon icon={faBed} /> Type d'hébergement</h3>
+        <div className={styles["option-buttons"]}>
+          {accommodationTypes.map((type) => (
+            <button
+              key={type}
+              className={`${styles["option-button"]} ${formData.accommodationPreferences.types?.includes(type) ? styles["selected"] : ""}`}
+              onClick={() => {
+                const updatedTypes = formData.accommodationPreferences.types?.includes(type)
+                  ? formData.accommodationPreferences.types.filter(t => t !== type)
+                  : [...(formData.accommodationPreferences.types || []), type];
+                handleInputChange("accommodationPreferences", { ...formData.accommodationPreferences, types: updatedTypes });
               }}
-            />
-            {type}
-          </label>
-        ))}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="standing">
-        <h3>Standing</h3>
-        <select
-          value={formData.accommodationPreferences.standing}
-          onChange={(e) =>
-            handleInputChange("accommodationPreferences", {
-              ...formData.accommodationPreferences,
-              standing: e.target.value,
-            })
-          }
-        >
-          <option value="">Sélectionnez un standing</option>
-          <option value="economique">Économique</option>
-          <option value="standard">Standard</option>
-          <option value="luxe">Luxe</option>
-        </select>
+
+      <div className={styles["preference-section"]}>
+        <h3><FontAwesomeIcon icon={faStar} /> Standing</h3>
+        <div className={styles["option-buttons"]}>
+          {standings.map((standing) => (
+            <button
+              key={standing}
+              className={`${styles["option-button"]} ${formData.accommodationPreferences.standing === standing ? styles["selected"] : ""}`}
+              onClick={() => handleInputChange("accommodationPreferences", { ...formData.accommodationPreferences, standing })}
+            >
+              {standing}
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="room-types">
-        <h3>Type de chambre</h3>
-        {roomTypes.map((type) => (
-          <label key={type}>
-            <input
-              type="radio"
-              name="roomType"
-              checked={formData.accommodationPreferences.roomType === type}
-              onChange={() =>
-                handleInputChange("accommodationPreferences", {
-                  ...formData.accommodationPreferences,
-                  roomType: type,
-                })
-              }
-            />
-            {type}
-          </label>
-        ))}
+
+      <div className={styles["preference-section"]}>
+        <h3><FontAwesomeIcon icon={faDoorOpen} /> Type de chambre</h3>
+        <div className={styles["option-buttons"]}>
+          {roomTypes.map((type) => (
+            <button
+              key={type}
+              className={`${styles["option-button"]} ${formData.accommodationPreferences.roomType === type ? styles["selected"] : ""}`}
+              onClick={() => handleInputChange("accommodationPreferences", { ...formData.accommodationPreferences, roomType: type })}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="equipments">
-        <h3>Les équipements</h3>
-        {equipments.map((equipment) => (
-          <label key={equipment}>
-            <input
-              type="checkbox"
-              checked={formData.accommodationPreferences.equipments?.includes(
-                equipment,
-              )}
-              onChange={() => {
-                const updatedEquipments =
-                  formData.accommodationPreferences.equipments?.includes(
-                    equipment,
-                  )
-                    ? formData.accommodationPreferences.equipments.filter(
-                        (e) => e !== equipment,
-                      )
-                    : [
-                        ...(formData.accommodationPreferences.equipments || []),
-                        equipment,
-                      ];
-                handleInputChange("accommodationPreferences", {
-                  ...formData.accommodationPreferences,
-                  equipments: updatedEquipments,
-                });
-              }}
-            />
-            {equipment}
-          </label>
-        ))}
+
+      <div className={styles["navigation-buttons"]}>
+        <button className={styles["nav-button"]} onClick={prevStep}>
+          Précédent
+        </button>
+        <button className={styles["nav-button"]} onClick={nextStep}>
+          Suivant
+        </button>
       </div>
-      <button className="custom-button" onClick={prevStep}>
-        Précédent
-      </button>
-      <button className="custom-button" onClick={nextStep}>
-        Suivant
-      </button>
     </div>
   );
 };

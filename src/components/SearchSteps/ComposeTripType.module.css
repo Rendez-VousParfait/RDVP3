@@ -1,10 +1,8 @@
-/* Le conteneur principal du module */
 .search-step {
-  width: 90%;
   max-width: 800px;
+  margin: 3rem auto;
   padding: 2.5rem;
-  background-color: rgba(255, 255, 255, 0.9);
-  /* Fond clair pour faire ressortir le module */
+  background: linear-gradient(135deg, #FF6B6B, #6B66FF);
   border-radius: 25px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
   transition: all 0.4s ease-out;
@@ -16,7 +14,6 @@
     opacity: 0;
     transform: translateY(20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -25,16 +22,14 @@
 
 .progress-indicator {
   text-align: center;
-  color: #333;
-  /* Couleur plus sombre pour contraster avec le fond clair */
+  color: #fff;
   font-size: 0.9rem;
   margin-bottom: 1rem;
 }
 
 .step-title {
   font-size: 2.7rem;
-  color: #333;
-  /* Couleur plus sombre pour contraster avec le fond clair */
+  color: #fff;
   margin-bottom: 2rem;
   text-align: center;
   font-weight: bold;
@@ -52,12 +47,11 @@
 .trip-type-button {
   flex: 0 1 calc(50% - 1rem);
   max-width: 200px;
-  background-color: rgba(0, 0, 0, 0.1);
-  /* Légèrement transparent pour un effet subtil */
-  color: #333;
-  border: none;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 2px solid #fff;
   border-radius: 20px;
-  padding: 2rem 1rem;
+  padding: 1.5rem 1rem;
   font-size: 1.2rem;
   font-weight: bold;
   cursor: pointer;
@@ -71,8 +65,9 @@
 
 .trip-type-button:hover,
 .trip-type-button.selected {
-  background-color: rgba(0, 0, 0, 0.2);
-  /* Légèrement plus foncé au hover */
+  background-color: #6B66FF;
+  color: #fff;
+  border-color: #6B66FF;
   transform: translateY(-5px);
 }
 
@@ -81,6 +76,7 @@
   margin-bottom: 0.5rem;
 }
 
+/* Ajoutez ces styles pour le champ de saisie du nombre de personnes */
 .person-count-container {
   margin-top: 1rem;
   text-align: center;
@@ -90,8 +86,7 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: bold;
-  color: #333;
-  /* Couleur plus sombre pour contraster avec le fond clair */
+  color: #fff;
 }
 
 .person-count-container input {
@@ -101,9 +96,8 @@
   font-size: 1rem;
   border: none;
   border-radius: 30px;
-  background-color: rgba(0, 0, 0, 0.1);
-  /* Légèrement transparent */
-  color: #333;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
   text-align: center;
 }
 
@@ -114,8 +108,8 @@
 }
 
 .next-button {
-  background-color: #6B66FF;
-  color: #fff;
+  background-color: #fff;
+  color: #6B66FF;
   border: none;
   border-radius: 30px;
   padding: 1rem 3rem;
@@ -132,23 +126,6 @@
 }
 
 .next-button:disabled {
-  background-color: rgba(107, 102, 255, 0.5);
-  color: rgba(255, 255, 255, 0.5);
+  opacity: 0.5;
   cursor: not-allowed;
-}
-
-@media (min-width: 768px) {
-  .trip-type-button {
-    flex: 0 1 calc(25% - 1rem);
-  }
-}
-
-@media (max-width: 480px) {
-  .step-title {
-    font-size: 2.2rem;
-  }
-
-  .search-step {
-    padding: 1.5rem;
-  }
 }

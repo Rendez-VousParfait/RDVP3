@@ -52,7 +52,7 @@ function Dashboard() {
 
   return (
     <div className={styles.dashboard}>
-      <header className={`${styles.header} ${scrollPosition > 50 ? styles.headerScrolled : ""}`}>
+      <header className={styles.header}>
         <div className={styles.locationSelector}>
           <FontAwesomeIcon icon={faMapMarkerAlt} className={styles.locationIcon} />
           <select
@@ -80,7 +80,7 @@ function Dashboard() {
         </div>
       </header>
 
-      <main>
+      <main className={styles.mainContainer}>
         <section className={styles.heroSection}>
           <video autoPlay muted loop className={styles.heroVideo}>
             <source src={heroVideo} type="video/mp4" />
