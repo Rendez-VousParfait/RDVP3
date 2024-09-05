@@ -1,0 +1,212 @@
+.tutorialOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.tutorialContent {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  width: 90%;
+  max-width: 1000px;
+  display: flex;
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.tutorialImage {
+  width: 50%;
+  height: 500px;
+  object-fit: cover;
+}
+
+.textContent {
+  width: 50%;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #f8f9fa;
+}
+
+.tutorialContent h3 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.tutorialContent p {
+  font-size: 18px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.progressIndicator {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.progressDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #ddd;
+  margin: 0 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.progressDot:hover {
+  transform: scale(1.2);
+}
+
+.activeDot {
+  background-color: #007bff;
+  transform: scale(1.2);
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tutorialButton {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.skipButton,
+.dontShowButton {
+  background-color: transparent;
+  color: #666;
+}
+
+.skipButton:hover,
+.dontShowButton:hover {
+  background-color: #e9ecef;
+  color: #333;
+}
+
+.tutorialButton:not(.skipButton):not(.dontShowButton) {
+  background-color: #007bff;
+  color: white;
+}
+
+.tutorialButton:not(.skipButton):not(.dontShowButton):hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 86, 179, 0.3);
+}
+
+.tooltip {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background-color: #333;
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 16px;
+  z-index: 1001;
+  max-width: 250px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.tooltipToggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.tooltipToggle:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 86, 179, 0.3);
+}
+
+@media (max-width: 768px) {
+  .tutorialContent {
+    flex-direction: column;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .tutorialImage,
+  .textContent {
+    width: 100%;
+  }
+
+  .tutorialImage {
+    height: 200px;
+  }
+
+  .textContent {
+    padding: 20px;
+  }
+
+  .buttonContainer {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .tutorialButton {
+    flex: 1 0 calc(50% - 5px);
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .tooltip {
+    bottom: 70px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+
+  .tooltipToggle {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    width: calc(100% - 20px);
+  }
+}

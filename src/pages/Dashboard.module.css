@@ -1,9 +1,21 @@
-.dashboard {
-  background: linear-gradient(135deg, #FF6B6B, #6B66FF);
-  color: #fff;
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
+
+.dashboardWrapper {
   min-height: 100vh;
+  background: linear-gradient(135deg, #FF6B6B, #6B66FF);
+  padding: 20px;
+}
+
+.dashboard {
+  color: #fff;
   font-family: 'Roboto', sans-serif;
-  padding-bottom: 70px;
+  border-radius: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  position: relative;
 }
 
 .header {
@@ -11,12 +23,31 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  border-radius: 30px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.locationSelector {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 5px 15px;
+}
+
+.locationIcon {
+  margin-right: 10px;
+}
+
+.locationSelect {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  outline: none;
 }
 
 .headerButtons {
@@ -41,60 +72,43 @@
 .iconButton:hover {
   background-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.dashboardContainer {
-  max-width: 1200px;
-  margin: 3rem auto;
-  padding: 2.5rem;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 25px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-}
-
-.contentContainer {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.dashboardSection h2 {
-  font-size: 2.7rem;
-  color: #fff;
-  margin-bottom: 2rem;
-  text-align: center;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.dashboardButton {
+.betaButton {
   background-color: rgba(255, 255, 255, 0.2);
   color: #fff;
-  border: 2px solid #fff;
-  border-radius: 20px;
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 25px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.dashboardButton:hover {
+.betaButton:hover {
   background-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-5px);
+  transform: translateY(-2px);
+}
+
+.mainContent {
+  padding: 0 20px 20px;
 }
 
 .heroSection {
   position: relative;
-  height: 50vh;
+  height: 60vh;
   overflow: hidden;
   margin-bottom: 30px;
+  border-radius: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .heroVideo {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: brightness(0.7);
 }
 
 .heroContent {
@@ -108,17 +122,18 @@
 }
 
 .heroContent h2 {
-  font-size: 36px;
+  font-size: 48px;
   margin-bottom: 20px;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  font-weight: 700;
 }
 
 .newEscapeButton {
   background-color: rgba(255, 255, 255, 0.2);
   color: #fff;
-  border: 2px solid #fff;
+  border: none;
   padding: 15px 30px;
-  border-radius: 30px;
+  border-radius: 25px;
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
@@ -131,12 +146,27 @@
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
 }
 
-.exclusivities, .catalog {
-  padding: 20px;
+.buttonIcon {
+  margin-left: 10px;
+}
+
+.exclusivities, .events, .catalog, .newsletter {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 h3 {
-  font-size: 24px;
+  font-size: 28px;
   margin-bottom: 20px;
   color: #fff;
   position: relative;
@@ -154,33 +184,32 @@ h3::after {
 }
 
 .cardContainer {
-  display: flex;
-  overflow-x: auto;
-  gap: 20px;
-  padding-bottom: 20px;
-  scroll-snap-type: x mandatory;
+  margin: 0 -10px;
+}
+
+.cardWrapper {
+  padding: 10px;
 }
 
 .card {
-  flex: 0 0 280px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   color: #fff;
-  border-radius: 15px;
+  border-radius: 25px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   transition: all 0.3s ease;
-  scroll-snap-align: start;
 }
 
 .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .card img {
   width: 100%;
-  height: 180px;
+  height: 200px;
   object-fit: cover;
 }
 
@@ -194,7 +223,7 @@ h3::after {
   transition: all 0.3s ease;
 }
 
-.heartIcon:hover {
+.heartIcon:hover, .heartIcon.liked {
   color: #ff6b6b;
   transform: scale(1.2);
 }
@@ -211,6 +240,65 @@ h3::after {
 .cardContent p {
   font-size: 14px;
   color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 10px;
+}
+
+.rating {
+  margin-bottom: 10px;
+}
+
+.starFilled {
+  color: #FFD700;
+}
+
+.starEmpty {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.cardButton {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 25px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cardButton:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.slickArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  cursor: pointer;
+  font-size: 24px;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.slickArrow:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.slickPrev {
+  left: 10px;
+}
+
+.slickNext {
+  right: 10px;
 }
 
 .catalogGrid {
@@ -223,17 +311,17 @@ h3::after {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.2);
+  border: none;
   color: #fff;
-  border-radius: 15px;
+  border-radius: 25px;
   padding: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .catalogButton:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-3px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
@@ -249,13 +337,6 @@ h3::after {
   font-weight: bold;
 }
 
-.sectionHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
 .seeMoreLink {
   color: #fff;
   text-decoration: none;
@@ -267,19 +348,33 @@ h3::after {
   color: rgba(255, 255, 255, 0.8);
 }
 
-@media (max-width: 768px) {
-  .heroContent h2 {
-    font-size: 28px;
-  }
+.newsletterForm {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
 
-  .newEscapeButton {
-    padding: 12px 24px;
-    font-size: 16px;
-  }
+.newsletterForm input {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 20px 0 0 20px;
+  font-size: 16px;
+  width: 250px;
+}
 
-  .catalogGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.subscribeButton {
+  background-color: #FF6B6B;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 0 20px 20px 0;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.subscribeButton:hover {
+  background-color: #FF8E8E;
 }
 
 .betaPopup {
@@ -290,24 +385,97 @@ h3::after {
   background-color: rgba(255, 107, 107, 0.9);
   color: white;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 15px;
   z-index: 1000;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.betaButton {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  border: 2px solid #fff;
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.betaButton:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.3);
+.fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+:global(.slick-dots) {
+  bottom: -30px;
+  display: flex !important;
+  justify-content: center;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  text-align: center;
+}
+
+:global(.slick-dots li) {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 0 5px;
+  padding: 0;
+  cursor: pointer;
+}
+
+:global(.slick-dots li button) {
+  font-size: 0;
+  line-height: 0;
+  display: block;
+  width: 20px;
+  height: 20px;
+  padding: 5px;
+  cursor: pointer;
+  color: transparent;
+  border: 0;
+  outline: none;
+  background: transparent;
+}
+
+:global(.slick-dots li button:before) {
+  font-size: 10px;
+  line-height: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  content: '•';
+  text-align: center;
+  opacity: .25;
+  color: white;
+}
+
+:global(.slick-dots li.slick-active button:before) {
+  opacity: .75;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .dashboardWrapper {
+    padding: 10px;
+  }
+
+  .dashboard {
+    border-radius: 30px;
+  }
+
+  .header {
+    padding: 15px;
+  }
+
+  .heroContent h2 {
+    font-size: 36px;
+  }
+
+  .newEscapeButton {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+
+  .catalogGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }

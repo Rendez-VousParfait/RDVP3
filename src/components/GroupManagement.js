@@ -21,7 +21,6 @@ const GroupManagement = () => {
   const [userGroups, setUserGroups] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedGroup, setSelectedGroup] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -118,18 +117,24 @@ const GroupManagement = () => {
       console.log(`Groupe mis à jour dans Firebase pour ${groupId}. Invités : ${updatedInvitedMembers.join(", ")}`);
 
       for (const email of emails) {
-        await sendInvitationEmail({ 
-          email, 
-          groupName, 
-          invitationLink: `https://votre-app.com/join-group/${groupId}` 
-        });
-        console.log(`Invitation envoyée à ${email}`);
+        try {
+          await sendInvitationEmail({ 
+            email, 
+            groupName, 
+            groupId
+          });
+          console.log(`Invitation envoyée à ${email}`);
+        } catch (error) {
+          console.error(`Erreur lors de l'envoi de l'invitation à ${email}:`, error);
+          alert(`Erreur lors de l'envoi de l'invitation à ${email}: ${error.message}`);
+        }
       }
 
-      console.log("Toutes les invitations ont été envoyées et le groupe a été mis à jour");
+      console.log("Toutes les invitations ont été traitées");
       navigate(`/groups/${groupId}`);  // Naviguer vers la page de gestion du groupe
     } catch (error) {
-      console.error("Erreur lors de l'envoi des invitations :", error);
+      console.error("Erreur lors du processus d'invitation :", error);
+      alert(`Erreur lors du processus d'invitation : ${error.message}`);
     }
   };
 

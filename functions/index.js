@@ -1,11 +1,9 @@
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
 const nodemailer = require('nodemailer');
 
-// Initialisation de l'application Firebase Admin
 admin.initializeApp();
 
-// Configuration du transporteur d'e-mail
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -51,23 +49,21 @@ exports.createUser = functions.https.onCall((data, context) => {
 
 // Fonction pour envoyer un e-mail d'invitation
 exports.sendInvitationEmail = functions.https.onCall(async (data, context) => {
-  // Vérification de l'authentification
+  console.log("Début de sendInvitationEmail avec données:", data);
+
   if (!context.auth) {
-    throw new functions.https.HttpsError(
-      "unauthenticated",
-      "User must be authenticated to send invitations."
-    );
+    console.log("Erreur: Utilisateur non authentifié");
+    throw new functions.https.HttpsError("unauthenticated", "User must be authenticated to send invitations.");
   }
 
-  const { email, groupName, invitationLink } = data;
+  const { email, groupName, groupId } = data;
 
-  // Vérification des données requises
-  if (!email || !groupName || !invitationLink) {
-    throw new functions.https.HttpsError(
-      "invalid-argument",
-      "Email, group name, and invitation link are required."
-    );
+  if (!email || !groupName || !groupId) {
+    console.log("Erreur: Données manquantes", { email, groupName, groupId });
+    throw new functions.https.HttpsError("invalid-argument", "Email, group name, and group ID are required.");
   }
+
+  const invitationLink = `https://03180a26-2db9-48f9-96be-160405a77d05-00-2ilb0tmq75o6f.spock.replit.dev/join-group/${encodeURIComponent(groupId)}`;
 
   const mailOptions = {
     from: 'Rendez-Vous Parfait <noreply@rendez-vous-parfait.com>',
@@ -82,11 +78,14 @@ exports.sendInvitationEmail = functions.https.onCall(async (data, context) => {
   };
 
   try {
+    console.log("Configuration de l'email:", mailOptions);
+    console.log("Tentative d'envoi d'e-mail à:", email);
     await transporter.sendMail(mailOptions);
-    console.log(`Invitation email sent successfully to ${email}`);
+    console.log("E-mail envoyé avec succès à:", email);
     return { success: true, message: "Invitation email sent successfully" };
   } catch (error) {
-    console.error("Erreur lors de l'envoi de l'e-mail:", error);
-    throw new functions.https.HttpsError('internal', "Impossible d'envoyer l'e-mail d'invitation.");
+    console.error("Erreur détaillée lors de l'envoi de l'e-mail:", error);
+    console.error("Stack trace:", error.stack);
+    throw new functions.https.HttpsError('internal', `Impossible d'envoyer l'e-mail d'invitation: ${error.message}`);
   }
 });

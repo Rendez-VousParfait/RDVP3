@@ -12,34 +12,69 @@ import {
   faMicrophone,
   faChevronRight,
   faMapMarkerAlt,
+  faStar,
+  faChevronLeft,
 } from "@fortawesome/free-solid-svg-icons";
+import Slider from "react-slick";
 import styles from "./Dashboard.module.css";
+import Tutorial from "../components/Tutorial";
 
-// Définition des constantes pour les médias
-const heroVideo = "https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-the-beach-1089-large.mp4";
-const parisImage = "https://images.pexels.com/photos/699466/pexels-photo-699466.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-const marseilleImage = "https://images.pexels.com/photos/4353229/pexels-photo-4353229.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-const bordeauxImage = "https://images.pexels.com/photos/6033986/pexels-photo-6033986.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-const lilleImage = "https://images.pexels.com/photos/16140703/pexels-photo-16140703.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-const lyonImage = "https://images.pexels.com/photos/13538314/pexels-photo-13538314.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-const strasbourgImage = "https://images.pexels.com/photos/6143037/pexels-photo-6143037.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const heroVideo =
+  "https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-the-beach-1089-large.mp4";
+const parisImage =
+  "https://images.pexels.com/photos/699466/pexels-photo-699466.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const marseilleImage =
+  "https://images.pexels.com/photos/4353229/pexels-photo-4353229.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const bordeauxImage =
+  "https://images.pexels.com/photos/6033986/pexels-photo-6033986.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const lilleImage =
+  "https://images.pexels.com/photos/16140703/pexels-photo-16140703.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const lyonImage =
+  "https://images.pexels.com/photos/13538314/pexels-photo-13538314.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const strasbourgImage =
+  "https://images.pexels.com/photos/6143037/pexels-photo-6143037.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
 
 function Dashboard() {
   const [showBetaPopup, setShowBetaPopup] = useState(false);
-  const [scrollPosition, setScrollPosition] = useState(0);
   const [likedCards, setLikedCards] = useState({});
   const [selectedLocation, setSelectedLocation] = useState("Bordeaux");
+  const [animatedElements, setAnimatedElements] = useState([]);
+  const [showTutorial, setShowTutorial] = useState(false);
 
-  const locations = ["Bordeaux", "Paris", "Marseille", "Lyon", "Lille", "Strasbourg"];
+  const locations = [
+    "Bordeaux",
+    "Paris",
+    "Marseille",
+    "Lyon",
+    "Lille",
+    "Strasbourg",
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrollPosition(window.scrollY);
+      const elements = document.querySelectorAll(".animateOnScroll");
+      elements.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (
+          rect.top <= window.innerHeight * 0.75 &&
+          !animatedElements.includes(el)
+        ) {
+          el.classList.add(styles.fadeIn);
+          setAnimatedElements((prev) => [...prev, el]);
+        }
+      });
     };
 
     window.addEventListener("scroll", handleScroll);
+
+    // Vérifier si le tutoriel a déjà été vu
+    const tutorialSeen = localStorage.getItem("tutorialSeen");
+    if (!tutorialSeen) {
+      setShowTutorial(true);
+    }
+
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [animatedElements]);
 
   const handleBetaClick = () => {
     setShowBetaPopup(true);
@@ -50,138 +85,279 @@ function Dashboard() {
     setLikedCards((prev) => ({ ...prev, [cardId]: !prev[cardId] }));
   };
 
-  return (
-    <div className={styles.dashboard}>
-      <header className={styles.header}>
-        <div className={styles.locationSelector}>
-          <FontAwesomeIcon icon={faMapMarkerAlt} className={styles.locationIcon} />
-          <select
-            value={selectedLocation}
-            onChange={(e) => setSelectedLocation(e.target.value)}
-            className={styles.locationSelect}
-          >
-            {locations.map((location) => (
-              <option key={location} value={location}>
-                {location}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className={styles.headerButtons}>
-          <Link to="/profile" className={styles.iconButton}>
-            <FontAwesomeIcon icon={faUser} />
-          </Link>
-          <Link to="/blog" className={styles.iconButton}>
-            <FontAwesomeIcon icon={faBlog} />
-          </Link>
-          <button onClick={handleBetaClick} className={styles.betaButton}>
-            Beta
-          </button>
-        </div>
-      </header>
+  const renderStars = (rating) => {
+    return Array.from({ length: 5 }, (_, index) => (
+      <FontAwesomeIcon
+        key={index}
+        icon={faStar}
+        className={index < rating ? styles.starFilled : styles.starEmpty}
+      />
+    ));
+  };
 
-      <main className={styles.mainContainer}>
-        <section className={styles.heroSection}>
-          <video autoPlay muted loop className={styles.heroVideo}>
-            <source src={heroVideo} type="video/mp4" />
-          </video>
-          <div className={styles.heroContent}>
-            <h2>Découvrez {selectedLocation}</h2>
-            <p>Vivez des expériences uniques</p>
-            <button className={styles.newEscapeButton}>
-              Planifier mon escapade
-              <FontAwesomeIcon icon={faChevronRight} className={styles.buttonIcon} />
+  const CustomDots = (dots) => (
+    <div
+      style={{
+        position: "absolute",
+        bottom: "-30px",
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <div style={{ display: "flex", overflow: "hidden" }}>{dots}</div>
+    </div>
+  );
+
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    prevArrow: (
+      <CustomArrow icon={faChevronLeft} className={styles.slickPrev} />
+    ),
+    nextArrow: (
+      <CustomArrow icon={faChevronRight} className={styles.slickNext} />
+    ),
+    appendDots: CustomDots,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
+  };
+
+  function CustomArrow({ className, icon, onClick }) {
+    return (
+      <div className={`${styles.slickArrow} ${className}`} onClick={onClick}>
+        <FontAwesomeIcon icon={icon} />
+      </div>
+    );
+  }
+
+  const cardData = [
+    {
+      id: "paris",
+      img: parisImage,
+      title: "Paris",
+      desc: "La Ville de l'Amour",
+      rating: 4,
+    },
+    {
+      id: "marseille",
+      img: marseilleImage,
+      title: "Marseille",
+      desc: "Eaux Turquoises du Sud",
+      rating: 5,
+    },
+    {
+      id: "lyon",
+      img: lyonImage,
+      title: "Lyon",
+      desc: "Capitale Gastronomique",
+      rating: 4,
+    },
+    {
+      id: "bordeaux",
+      img: bordeauxImage,
+      title: "Bordeaux",
+      desc: "Capitale du Vin",
+      rating: 5,
+    },
+    {
+      id: "lille",
+      img: lilleImage,
+      title: "Lille",
+      desc: "Charme du Nord",
+      rating: 4,
+    },
+    {
+      id: "strasbourg",
+      img: strasbourgImage,
+      title: "Strasbourg",
+      desc: "Cœur de l'Europe",
+      rating: 5,
+    },
+  ];
+
+  const handleTutorialComplete = () => {
+    setShowTutorial(false);
+    localStorage.setItem("tutorialSeen", "true");
+  };
+
+  const handleTutorialSkip = () => {
+    setShowTutorial(false);
+    localStorage.setItem("tutorialSeen", "true");
+  };
+
+  return (
+    <div className={styles.dashboardWrapper}>
+      <div className={styles.dashboard}>
+        <header className={styles.header}>
+          <div className={styles.locationSelector}>
+            <FontAwesomeIcon
+              icon={faMapMarkerAlt}
+              className={styles.locationIcon}
+            />
+            <select
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+              className={styles.locationSelect}
+            >
+              {locations.map((location) => (
+                <option key={location} value={location}>
+                  {location}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={styles.headerButtons}>
+            <Link to="/profile" className={styles.iconButton}>
+              <FontAwesomeIcon icon={faUser} />
+            </Link>
+            <Link to="/blog" className={styles.iconButton}>
+              <FontAwesomeIcon icon={faBlog} />
+            </Link>
+            <button onClick={handleBetaClick} className={styles.betaButton}>
+              Beta
             </button>
           </div>
-        </section>
+        </header>
 
-        <section className={styles.exclusivities}>
-          <h3>Exclusivités</h3>
-          <div className={styles.cardContainer}>
-            {[
-              { id: "paris", img: parisImage, title: "Paris", desc: "La Ville de l'Amour" },
-              { id: "marseille", img: marseilleImage, title: "Marseille", desc: "Eaux Turquoises du Sud" },
-              { id: "lyon", img: lyonImage, title: "Lyon", desc: "Capitale Gastronomique" },
-            ].map((card) => (
-              <div key={card.id} className={styles.card}>
-                <img src={card.img} alt={card.title} />
+        <main className={styles.mainContent}>
+          <section className={`${styles.heroSection} animateOnScroll`}>
+            <video autoPlay muted loop className={styles.heroVideo}>
+              <source src={heroVideo} type="video/mp4" />
+            </video>
+            <div className={styles.heroContent}>
+              <h2>Découvrez {selectedLocation}</h2>
+              <p>Vivez des expériences uniques</p>
+              <button className={styles.newEscapeButton}>
+                Planifier mon escapade
                 <FontAwesomeIcon
-                  icon={faHeart}
-                  className={`${styles.heartIcon} ${likedCards[card.id] ? styles.liked : ""}`}
-                  onClick={() => handleLikeClick(card.id)}
+                  icon={faChevronRight}
+                  className={styles.buttonIcon}
                 />
-                <div className={styles.cardContent}>
-                  <h4>{card.title}</h4>
-                  <p>{card.desc}</p>
-                  <button className={styles.cardButton}>Réserver</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className={styles.catalog}>
-          <h3>Nos activités</h3>
-          <div className={styles.catalogGrid}>
-            {[
-              { icon: faFlag, label: "Aventures" },
-              { icon: faGlassMartini, label: "Vie nocturne" },
-              { icon: faPaintBrush, label: "Arts & Culture" },
-              { icon: faCamera, label: "Photographie" },
-              { icon: faMicrophone, label: "Musique live" },
-            ].map((item, index) => (
-              <button key={index} className={styles.catalogButton}>
-                <FontAwesomeIcon icon={item.icon} />
-                <span>{item.label}</span>
               </button>
-            ))}
-          </div>
-        </section>
+            </div>
+          </section>
 
-        <section className={styles.events}>
-          <div className={styles.sectionHeader}>
-            <h3>Événements à venir</h3>
-            <Link to="/events" className={styles.seeMoreLink}>
-              Voir plus
-              <FontAwesomeIcon icon={faChevronRight} className={styles.linkIcon} />
-            </Link>
-          </div>
-          <div className={styles.cardContainer}>
-            {[
-              { id: "bordeaux", img: bordeauxImage, title: "Festival du Vin", desc: "Meilleurs crus de la région" },
-              { id: "lille", img: lilleImage, title: "Braderie de Lille", desc: "Plus grand marché aux puces" },
-              { id: "strasbourg", img: strasbourgImage, title: "Marché de Noël", desc: "Magie des fêtes" },
-            ].map((card) => (
-              <div key={card.id} className={styles.card}>
-                <img src={card.img} alt={card.title} />
-                <FontAwesomeIcon
-                  icon={faHeart}
-                  className={`${styles.heartIcon} ${likedCards[card.id] ? styles.liked : ""}`}
-                  onClick={() => handleLikeClick(card.id)}
-                />
-                <div className={styles.cardContent}>
-                  <h4>{card.title}</h4>
-                  <p>{card.desc}</p>
-                  <button className={styles.cardButton}>En savoir plus</button>
+          <section className={`${styles.exclusivities} animateOnScroll`}>
+            <h3>Exclusivités</h3>
+            <Slider {...sliderSettings} className={styles.cardContainer}>
+              {cardData.map((card) => (
+                <div key={card.id} className={styles.cardWrapper}>
+                  <div className={styles.card}>
+                    <img src={card.img} alt={card.title} />
+                    <FontAwesomeIcon
+                      icon={faHeart}
+                      className={`${styles.heartIcon} ${likedCards[card.id] ? styles.liked : ""}`}
+                      onClick={() => handleLikeClick(card.id)}
+                    />
+                    <div className={styles.cardContent}>
+                      <h4>{card.title}</h4>
+                      <p>{card.desc}</p>
+                      <div className={styles.rating}>
+                        {renderStars(card.rating)}
+                      </div>
+                      <button className={styles.cardButton}>Réserver</button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </section>
+              ))}
+            </Slider>
+          </section>
 
-        <section className={styles.newsletter}>
-          <h3>Restez informé</h3>
-          <p>Recevez nos meilleures offres</p>
-          <form className={styles.newsletterForm}>
-            <input type="email" placeholder="Votre e-mail" required />
-            <button type="submit" className={styles.subscribeButton}>S'abonner</button>
-          </form>
-        </section>
-      </main>
+          <section className={`${styles.catalog} animateOnScroll`}>
+            <h3>Nos activités</h3>
+            <div className={styles.catalogGrid}>
+              {[
+                { icon: faFlag, label: "Aventures" },
+                { icon: faGlassMartini, label: "Vie nocturne" },
+                { icon: faPaintBrush, label: "Arts & Culture" },
+                { icon: faCamera, label: "Photographie" },
+                { icon: faMicrophone, label: "Musique live" },
+              ].map((item, index) => (
+                <button key={index} className={styles.catalogButton}>
+                  <FontAwesomeIcon icon={item.icon} />
+                  <span>{item.label}</span>
+                </button>
+              ))}
+            </div>
+          </section>
 
-      {showBetaPopup && (
-        <div className={styles.betaPopup}>Beta Test en cours...</div>
-      )}
+          <section className={`${styles.events} animateOnScroll`}>
+            <div className={styles.sectionHeader}>
+              <h3>Événements à venir</h3>
+              <Link to="/events" className={styles.seeMoreLink}>
+                Voir plus
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  className={styles.linkIcon}
+                />
+              </Link>
+            </div>
+            <Slider {...sliderSettings} className={styles.cardContainer}>
+              {cardData.map((card) => (
+                <div key={card.id} className={styles.cardWrapper}>
+                  <div className={styles.card}>
+                    <img src={card.img} alt={card.title} />
+                    <FontAwesomeIcon
+                      icon={faHeart}
+                      className={`${styles.heartIcon} ${likedCards[card.id] ? styles.liked : ""}`}
+                      onClick={() => handleLikeClick(card.id)}
+                    />
+                    <div className={styles.cardContent}>
+                      <h4>{card.title}</h4>
+                      <p>{card.desc}</p>
+                      <div className={styles.rating}>
+                        {renderStars(card.rating)}
+                      </div>
+                      <button className={styles.cardButton}>
+                        En savoir plus
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </Slider>
+          </section>
+
+          <section className={`${styles.newsletter} animateOnScroll`}>
+            <h3>Restez informé</h3>
+            <p>Recevez nos meilleures offres</p>
+            <form className={styles.newsletterForm}>
+              <input type="email" placeholder="Votre e-mail" required />
+              <button type="submit" className={styles.subscribeButton}>
+                S'abonner
+              </button>
+            </form>
+          </section>
+        </main>
+
+        {showBetaPopup && (
+          <div className={styles.betaPopup}>Beta Test en cours...</div>
+        )}
+
+        {showTutorial && (
+          <Tutorial
+            onComplete={handleTutorialComplete}
+            onSkip={handleTutorialSkip}
+          />
+        )}
+      </div>
     </div>
   );
 }

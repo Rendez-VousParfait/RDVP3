@@ -8,8 +8,12 @@ import BlogList from "../components/blog/BlogList";
 import BlogPost from "../components/blog/BlogPost";
 import SwiperPage from "../pages/SwiperPage";
 import GroupManagement from "../components/GroupManagement";
-import GroupDetails from "../components/GroupDetails"; // Nouveau import
+import GroupDetails from "../components/GroupDetails";
 import styles from "./AppLayout.module.css";
+
+// Importations pour Slick
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function AppLayout() {
   return (
@@ -23,7 +27,7 @@ function AppLayout() {
           <Route path="/blog/:id" element={<BlogPost />} />
           <Route path="/swiper" element={<SwiperPage />} />
           <Route path="/groups" element={<GroupManagement />} />
-          <Route path="/groups/:groupId" element={<GroupDetails />} /> {/* Nouvelle route */}
+          <Route path="/groups/:groupId" element={<GroupDetails />} />
         </Routes>
       </main>
       <AppNavigation />
