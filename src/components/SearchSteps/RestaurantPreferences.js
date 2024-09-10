@@ -18,6 +18,8 @@ const RestaurantPreferences = ({
   prevStep,
   currentStep,
   totalSteps,
+  isGroupSearch,
+  userRole,
 }) => {
   const cuisineTypes = [
     { id: "duMonde", icon: faGlobe, label: "Du monde" },
@@ -33,6 +35,8 @@ const RestaurantPreferences = ({
   ];
 
   const handlePreferenceClick = (category, value) => {
+    if (isGroupSearch && userRole !== 'creator') return;
+
     const currentPreferences = formData.restaurantPreferences[category] || [];
     const updatedPreferences = currentPreferences.includes(value)
       ? currentPreferences.filter((item) => item !== value)
@@ -44,12 +48,55 @@ const RestaurantPreferences = ({
     });
   };
 
+  if (isGroupSearch && userRole !== 'creator') {
+    return (
+      <div className={styles["search-step"]}>
+        <div className={styles["progress-indicator"]}>
+          Étape {currentStep} sur {totalSteps}
+        </div>
+        <h2 className={styles["step-title"]}>Préférences Restaurants du Groupe</h2>
+        <div className={styles["group-preferences-summary"]}>
+          <h3>Types de cuisine sélectionnés :</h3>
+          <ul>
+            {formData.restaurantPreferences.cuisineTypes?.map(type => (
+              <li key={type}>
+                <FontAwesomeIcon icon={cuisineTypes.find(ct => ct.id === type)?.icon} />
+                {" "}
+                {cuisineTypes.find(ct => ct.id === type)?.label}
+              </li>
+            ))}
+          </ul>
+          <h3>Équipements sélectionnés :</h3>
+          <ul>
+            {formData.restaurantPreferences.equipments?.map(eq => (
+              <li key={eq}>
+                <FontAwesomeIcon icon={equipments.find(e => e.id === eq)?.icon} />
+                {" "}
+                {equipments.find(e => e.id === eq)?.label}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className={styles["navigation-buttons"]}>
+          <button className={styles["nav-button"]} onClick={prevStep}>
+            Précédent
+          </button>
+          <button className={styles["nav-button"]} onClick={nextStep}>
+            Suivant
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles["search-step"]}>
       <div className={styles["progress-indicator"]}>
         Étape {currentStep} sur {totalSteps}
       </div>
-      <h2 className={styles["step-title"]}>Préférences Restaurants</h2>
+      <h2 className={styles["step-title"]}>
+        {isGroupSearch ? "Préférences Restaurants du Groupe" : "Préférences Restaurants"}
+      </h2>
 
       <div className={styles["preferences-section"]}>
         <h3 className={styles["section-title"]}>Type de cuisine</h3>

@@ -35,6 +35,8 @@ const ActivityPreferences = ({
   prevStep,
   currentStep,
   totalSteps,
+  isGroupSearch,
+  userRole,
 }) => {
   const [flippedCards, setFlippedCards] = useState({});
 
@@ -123,6 +125,7 @@ const ActivityPreferences = ({
   ];
 
   const handlePreferenceClick = (category, value) => {
+    if (isGroupSearch && userRole !== 'creator') return;
     const currentPreferences = formData.activityPreferences[category] || [];
     const updatedPreferences = currentPreferences.includes(value)
       ? currentPreferences.filter((item) => item !== value)
@@ -135,6 +138,7 @@ const ActivityPreferences = ({
   };
 
   const handleSubCategoryClick = (activityId, subCategoryId) => {
+    if (isGroupSearch && userRole !== 'creator') return;
     const currentSubCategories =
       formData.activityPreferences.subCategories || {};
     const updatedSubCategories = {
@@ -153,10 +157,12 @@ const ActivityPreferences = ({
   };
 
   const toggleFlip = (id) => {
+    if (isGroupSearch && userRole !== 'creator') return;
     setFlippedCards((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const resetSelections = () => {
+    if (isGroupSearch && userRole !== 'creator') return;
     handleInputChange("activityPreferences", {
       types: [],
       subCategories: {},
@@ -179,6 +185,7 @@ const ActivityPreferences = ({
   };
 
   const surpriseMe = () => {
+    if (isGroupSearch && userRole !== 'creator') return;
     const randomTypes = activityTypes
       .sort(() => 0.5 - Math.random())
       .slice(0, 3)
@@ -213,12 +220,51 @@ const ActivityPreferences = ({
     setFlippedCards({});
   };
 
+  if (isGroupSearch && userRole !== 'creator') {
+    return (
+      <div className={styles["search-step"]}>
+        <div className={styles["progress-indicator"]}>
+          Étape {currentStep} sur {totalSteps}
+        </div>
+        <h2 className={styles["step-title"]}>Préférences Activités du Groupe</h2>
+        <div className={styles["group-preferences-summary"]}>
+          <h3>Types d'activités sélectionnés :</h3>
+          <ul>
+            {formData.activityPreferences.types?.map(type => (
+              <li key={type}>{activityTypes.find(t => t.id === type)?.label}</li>
+            ))}
+          </ul>
+          <h3>Encadrement :</h3>
+          <p>{formData.activityPreferences.encadrement || "Non spécifié"}</p>
+          <h3>Accessibilité :</h3>
+          <p>{formData.activityPreferences.accessibility || "Non spécifié"}</p>
+          <h3>Intérêts particuliers :</h3>
+          <ul>
+            {formData.activityPreferences.specialInterests?.map(interest => (
+              <li key={interest}>{specialInterests.find(i => i.id === interest)?.label}</li>
+            ))}
+          </ul>
+        </div>
+        <div className={styles["navigation-buttons"]}>
+          <button className={styles["nav-button"]} onClick={prevStep}>
+            Précédent
+          </button>
+          <button className={styles["nav-button"]} onClick={nextStep}>
+            Suivant
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles["search-step"]}>
       <div className={styles["progress-indicator"]}>
         Étape {currentStep} sur {totalSteps}
       </div>
-      <h2 className={styles["step-title"]}>Préférences Activités</h2>
+      <h2 className={styles["step-title"]}>
+        {isGroupSearch ? "Préférences Activités du Groupe" : "Préférences Activités"}
+      </h2>
 
       <div className={styles["selection-counter"]}>
         Sélections totales : {getTotalSelections()}
@@ -365,7 +411,7 @@ const ActivityPreferences = ({
           Précédent
         </button>
         <button className={styles["nav-button"]} onClick={nextStep}>
-          Rechercher
+          {isGroupSearch ? "Suivant" : "Rechercher"}
         </button>
       </div>
     </div>

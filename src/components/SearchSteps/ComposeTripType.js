@@ -9,6 +9,8 @@ const ComposeTripType = ({
   nextStep,
   currentStep,
   totalSteps,
+  isGroupSearch,
+  userRole,
 }) => {
   const tripTypes = [
     { id: "amis", icon: faUsers, label: "Amis" },
@@ -40,6 +42,25 @@ const ComposeTripType = ({
     }
     nextStep();
   };
+
+  // Si c'est une recherche de groupe et que l'utilisateur n'est pas le créateur, on affiche juste les informations
+  if (isGroupSearch && userRole !== 'creator') {
+    return (
+      <div className={styles["search-step"]}>
+        <div className={styles["progress-indicator"]}>
+          Étape {currentStep} sur {totalSteps}
+        </div>
+        <h2 className={styles["step-title"]}>Détails du voyage de groupe</h2>
+        <p>Type de voyage : {formData.tripType}</p>
+        <p>Nombre de personnes : {formData.personCount}</p>
+        <div className={styles["next-button-container"]}>
+          <button className={styles["next-button"]} onClick={nextStep}>
+            Suivant
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles["search-step"]}>

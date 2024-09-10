@@ -10,6 +10,8 @@ const PersonalizeAdvanced = ({
   prevStep,
   currentStep,
   totalSteps,
+  isGroupSearch,
+  userRole,
 }) => {
   const [personalizationType, setPersonalizationType] = useState(
     formData.personalizationType || "ambiance"
@@ -31,10 +33,14 @@ const PersonalizeAdvanced = ({
   ];
 
   useEffect(() => {
-    handleInputChange("personalizationType", personalizationType);
-  }, [personalizationType, handleInputChange]);
+    if (!isGroupSearch || userRole === 'creator') {
+      handleInputChange("personalizationType", personalizationType);
+    }
+  }, [personalizationType, handleInputChange, isGroupSearch, userRole]);
 
   const toggleSelection = (item, selectionType) => {
+    if (isGroupSearch && userRole !== 'creator') return;
+
     if (selectionType === "activities") {
       const updatedActivities = formData.activities?.includes(item)
         ? formData.activities.filter(a => a !== item)
@@ -45,12 +51,50 @@ const PersonalizeAdvanced = ({
     }
   };
 
+  if (isGroupSearch && userRole !== 'creator') {
+    return (
+      <div className={styles["search-step"]}>
+        <div className={styles["progress-indicator"]}>
+          Étape {currentStep} sur {totalSteps}
+        </div>
+        <h2 className={styles["step-title"]}>Personnalisation du séjour de groupe</h2>
+        <div className={styles["group-preferences-summary"]}>
+          <h3>Type de personnalisation : {formData.personalizationType}</h3>
+          {formData.personalizationType === "ambiance" && (
+            <p>Ambiance sélectionnée : {formData.ambiance}</p>
+          )}
+          {formData.personalizationType === "preferences" && (
+            <>
+              <h4>Activités sélectionnées :</h4>
+              <ul>
+                {formData.activities?.map(activity => (
+                  <li key={activity}>{activity}</li>
+                ))}
+              </ul>
+              <p>Accessibilité : {formData.accessibility === "car" ? "En voiture" : "Transports en commun"}</p>
+            </>
+          )}
+        </div>
+        <div className={styles["navigation-buttons"]}>
+          <button className={styles["nav-button"]} onClick={prevStep}>
+            Précédent
+          </button>
+          <button className={styles["nav-button"]} onClick={nextStep}>
+            Suivant
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles["search-step"]}>
       <div className={styles["progress-indicator"]}>
         Étape {currentStep} sur {totalSteps}
       </div>
-      <h2 className={styles["step-title"]}>Personnalise ton séjour</h2>
+      <h2 className={styles["step-title"]}>
+        {isGroupSearch ? "Personnalise le séjour de groupe" : "Personnalise ton séjour"}
+      </h2>
 
       <div className={styles["personalization-type"]}>
         <button

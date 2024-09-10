@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCog, faSignOutAlt, faTrash, faSearch, faSync, faUserPlus } from "@fortawesome/free-solid-svg-icons";
@@ -115,6 +115,10 @@ const GroupDetails = () => {
     }
   };
 
+  const handleGroupSearch = () => {
+    navigate(`/search?groupId=${groupId}`);
+  };
+
   if (isLoading) {
     return <div className={styles.loading}>Loading...</div>;
   }
@@ -182,6 +186,9 @@ const GroupDetails = () => {
             <FontAwesomeIcon icon={faTrash} /> Supprimer le groupe
           </button>
         )}
+        <button className={styles.groupActionButton} onClick={handleGroupSearch}>
+          <FontAwesomeIcon icon={faSearch} /> Recherche de groupe
+        </button>
       </div>
       {showInviteModal && (
         <div className={styles.modalOverlay}>

@@ -5,24 +5,58 @@ import { doc, setDoc } from "firebase/firestore";
 import { auth, db, googleProvider, storage } from "../firebase";
 import { AuthContext } from "../context/AuthContext";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faUser,
-  faEnvelope,
-  faLock,
-  faPhone,
-  faMapMarkerAlt,
-  faImage,
-  faPlane,
-  faHotel,
-  faUtensils,
-  faLanguage,
-  faGlobe,
-} from "@fortawesome/free-solid-svg-icons";
-import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+  ThemeProvider,
+  createTheme,
+  CssBaseline,
+  Container,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Stepper,
+  Step,
+  StepLabel,
+  Grid,
+  Checkbox,
+  FormControlLabel,
+  Chip,
+  InputAdornment,
+  Card,
+  CardContent,
+} from "@mui/material";
+import {
+  Person,
+  Email,
+  Lock,
+  Phone,
+  Home,
+  Image,
+  FlightTakeoff,
+  Public,
+  Google,
+} from "@mui/icons-material";
+import { motion, AnimatePresence } from "framer-motion";
+import "./Signup.css";
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#FF416C",
+    },
+    secondary: {
+      main: "#8A2387",
+    },
+    text: {
+      primary: "#333333",
+    },
+  },
+});
+
+const MotionContainer = motion(Container);
 
 const Signup = () => {
-  const [step, setStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -34,7 +68,6 @@ const Signup = () => {
       type: "",
       accommodation: [],
       activities: [],
-      cuisine: [],
     },
     languages: [],
     destinations: [],
@@ -72,7 +105,7 @@ const Signup = () => {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,
-        formData.password,
+        formData.password
       );
       const user = userCredential.user;
 
@@ -81,7 +114,7 @@ const Signup = () => {
         const storageRef = ref(storage, `profilePictures/${user.uid}`);
         const uploadTask = uploadBytesResumable(
           storageRef,
-          formData.profilePicture,
+          formData.profilePicture
         );
         await uploadTask;
         profilePictureUrl = await getDownloadURL(storageRef);
@@ -121,18 +154,21 @@ const Signup = () => {
     }
   };
 
-  const nextStep = () => setStep((prevStep) => prevStep + 1);
-  const prevStep = () => setStep((prevStep) => prevStep - 1);
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
 
-  const renderProgressBar = () => (
-    <div className="progressIndicator">
-      {[0, 1, 2].map((i) => (
-        <div key={i} className={`progressStep ${i <= step ? "active" : ""}`} />
-      ))}
-    </div>
-  );
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
 
-  const renderStep = () => {
+  const steps = [
+    "Informations personnelles",
+    "Préférences de voyage",
+    "Langues et destinations",
+  ];
+
+  const getStepContent = (step) => {
     switch (step) {
       case 0:
         return (
@@ -140,7 +176,6 @@ const Signup = () => {
             formData={formData}
             handleInputChange={handleInputChange}
             handleProfilePictureChange={handleProfilePictureChange}
-            nextStep={nextStep}
           />
         );
       case 1:
@@ -148,8 +183,6 @@ const Signup = () => {
           <TravelPreferences
             formData={formData}
             handleInputChange={handleInputChange}
-            nextStep={nextStep}
-            prevStep={prevStep}
           />
         );
       case 2:
@@ -157,28 +190,106 @@ const Signup = () => {
           <LanguagesAndDestinations
             formData={formData}
             handleInputChange={handleInputChange}
-            handleSignup={handleSignup}
-            prevStep={prevStep}
           />
         );
       default:
-        return null;
+        return "Unknown step";
     }
   };
 
   return (
-    <div className="signupContainer">
-      {renderProgressBar()}
-      <h2>Inscription</h2>
-      {renderStep()}
-      {error && <p className="error">{error}</p>}
-      {step === 0 && (
-        <button onClick={handleGoogleSignup} className="googleButton">
-          <FontAwesomeIcon icon={faGoogle} />
-          S'inscrire avec Google
-        </button>
-      )}
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box
+        sx={{
+          background: "white",
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <MotionContainer
+          component="main"
+          maxWidth="sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Card
+            sx={{
+              backgroundColor: "rgba(255, 255, 255, 0.8)",
+              borderRadius: "16px",
+              padding: "24px",
+              boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+            }}
+          >
+            <CardContent>
+              <Typography component="h1" variant="h4" align="center" gutterBottom>
+                Inscription
+              </Typography>
+              <Stepper activeStep={activeStep} alternativeLabel>
+                {steps.map((label) => (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+              <Box sx={{ mt: 4 }}>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeStep}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {getStepContent(activeStep)}
+                  </motion.div>
+                </AnimatePresence>
+                <Box
+                  sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}
+                >
+                  <Button
+                    color="inherit"
+                    disabled={activeStep === 0}
+                    onClick={handleBack}
+                    sx={{ mr: 1 }}
+                  >
+                    Précédent
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={
+                      activeStep === steps.length - 1 ? handleSignup : handleNext
+                    }
+                  >
+                    {activeStep === steps.length - 1 ? "S'inscrire" : "Suivant"}
+                  </Button>
+                </Box>
+              </Box>
+              {error && (
+                <Typography color="error" align="center" sx={{ mt: 2 }}>
+                  {error}
+                </Typography>
+              )}
+              {activeStep === 0 && (
+                <Button
+                  startIcon={<Google />}
+                  variant="outlined"
+                  onClick={handleGoogleSignup}
+                  fullWidth
+                  sx={{ mt: 2 }}
+                >
+                  S'inscrire avec Google
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </MotionContainer>
+      </Box>
+    </ThemeProvider>
   );
 };
 
@@ -186,207 +297,270 @@ const BasicInfo = ({
   formData,
   handleInputChange,
   handleProfilePictureChange,
-  nextStep,
 }) => (
-  <div className="formStep">
-    <div className="inputGroup">
-      <FontAwesomeIcon icon={faUser} className="inputIcon" />
-      <input
-        type="text"
+  <Grid container spacing={2}>
+    <Grid item xs={12}>
+      <TextField
+        fullWidth
+        label="Nom d'utilisateur"
         value={formData.username}
         onChange={(e) => handleInputChange("username", e.target.value)}
-        placeholder="Nom d'utilisateur"
-        required
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Person />
+            </InputAdornment>
+          ),
+        }}
       />
-    </div>
-    <div className="inputGroup">
-      <FontAwesomeIcon icon={faEnvelope} className="inputIcon" />
-      <input
+    </Grid>
+    <Grid item xs={12}>
+      <TextField
+        fullWidth
+        label="Email"
         type="email"
         value={formData.email}
         onChange={(e) => handleInputChange("email", e.target.value)}
-        placeholder="Email"
-        required
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Email />
+            </InputAdornment>
+          ),
+        }}
       />
-    </div>
-    <div className="inputGroup">
-      <FontAwesomeIcon icon={faLock} className="inputIcon" />
-      <input
+    </Grid>
+    <Grid item xs={12}>
+      <TextField
+        fullWidth
+        label="Mot de passe"
         type="password"
         value={formData.password}
         onChange={(e) => handleInputChange("password", e.target.value)}
-        placeholder="Mot de passe"
-        required
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Lock />
+            </InputAdornment>
+          ),
+        }}
       />
-    </div>
-    <div className="inputGroup">
-      <FontAwesomeIcon icon={faPhone} className="inputIcon" />
-      <input
-        type="tel"
+    </Grid>
+    <Grid item xs={12}>
+      <TextField
+        fullWidth
+        label="Téléphone"
         value={formData.phone}
         onChange={(e) => handleInputChange("phone", e.target.value)}
-        placeholder="Téléphone"
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Phone />
+            </InputAdornment>
+          ),
+        }}
       />
-    </div>
-    <div className="inputGroup">
-      <FontAwesomeIcon icon={faMapMarkerAlt} className="inputIcon" />
-      <input
-        type="text"
+    </Grid>
+    <Grid item xs={12}>
+      <TextField
+        fullWidth
+        label="Adresse"
         value={formData.address}
         onChange={(e) => handleInputChange("address", e.target.value)}
-        placeholder="Adresse"
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Home />
+            </InputAdornment>
+          ),
+        }}
       />
-    </div>
-    <div className="inputGroup">
-      <FontAwesomeIcon icon={faImage} className="inputIcon" />
-      <input
-        type="file"
-        onChange={handleProfilePictureChange}
-        accept="image/*"
-      />
-    </div>
-    <button onClick={nextStep} className="nextButton">
-      Suivant
-    </button>
-  </div>
+    </Grid>
+    <Grid item xs={12}>
+      <Button
+        variant="outlined"
+        component="label"
+        startIcon={<Image />}
+        fullWidth
+      >
+        Choisir une photo de profil
+        <input
+          type="file"
+          hidden
+          accept="image/*"
+          onChange={handleProfilePictureChange}
+        />
+      </Button>
+    </Grid>
+  </Grid>
 );
 
-const TravelPreferences = ({
-  formData,
-  handleInputChange,
-  nextStep,
-  prevStep,
-}) => (
-  <div className="formStep">
-    <h3>Type de voyage préféré</h3>
-    <div className="optionButtons">
-      {["Solo", "Couple", "Famille", "Amis"].map((type) => (
-        <button
-          key={type}
-          className={`optionButton ${formData.travelPreferences.type === type ? "selected" : ""}`}
-          onClick={() =>
-            handleInputChange("travelPreferences", {
-              ...formData.travelPreferences,
-              type,
-            })
+const TravelPreferences = ({ formData, handleInputChange }) => (
+  <Grid container spacing={2}>
+    <Grid item xs={12}>
+      <Typography variant="h6" gutterBottom>
+        Type de voyage préféré
+      </Typography>
+      <Grid container spacing={1}>
+        {["Solo", "Couple", "Famille", "Amis"].map((type) => (
+          <Grid item key={type}>
+            <Button
+              variant={
+                formData.travelPreferences.type === type
+                  ? "contained"
+                  : "outlined"
+              }
+              onClick={() =>
+                handleInputChange("travelPreferences", {
+                  ...formData.travelPreferences,
+                  type,
+                })
+              }
+              startIcon={<FlightTakeoff />}
+            >
+              {type}
+            </Button>
+          </Grid>
+        ))}
+      </Grid>
+    </Grid>
+    <Grid item xs={12}>
+      <Typography variant="h6" gutterBottom>
+        Hébergement préféré
+      </Typography>
+      <Grid container spacing={1}>
+        {["Hôtel", "Appartement", "Camping", "Auberge de jeunesse"].map(
+          (acc) => (
+            <Grid item key={acc}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.travelPreferences.accommodation.includes(
+                      acc
+                    )}
+                    onChange={(e) => {
+                      const newAccommodation = e.target.checked
+                        ? [...formData.travelPreferences.accommodation, acc]
+                        : formData.travelPreferences.accommodation.filter(
+                            (a) => a !== acc
+                          );
+                      handleInputChange("travelPreferences", {
+                        ...formData.travelPreferences,
+                        accommodation: newAccommodation,
+                      });
+                    }}
+                  />
+                }
+                label={acc}
+              />
+            </Grid>
+          )
+        )}
+      </Grid>
+    </Grid>
+    <Grid item xs={12}>
+      <Typography variant="h6" gutterBottom>
+        Activités préférées
+      </Typography>
+      <Grid container spacing={1}>
+        {["Plage", "Montagne", "Ville", "Culture", "Sport"].map((activity) => (
+          <Grid item key={activity}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.travelPreferences.activities.includes(
+                    activity
+                  )}
+                  onChange={(e) => {
+                    const newActivities = e.target.checked
+                      ? [...formData.travelPreferences.activities, activity]
+                      : formData.travelPreferences.activities.filter(
+                          (a) => a !== activity
+                        );
+                    handleInputChange("travelPreferences", {
+                      ...formData.travelPreferences,
+                      activities: newActivities,
+                    });
+                  }}
+                />
+              }
+              label={activity}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    </Grid>
+  </Grid>
+);
+
+const LanguagesAndDestinations = ({ formData, handleInputChange }) => (
+  <Grid container spacing={2}>
+    <Grid item xs={12}>
+      <Typography variant="h6" gutterBottom>
+        Langues parlées
+      </Typography>
+      <Grid container spacing={1}>
+        {["Français", "Anglais", "Espagnol", "Allemand", "Italien"].map(
+          (lang) => (
+            <Grid item key={lang}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.languages.includes(lang)}
+                    onChange={(e) => {
+                      const newLanguages = e.target.checked
+                        ? [...formData.languages, lang]
+                        : formData.languages.filter((l) => l !== lang);
+                      handleInputChange("languages", newLanguages);
+                    }}
+                  />
+                }
+                label={lang}
+              />
+            </Grid>
+          )
+        )}
+      </Grid>
+    </Grid>
+    <Grid item xs={12}>
+      <Typography variant="h6" gutterBottom>
+        Destinations souhaitées
+      </Typography>
+      <TextField
+        fullWidth
+        label="Ajouter une destination"
+        onKeyPress={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            const newDestinations = [...formData.destinations, e.target.value];
+            handleInputChange("destinations", newDestinations);
+            e.target.value = "";
           }
-        >
-          <FontAwesomeIcon icon={faPlane} className="optionIcon" />
-          {type}
-        </button>
-      ))}
-    </div>
-
-    <h3>Hébergement préféré</h3>
-    <div className="optionButtons">
-      {["Hôtel", "Appartement", "Camping", "Auberge de jeunesse"].map((acc) => (
-        <button
-          key={acc}
-          className={`optionButton ${formData.travelPreferences.accommodation.includes(acc) ? "selected" : ""}`}
-          onClick={() => {
-            const newAccommodation =
-              formData.travelPreferences.accommodation.includes(acc)
-                ? formData.travelPreferences.accommodation.filter(
-                    (a) => a !== acc,
-                  )
-                : [...formData.travelPreferences.accommodation, acc];
-            handleInputChange("travelPreferences", {
-              ...formData.travelPreferences,
-              accommodation: newAccommodation,
-            });
-          }}
-        >
-          <FontAwesomeIcon icon={faHotel} className="optionIcon" />
-          {acc}
-        </button>
-      ))}
-    </div>
-
-    <h3>Activités préférées</h3>
-    <div className="optionButtons">
-      {["Plage", "Montagne", "Ville", "Culture", "Sport"].map((activity) => (
-        <button
-          key={activity}
-          className={`optionButton ${formData.travelPreferences.activities.includes(activity) ? "selected" : ""}`}
-          onClick={() => {
-            const newActivities =
-              formData.travelPreferences.activities.includes(activity)
-                ? formData.travelPreferences.activities.filter(
-                    (a) => a !== activity,
-                  )
-                : [...formData.travelPreferences.activities, activity];
-            handleInputChange("travelPreferences", {
-              ...formData.travelPreferences,
-              activities: newActivities,
-            });
-          }}
-        >
-          <FontAwesomeIcon icon={faUtensils} className="optionIcon" />
-          {activity}
-        </button>
-      ))}
-    </div>
-
-    <div className="navigationButtons">
-      <button onClick={prevStep} className="prevButton">
-        Précédent
-      </button>
-      <button onClick={nextStep} className="nextButton">
-        Suivant
-      </button>
-    </div>
-  </div>
-);
-
-const LanguagesAndDestinations = ({
-  formData,
-  handleInputChange,
-  handleSignup,
-  prevStep,
-}) => (
-  <div className="formStep">
-    <h3>Langues parlées</h3>
-    <div className="optionButtons">
-      {["Français", "Anglais", "Espagnol", "Allemand", "Italien"].map(
-        (lang) => (
-          <button
-            key={lang}
-            className={`optionButton ${formData.languages.includes(lang) ? "selected" : ""}`}
-            onClick={() => {
-              const newLanguages = formData.languages.includes(lang)
-                ? formData.languages.filter((l) => l !== lang)
-                : [...formData.languages, lang];
-              handleInputChange("languages", newLanguages);
-            }}
-          >
-            <FontAwesomeIcon icon={faLanguage} className="optionIcon" />
-            {lang}
-          </button>
-        ),
-      )}
-    </div>
-
-    <div className="inputGroup">
-      <FontAwesomeIcon icon={faGlobe} className="inputIcon" />
-      <input
-        type="text"
-        value={formData.destinations.join(", ")}
-        onChange={(e) =>
-          handleInputChange("destinations", e.target.value.split(", "))
-        }
-        placeholder="Entrez vos destinations souhaitées, séparées par des virgules"
+        }}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Public />
+            </InputAdornment>
+          ),
+        }}
       />
-    </div>
-
-    <div className="navigationButtons">
-      <button onClick={prevStep} className="prevButton">
-        Précédent
-      </button>
-      <button onClick={handleSignup} className="signupButton">
-        S'inscrire
-      </button>
-    </div>
-  </div>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 1 }}>
+        {formData.destinations.map((destination, index) => (
+          <Chip
+            key={index}
+            label={destination}
+            onDelete={() => {
+              const newDestinations = formData.destinations.filter(
+                (_, i) => i !== index
+              );
+              handleInputChange("destinations", newDestinations);
+            }}
+          />
+        ))}
+      </Box>
+    </Grid>
+  </Grid>
 );
 
 export default Signup;

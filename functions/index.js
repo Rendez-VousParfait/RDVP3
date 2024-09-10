@@ -12,14 +12,11 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Fonction de test Hello World
 exports.helloWorld = functions.https.onRequest((request, response) => {
   response.send("Hello from Firebase!");
 });
 
-// Fonction pour créer un utilisateur
 exports.createUser = functions.https.onCall((data, context) => {
-  // Vérification de l'authentification
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -29,7 +26,6 @@ exports.createUser = functions.https.onCall((data, context) => {
 
   const { name, email } = data;
 
-  // Création de l'utilisateur dans Firestore
   return admin
     .firestore()
     .collection("users")
@@ -47,7 +43,6 @@ exports.createUser = functions.https.onCall((data, context) => {
     });
 });
 
-// Fonction pour envoyer un e-mail d'invitation
 exports.sendInvitationEmail = functions.https.onCall(async (data, context) => {
   console.log("Début de sendInvitationEmail avec données:", data);
 
@@ -63,7 +58,7 @@ exports.sendInvitationEmail = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError("invalid-argument", "Email, group name, and group ID are required.");
   }
 
-  const invitationLink = `https://03180a26-2db9-48f9-96be-160405a77d05-00-2ilb0tmq75o6f.spock.replit.dev/join-group/${encodeURIComponent(groupId)}`;
+  const searchLink = `https://03180a26-2db9-48f9-96be-160405a77d05-00-2ilb0tmq75o6f.spock.replit.dev/search?groupId=${encodeURIComponent(groupId)}`;
 
   const mailOptions = {
     from: 'Rendez-Vous Parfait <noreply@rendez-vous-parfait.com>',
@@ -72,8 +67,8 @@ exports.sendInvitationEmail = functions.https.onCall(async (data, context) => {
     html: `
       <h1>Vous avez été invité à rejoindre un groupe de voyage !</h1>
       <p>Vous avez été invité à rejoindre le groupe "${groupName}" sur Rendez-Vous Parfait, notre application de planification de voyage.</p>
-      <p>Pour accepter l'invitation, cliquez sur le lien suivant :</p>
-      <a href="${invitationLink}">Rejoindre le groupe</a>
+      <p>Pour accepter l'invitation et remplir vos préférences, cliquez sur le lien suivant :</p>
+      <a href="${searchLink}">Rejoindre le groupe et remplir mes préférences</a>
     `
   };
 
@@ -89,3 +84,59 @@ exports.sendInvitationEmail = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('internal', `Impossible d'envoyer l'e-mail d'invitation: ${error.message}`);
   }
 });
+
+exports.notifyGroupMembers = functions.firestore
+  .document('groups/{groupId}')
+  .onUpdate(async (change, context) => {
+    const newValue = change.after.data();
+    const previousValue = change.before.data();
+    const groupId = context.params.groupId;
+
+    if (newValue.members.length > previousValue.members.length) {
+      const newMembers = newValue.members.filter(m => !previousValue.members.includes(m));
+
+      for (const memberEmail of newMembers) {
+        const mailOptions = {
+          from: 'Rendez-Vous Parfait <noreply@rendez-vous-parfait.com>',
+          to: memberEmail,
+          subject: `Remplissez vos préférences pour le groupe "${newValue.name}"`,
+          html: `
+            <h1>Vous avez rejoint un nouveau groupe de voyage !</h1>
+            <p>Vous avez été ajouté au groupe "${newValue.name}" sur Rendez-Vous Parfait.</p>
+            <p>Veuillez remplir vos préférences pour le voyage en vous connectant à l'application.</p>
+            <a href="https://03180a26-2db9-48f9-96be-160405a77d05-00-2ilb0tmq75o6f.spock.replit.dev/search?groupId=${groupId}">Remplir mes préférences</a>
+          `
+        };
+
+        try {
+          await transporter.sendMail(mailOptions);
+          console.log(`E-mail de notification envoyé à ${memberEmail}`);
+        } catch (error) {
+          console.error(`Erreur lors de l'envoi de l'e-mail à ${memberEmail}:`, error);
+        }
+      }
+    }
+
+    const memberPreferences = newValue.memberPreferences || {};
+    if (Object.keys(memberPreferences).length === newValue.members.length) {
+      const creatorEmail = newValue.members[0];
+      const mailOptions = {
+        from: 'Rendez-Vous Parfait <noreply@rendez-vous-parfait.com>',
+        to: creatorEmail,
+        subject: `Toutes les préférences sont remplies pour le groupe "${newValue.name}"`,
+        html: `
+          <h1>Toutes les préférences ont été remplies !</h1>
+          <p>Tous les membres du groupe "${newValue.name}" ont rempli leurs préférences.</p>
+          <p>Vous pouvez maintenant lancer la recherche pour le groupe.</p>
+          <a href="https://03180a26-2db9-48f9-96be-160405a77d05-00-2ilb0tmq75o6f.spock.replit.dev/search?groupId=${groupId}">Lancer la recherche</a>
+        `
+      };
+
+      try {
+        await transporter.sendMail(mailOptions);
+        console.log(`E-mail de notification envoyé au créateur ${creatorEmail}`);
+      } catch (error) {
+        console.error(`Erreur lors de l'envoi de l'e-mail au créateur ${creatorEmail}:`, error);
+      }
+    }
+  });

@@ -14,7 +14,7 @@ a:active {
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 2rem;
-  background: linear-gradient(45deg, #3a1c71, #d76d77, #ffaf7b);
+  background: linear-gradient(-135deg, #FF6B6B, #6B66FF);
   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);

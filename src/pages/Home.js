@@ -14,6 +14,7 @@ import styles from "./Home.module.css";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { motion } from "framer-motion";
 
 const heroVideo =
   "https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-the-beach-1089-large.mp4";
@@ -68,23 +69,17 @@ function Home() {
     slidesToScroll: 1,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
-    centerMode: true,
-    centerPadding: "60px",
     responsive: [
       {
         breakpoint: 1024,
         settings: {
           slidesToShow: 2,
-          centerMode: true,
-          centerPadding: "40px",
         },
       },
       {
         breakpoint: 600,
         settings: {
           slidesToShow: 1,
-          centerMode: true,
-          centerPadding: "40px",
         },
       },
     ],
@@ -106,85 +101,105 @@ function Home() {
         <video autoPlay muted loop className={styles.heroVideo}>
           <source src={heroVideo} type="video/mp4" />
         </video>
-        <div className={styles.heroContent}>
+        <motion.div
+          className={styles.heroContent}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
           <h1 className={styles.heroTitle}>Découvrez Rendez-Vous Parfait</h1>
           <p className={styles.heroSubtitle}>
             Individuellement ou en Groupe, créez vos Expériences Sur Mesure
             selon vos envies du moment
           </p>
-          <Link to="/search" className={styles.ctaButton}>
-            Démarrez l'Aventure
-          </Link>
-        </div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link to="/search" className={styles.ctaButton}>
+              Démarrez l'Aventure
+            </Link>
+          </motion.div>
+        </motion.div>
       </header>
 
       <section className={styles.howItWorks}>
         <h2>Notre Processus en 3 Étapes</h2>
         <div className={styles.steps}>
-          <div className={styles.step}>
-            <FontAwesomeIcon icon={faPencil} className={styles.stepIcon} />
-            <h3>Personnalisez Votre Profil</h3>
-            <p>Exprimez vos Envies et Goûts Personnels, en Solo ou en Groupe</p>
-          </div>
-          <div className={styles.step}>
-            <FontAwesomeIcon icon={faCalendarAlt} className={styles.stepIcon} />
-            <h3>Choisissez Vos Dates</h3>
-            <p>
-              Sélectionnez les Dates qui Correspondent Parfaitement à Votre
-              Planning
-            </p>
-          </div>
-          <div className={styles.step}>
-            <FontAwesomeIcon icon={faStar} className={styles.stepIcon} />
-            <h3>Fixez Vos Préférences</h3>
-            <p>Définissez Vos Préférences en Quelques Clics</p>
-          </div>
+          {[
+            {
+              icon: faPencil,
+              title: "Personnalisez Votre Profil",
+              description: "Exprimez vos Envies et Goûts Personnels, en Solo ou en Groupe",
+            },
+            {
+              icon: faCalendarAlt,
+              title: "Choisissez Vos Dates",
+              description: "Sélectionnez les Dates qui Correspondent Parfaitement à Votre Planning",
+            },
+            {
+              icon: faStar,
+              title: "Fixez Vos Préférences",
+              description: "Définissez Vos Préférences en Quelques Clics",
+            },
+          ].map((step, index) => (
+            <motion.div
+              key={index}
+              className={styles.step}
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <FontAwesomeIcon icon={step.icon} className={styles.stepIcon} />
+              <h3>{step.title}</h3>
+              <p>{step.description}</p>
+            </motion.div>
+          ))}
         </div>
       </section>
 
       <section className={styles.popularDestinations}>
         <h2>Destinations Incontournables</h2>
-        <div className={styles.sliderContainer}>
-          <Slider {...destinationSettings}>
-            {[
-              {
-                name: "Paris",
-                image: parisImage,
-                description: "Vivez la Magie de la Ville de l'Amour",
-              },
-              {
-                name: "Marseille",
-                image: marseilleImage,
-                description: "Plongez dans les Eaux Turquoises du Sud",
-              },
-              {
-                name: "Bordeaux",
-                image: bordeauxImage,
-                description: "Profitez de l'Énergie des Vignobles",
-              },
-              {
-                name: "Lille",
-                image: lilleImage,
-                description: "Découvrez les Charmes du Nord",
-              },
-            ].map((destination, index) => (
-              <div key={index} className={styles.destinationItem}>
-                <Link
-                  to={`/search?destination=${destination.name}`}
-                  className={styles.destinationLink}
-                >
-                  <img
-                    src={destination.image}
-                    alt={destination.name}
-                    className={styles.destinationImage}
-                  />
-                  <h3>{destination.name}</h3>
-                  <p>{destination.description}</p>
-                </Link>
-              </div>
-            ))}
-          </Slider>
-        </div>
+        <Slider {...destinationSettings}>
+          {[
+            {
+              name: "Paris",
+              image: parisImage,
+              description: "Vivez la Magie de la Ville de l'Amour",
+            },
+            {
+              name: "Marseille",
+              image: marseilleImage,
+              description: "Plongez dans les Eaux Turquoises du Sud",
+            },
+            {
+              name: "Bordeaux",
+              image: bordeauxImage,
+              description: "Profitez de l'Énergie des Vignobles",
+            },
+            {
+              name: "Lille",
+              image: lilleImage,
+              description: "Découvrez les Charmes du Nord",
+            },
+          ].map((destination, index) => (
+            <motion.div
+              key={index}
+              className={styles.destinationItem}
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Link
+                to={`/search?destination=${destination.name}`}
+                className={styles.destinationLink}
+              >
+                <img
+                  src={destination.image}
+                  alt={destination.name}
+                  className={styles.destinationImage}
+                />
+                <h3>{destination.name}</h3>
+                <p>{destination.description}</p>
+              </Link>
+            </motion.div>
+          ))}
+        </Slider>
       </section>
 
       <section className={styles.testimonials}>
@@ -205,11 +220,9 @@ function Home() {
               <span>Marie et Thomas, 28 ans</span>
             </div>
             <div className={styles.testimonialRating}>
-              <FontAwesomeIcon icon={faStar} />
-              <FontAwesomeIcon icon={faStar} />
-              <FontAwesomeIcon icon={faStar} />
-              <FontAwesomeIcon icon={faStar} />
-              <FontAwesomeIcon icon={faStar} />
+              {[...Array(5)].map((_, i) => (
+                <FontAwesomeIcon key={i} icon={faStar} />
+              ))}
             </div>
           </div>
           <div className={styles.testimonialItem}>
@@ -226,105 +239,54 @@ function Home() {
               <span>Lucas, 35 ans</span>
             </div>
             <div className={styles.testimonialRating}>
-              <FontAwesomeIcon icon={faStar} />
-              <FontAwesomeIcon icon={faStar} />
-              <FontAwesomeIcon icon={faStar} />
-              <FontAwesomeIcon icon={faStar} />
-              <FontAwesomeIcon icon={faStar} />
+              {[...Array(5)].map((_, i) => (
+                <FontAwesomeIcon key={i} icon={faStar} />
+              ))}
             </div>
           </div>
         </Slider>
       </section>
 
-      <section className={styles.blogSection}>
-        <h2>Idées de Voyages Inspirantes</h2>
-        <div className={styles.blogPosts}>
-          <div className={styles.blogPost}>
-            <img
-              src="https://images.pexels.com/photos/705764/pexels-photo-705764.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-              alt="Blog post 1"
-            />
-            <h3>Les 10 Lieux Incontournables à Paris</h3>
-            <p>Explorez les Trésors Cachés de la Ville Lumière...</p>
-            <Link to="/blog/post1" className={styles.readMore}>
-              Découvrir Plus
-            </Link>
-          </div>
-          <div className={styles.blogPost}>
-            <img
-              src="https://images.pexels.com/photos/1573471/pexels-photo-1573471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-              alt="Blog post 2"
-            />
-            <h3>Les Plus Belles Plages de Marseille</h3>
-            <p>
-              Plongez dans les Criques Paradisiaques de la Côte
-              Méditerranéenne...
-            </p>
-            <Link to="/blog/post2" className={styles.readMore}>
-              Découvrir Plus
-            </Link>
-          </div>
-          <div className={styles.blogPost}>
-            <img
-              src="https://images.pexels.com/photos/2702805/pexels-photo-2702805.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-              alt="Blog post 3"
-            />
-            <h3>Guide des Vins de Bordeaux</h3>
-            <p>
-              Initiez-vous à l'Art de la Dégustation dans la Capitale du Vin...
-            </p>
-            <Link to="/blog/post3" className={styles.readMore}>
-              Découvrir Plus
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.partners}>
-        <h2>Nos Partenaires de Confiance</h2>
-        <div className={styles.partnerLogos}>
-          <img
-            src="https://upload.wikimedia.org/wikipedia/fr/thumb/e/e7/Logo_big_mamma.png/640px-Logo_big_mamma.png"
-            alt="Accor"
-          />
-          <img
-            src="https://logos-world.net/wp-content/uploads/2020/03/Ryanair-Logo-700x394.png"
-            alt="Ryanair"
-          />
-          <img
-            src="https://e7.pngegg.com/pngimages/248/721/png-clipart-airbnb-rebrand-logo-online-marketplace-rebranding-airbnb-logo-text-service-thumbnail.png"
-            alt="Avis"
-          />
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Booking.com_logo.svg/2560px-Booking.com_logo.svg.png"
-            alt="Booking.com"
-          />
-        </div>
-      </section>
-
       <section className={styles.newsletter}>
-        <h2>Restez Informé de nos Dernières Offres</h2>
-        <p>Abonnez-vous à notre Newsletter pour ne Rien Manquer !</p>
-        <form onSubmit={handleSubmit} className={styles.newsletterForm}>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Votre Adresse E-mail"
-            required
-            className={styles.newsletterInput}
-          />
-          <button type="submit" className={styles.newsletterButton}>
-            S'abonner
-          </button>
-        </form>
+        <motion.div
+          className={styles.newsletterCard}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h2>Restez Informé de nos Dernières Offres</h2>
+          <p>Abonnez-vous à notre Newsletter pour ne Rien Manquer !</p>
+          <form onSubmit={handleSubmit} className={styles.newsletterForm}>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Votre Adresse E-mail"
+              required
+              className={styles.newsletterInput}
+            />
+            <motion.button
+              type="submit"
+              className={styles.newsletterButton}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              S'abonner
+            </motion.button>
+          </form>
+        </motion.div>
       </section>
 
-      <div className={styles.floatingCTA}>
+      <motion.div
+        className={styles.floatingCTA}
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1, duration: 0.8 }}
+      >
         <Link to="/search" className={styles.ctaButton}>
           Réservation Personnalisée
         </Link>
-      </div>
+      </motion.div>
     </div>
   );
 }

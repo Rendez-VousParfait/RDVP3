@@ -19,6 +19,8 @@ const ComposeTrip = React.memo(({
   prevStep,
   currentStep,
   totalSteps,
+  isGroupSearch,
+  userRole,
 }) => {
   const [localBudget, setLocalBudget] = useState(formData.budget || "");
 
@@ -63,13 +65,41 @@ const ComposeTrip = React.memo(({
     { id: "activité", icon: faRunning, label: "Activité" },
   ], []);
 
+  // Si c'est une recherche de groupe et que l'utilisateur n'est pas le créateur, on affiche juste les informations
+  if (isGroupSearch && userRole !== 'creator') {
+    return (
+      <div className={styles["search-step"]}>
+        <div className={styles["progress-indicator"]}>
+          Étape {currentStep} sur {totalSteps}
+        </div>
+        <h2 className={styles["step-title"]}>
+          <FontAwesomeIcon icon={faUsers} /> Détails du séjour de groupe
+        </h2>
+        <div className={styles["group-trip-details"]}>
+          <p><FontAwesomeIcon icon={faCalendarAlt} /> Dates du séjour : 
+            {formData.dates.start && formData.dates.end 
+              ? ` Du ${formData.dates.start.toLocaleDateString()} au ${formData.dates.end.toLocaleDateString()}`
+              : " Non définies"}
+          </p>
+          <p><FontAwesomeIcon icon={faWallet} /> Budget par personne : {formData.budget ? `${formData.budget}€` : "Non défini"}</p>
+          <p>Services principaux : {formData.mainServices.join(", ") || "Aucun service sélectionné"}</p>
+        </div>
+        <div className={styles["next-button-container"]}>
+          <button type="button" className={styles["next-button"]} onClick={handleNext}>
+            Suivant
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles["search-step"]}>
       <div className={styles["progress-indicator"]}>
         Étape {currentStep} sur {totalSteps}
       </div>
       <h2 className={styles["step-title"]}>
-        <FontAwesomeIcon icon={faUsers} /> Compose ton séjour
+        <FontAwesomeIcon icon={faUsers} /> {isGroupSearch ? "Compose le séjour de groupe" : "Compose ton séjour"}
       </h2>
       <div className={styles["date-selector"]}>
         <label>
