@@ -1,51 +1,67 @@
 @import "~slick-carousel/slick/slick.css";
 @import "~slick-carousel/slick/slick-theme.css";
 
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+}
+
+.appLayoutContainer {
+  background-color: white;
+}
+
 .dashboardWrapper {
   min-height: 100vh;
-  background: linear-gradient(135deg, #FF6B6B, #6B66FF);
+  width: 100%;
+  background-color: white;
   padding: 20px;
+  box-sizing: border-box;
 }
 
 .dashboard {
-  color: #fff;
-  font-family: 'Roboto', sans-serif;
-  border-radius: 40px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  will-change: opacity, transform;
 }
 
-.header {
+.dashboardLoaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dashboardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  background: #f8f8f8;
   border-radius: 30px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   margin-bottom: 30px;
 }
 
 .locationSelector {
   display: flex;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #ffffff;
   border-radius: 20px;
   padding: 5px 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .locationIcon {
   margin-right: 10px;
+  color: #FF6B6B;
 }
 
 .locationSelect {
   background: transparent;
   border: none;
-  color: #fff;
+  color: #333;
   font-size: 16px;
   outline: none;
 }
@@ -59,25 +75,26 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-right: 15px;
-  color: #fff;
+  color: #333;
   text-decoration: none;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .iconButton:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: #f0f0f0;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .betaButton {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  background-color: #FF6B6B;
+  color: white;
   border: none;
   padding: 8px 15px;
   border-radius: 25px;
@@ -87,7 +104,7 @@
 }
 
 .betaButton:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: #FF8E8E;
   transform: translateY(-2px);
 }
 
@@ -101,7 +118,7 @@
   overflow: hidden;
   margin-bottom: 30px;
   border-radius: 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .heroVideo {
@@ -119,6 +136,8 @@
   text-align: center;
   color: white;
   z-index: 1;
+  width: 90%;
+  max-width: 1200px;
 }
 
 .heroContent h2 {
@@ -129,8 +148,8 @@
 }
 
 .newEscapeButton {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  background-color: #FF6B6B;
+  color: white;
   border: none;
   padding: 15px 30px;
   border-radius: 25px;
@@ -141,7 +160,7 @@
 }
 
 .newEscapeButton:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: #FF8E8E;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
 }
@@ -151,11 +170,17 @@
 }
 
 .exclusivities, .events, .catalog, .newsletter {
-  background: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #FF6B6B, #6B66FF);
   border-radius: 30px;
   padding: 30px;
   margin-bottom: 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  color: white;
+}
+
+.sectionContent {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .sectionHeader {
@@ -168,7 +193,7 @@
 h3 {
   font-size: 28px;
   margin-bottom: 20px;
-  color: #fff;
+  color: white;
   position: relative;
   padding-bottom: 10px;
 }
@@ -180,7 +205,7 @@ h3::after {
   left: 0;
   width: 50px;
   height: 3px;
-  background-color: #fff;
+  background-color: white;
 }
 
 .cardContainer {
@@ -192,9 +217,9 @@ h3::after {
 }
 
 .card {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: white;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  color: #fff;
+  color: #333;
   border-radius: 25px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -224,7 +249,7 @@ h3::after {
 }
 
 .heartIcon:hover, .heartIcon.liked {
-  color: #ff6b6b;
+  color: #FF6B6B;
   transform: scale(1.2);
 }
 
@@ -239,7 +264,7 @@ h3::after {
 
 .cardContent p {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.8);
+  color: #666;
   margin-bottom: 10px;
 }
 
@@ -252,12 +277,12 @@ h3::after {
 }
 
 .starEmpty {
-  color: rgba(255, 255, 255, 0.3);
+  color: #e0e0e0;
 }
 
 .cardButton {
-  background-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
+  background-color: #FF6B6B;
+  color: white;
   border: none;
   padding: 8px 15px;
   border-radius: 25px;
@@ -267,7 +292,7 @@ h3::after {
 }
 
 .cardButton:hover {
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: #FF8E8E;
   transform: translateY(-2px);
 }
 
@@ -313,7 +338,7 @@ h3::after {
   align-items: center;
   background-color: rgba(255, 255, 255, 0.2);
   border: none;
-  color: #fff;
+  color: white;
   border-radius: 25px;
   padding: 20px;
   cursor: pointer;
@@ -329,7 +354,7 @@ h3::after {
 .catalogButton svg {
   font-size: 32px;
   margin-bottom: 10px;
-  color: #fff;
+  color: white;
 }
 
 .catalogButton span {
@@ -338,7 +363,7 @@ h3::after {
 }
 
 .seeMoreLink {
-  color: #fff;
+  color: white;
   text-decoration: none;
   font-weight: bold;
   transition: color 0.3s ease;
@@ -390,16 +415,7 @@ h3::after {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.fadeIn {
-  animation: fadeIn 0.5s ease-out;
-}
-
-:global(.slick-dots) {
+.customDots {
   bottom: -30px;
   display: flex !important;
   justify-content: center;
@@ -410,7 +426,7 @@ h3::after {
   text-align: center;
 }
 
-:global(.slick-dots li) {
+.customDots li {
   position: relative;
   display: inline-block;
   width: 20px;
@@ -420,7 +436,7 @@ h3::after {
   cursor: pointer;
 }
 
-:global(.slick-dots li button) {
+.customDots li button {
   font-size: 0;
   line-height: 0;
   display: block;
@@ -434,7 +450,7 @@ h3::after {
   background: transparent;
 }
 
-:global(.slick-dots li button:before) {
+.customDots li button:before {
   font-size: 10px;
   line-height: 20px;
   position: absolute;
@@ -448,7 +464,7 @@ h3::after {
   color: white;
 }
 
-:global(.slick-dots li.slick-active button:before) {
+.customDots li.slick-active button:before {
   opacity: .75;
   color: white;
 }
@@ -462,7 +478,7 @@ h3::after {
     border-radius: 30px;
   }
 
-  .header {
+  .dashboardHeader {
     padding: 15px;
   }
 

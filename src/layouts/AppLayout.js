@@ -7,8 +7,11 @@ import Profile from "../pages/Profile";
 import BlogList from "../components/blog/BlogList";
 import BlogPost from "../components/blog/BlogPost";
 import SwiperPage from "../pages/SwiperPage";
+import GroupInvitation from '../components/GroupInvitation';
 import GroupManagement from "../components/GroupManagement";
 import GroupDetails from "../components/GroupDetails";
+import JoinGroup from '../components/JoinGroup'; 
+import Catalog from "../components/Catalog";  // Assurez-vous que le chemin est correct
 import styles from "./AppLayout.module.css";
 
 // Importations pour Slick
@@ -27,7 +30,10 @@ function AppLayout() {
           <Route path="/blog/:id" element={<BlogPost />} />
           <Route path="/swiper" element={<SwiperPage />} />
           <Route path="/groups" element={<GroupManagement />} />
+          <Route path="/invitation/:groupId" element={<GroupInvitation />} />
           <Route path="/groups/:groupId" element={<GroupDetails />} />
+          <Route path="/join-group/:groupId" element={<JoinGroup />} />
+          <Route path="/catalog" element={<Catalog />} />  {/* Nouvelle route pour le Catalog */}
         </Routes>
       </main>
       <AppNavigation />

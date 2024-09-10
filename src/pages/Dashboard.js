@@ -11,70 +11,41 @@ import {
   faCamera,
   faMicrophone,
   faChevronRight,
-  faMapMarkerAlt,
   faStar,
   faChevronLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import Slider from "react-slick";
 import styles from "./Dashboard.module.css";
+import LocationSelector from "../components/LocationSelector";
 import Tutorial from "../components/Tutorial";
 
-const heroVideo =
-  "https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-the-beach-1089-large.mp4";
-const parisImage =
-  "https://images.pexels.com/photos/699466/pexels-photo-699466.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-const marseilleImage =
-  "https://images.pexels.com/photos/4353229/pexels-photo-4353229.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-const bordeauxImage =
-  "https://images.pexels.com/photos/6033986/pexels-photo-6033986.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-const lilleImage =
-  "https://images.pexels.com/photos/16140703/pexels-photo-16140703.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-const lyonImage =
-  "https://images.pexels.com/photos/13538314/pexels-photo-13538314.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-const strasbourgImage =
-  "https://images.pexels.com/photos/6143037/pexels-photo-6143037.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const heroVideo = "https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-the-beach-1089-large.mp4";
+const parisImage = "https://images.pexels.com/photos/699466/pexels-photo-699466.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const marseilleImage = "https://images.pexels.com/photos/4353229/pexels-photo-4353229.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const bordeauxImage = "https://images.pexels.com/photos/6033986/pexels-photo-6033986.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const lilleImage = "https://images.pexels.com/photos/16140703/pexels-photo-16140703.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const lyonImage = "https://images.pexels.com/photos/13538314/pexels-photo-13538314.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+const strasbourgImage = "https://images.pexels.com/photos/6143037/pexels-photo-6143037.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
 
 function Dashboard() {
   const [showBetaPopup, setShowBetaPopup] = useState(false);
   const [likedCards, setLikedCards] = useState({});
   const [selectedLocation, setSelectedLocation] = useState("Bordeaux");
-  const [animatedElements, setAnimatedElements] = useState([]);
   const [showTutorial, setShowTutorial] = useState(false);
-
-  const locations = [
-    "Bordeaux",
-    "Paris",
-    "Marseille",
-    "Lyon",
-    "Lille",
-    "Strasbourg",
-  ];
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const elements = document.querySelectorAll(".animateOnScroll");
-      elements.forEach((el) => {
-        const rect = el.getBoundingClientRect();
-        if (
-          rect.top <= window.innerHeight * 0.75 &&
-          !animatedElements.includes(el)
-        ) {
-          el.classList.add(styles.fadeIn);
-          setAnimatedElements((prev) => [...prev, el]);
-        }
-      });
-    };
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 100);
 
-    window.addEventListener("scroll", handleScroll);
-
-    // Vérifier si le tutoriel a déjà été vu
     const tutorialSeen = localStorage.getItem("tutorialSeen");
     if (!tutorialSeen) {
       setShowTutorial(true);
     }
 
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [animatedElements]);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleBetaClick = () => {
     setShowBetaPopup(true);
@@ -96,18 +67,7 @@ function Dashboard() {
   };
 
   const CustomDots = (dots) => (
-    <div
-      style={{
-        position: "absolute",
-        bottom: "-30px",
-        width: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <div style={{ display: "flex", overflow: "hidden" }}>{dots}</div>
-    </div>
+    <div className={styles.customDots}>{dots}</div>
   );
 
   const sliderSettings = {
@@ -116,12 +76,8 @@ function Dashboard() {
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
-    prevArrow: (
-      <CustomArrow icon={faChevronLeft} className={styles.slickPrev} />
-    ),
-    nextArrow: (
-      <CustomArrow icon={faChevronRight} className={styles.slickNext} />
-    ),
+    prevArrow: <CustomArrow icon={faChevronLeft} className={styles.slickPrev} />,
+    nextArrow: <CustomArrow icon={faChevronRight} className={styles.slickNext} />,
     appendDots: CustomDots,
     responsive: [
       {
@@ -148,48 +104,12 @@ function Dashboard() {
   }
 
   const cardData = [
-    {
-      id: "paris",
-      img: parisImage,
-      title: "Paris",
-      desc: "La Ville de l'Amour",
-      rating: 4,
-    },
-    {
-      id: "marseille",
-      img: marseilleImage,
-      title: "Marseille",
-      desc: "Eaux Turquoises du Sud",
-      rating: 5,
-    },
-    {
-      id: "lyon",
-      img: lyonImage,
-      title: "Lyon",
-      desc: "Capitale Gastronomique",
-      rating: 4,
-    },
-    {
-      id: "bordeaux",
-      img: bordeauxImage,
-      title: "Bordeaux",
-      desc: "Capitale du Vin",
-      rating: 5,
-    },
-    {
-      id: "lille",
-      img: lilleImage,
-      title: "Lille",
-      desc: "Charme du Nord",
-      rating: 4,
-    },
-    {
-      id: "strasbourg",
-      img: strasbourgImage,
-      title: "Strasbourg",
-      desc: "Cœur de l'Europe",
-      rating: 5,
-    },
+    { id: "paris", img: parisImage, title: "Paris", desc: "La Ville de l'Amour", rating: 4 },
+    { id: "marseille", img: marseilleImage, title: "Marseille", desc: "Eaux Turquoises du Sud", rating: 5 },
+    { id: "lyon", img: lyonImage, title: "Lyon", desc: "Capitale Gastronomique", rating: 4 },
+    { id: "bordeaux", img: bordeauxImage, title: "Bordeaux", desc: "Capitale du Vin", rating: 5 },
+    { id: "lille", img: lilleImage, title: "Lille", desc: "Charme du Nord", rating: 4 },
+    { id: "strasbourg", img: strasbourgImage, title: "Strasbourg", desc: "Cœur de l'Europe", rating: 5 },
   ];
 
   const handleTutorialComplete = () => {
@@ -204,25 +124,12 @@ function Dashboard() {
 
   return (
     <div className={styles.dashboardWrapper}>
-      <div className={styles.dashboard}>
-        <header className={styles.header}>
-          <div className={styles.locationSelector}>
-            <FontAwesomeIcon
-              icon={faMapMarkerAlt}
-              className={styles.locationIcon}
-            />
-            <select
-              value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
-              className={styles.locationSelect}
-            >
-              {locations.map((location) => (
-                <option key={location} value={location}>
-                  {location}
-                </option>
-              ))}
-            </select>
-          </div>
+      <div className={`${styles.dashboard} ${isLoaded ? styles.dashboardLoaded : ''}`}>
+        <header className={styles.dashboardHeader}>
+          <LocationSelector
+            selectedLocation={selectedLocation}
+            setSelectedLocation={setSelectedLocation}
+          />
           <div className={styles.headerButtons}>
             <Link to="/profile" className={styles.iconButton}>
               <FontAwesomeIcon icon={faUser} />
@@ -237,7 +144,7 @@ function Dashboard() {
         </header>
 
         <main className={styles.mainContent}>
-          <section className={`${styles.heroSection} animateOnScroll`}>
+          <section className={styles.heroSection}>
             <video autoPlay muted loop className={styles.heroVideo}>
               <source src={heroVideo} type="video/mp4" />
             </video>
@@ -246,15 +153,12 @@ function Dashboard() {
               <p>Vivez des expériences uniques</p>
               <button className={styles.newEscapeButton}>
                 Planifier mon escapade
-                <FontAwesomeIcon
-                  icon={faChevronRight}
-                  className={styles.buttonIcon}
-                />
+                <FontAwesomeIcon icon={faChevronRight} className={styles.buttonIcon} />
               </button>
             </div>
           </section>
 
-          <section className={`${styles.exclusivities} animateOnScroll`}>
+          <section className={styles.exclusivities}>
             <h3>Exclusivités</h3>
             <Slider {...sliderSettings} className={styles.cardContainer}>
               {cardData.map((card) => (
@@ -269,9 +173,7 @@ function Dashboard() {
                     <div className={styles.cardContent}>
                       <h4>{card.title}</h4>
                       <p>{card.desc}</p>
-                      <div className={styles.rating}>
-                        {renderStars(card.rating)}
-                      </div>
+                      <div className={styles.rating}>{renderStars(card.rating)}</div>
                       <button className={styles.cardButton}>Réserver</button>
                     </div>
                   </div>
@@ -280,7 +182,7 @@ function Dashboard() {
             </Slider>
           </section>
 
-          <section className={`${styles.catalog} animateOnScroll`}>
+          <section className={styles.catalog}>
             <h3>Nos activités</h3>
             <div className={styles.catalogGrid}>
               {[
@@ -298,15 +200,12 @@ function Dashboard() {
             </div>
           </section>
 
-          <section className={`${styles.events} animateOnScroll`}>
+          <section className={styles.events}>
             <div className={styles.sectionHeader}>
               <h3>Événements à venir</h3>
               <Link to="/events" className={styles.seeMoreLink}>
                 Voir plus
-                <FontAwesomeIcon
-                  icon={faChevronRight}
-                  className={styles.linkIcon}
-                />
+                <FontAwesomeIcon icon={faChevronRight} className={styles.linkIcon} />
               </Link>
             </div>
             <Slider {...sliderSettings} className={styles.cardContainer}>
@@ -322,12 +221,8 @@ function Dashboard() {
                     <div className={styles.cardContent}>
                       <h4>{card.title}</h4>
                       <p>{card.desc}</p>
-                      <div className={styles.rating}>
-                        {renderStars(card.rating)}
-                      </div>
-                      <button className={styles.cardButton}>
-                        En savoir plus
-                      </button>
+                      <div className={styles.rating}>{renderStars(card.rating)}</div>
+                      <button className={styles.cardButton}>En savoir plus</button>
                     </div>
                   </div>
                 </div>
@@ -335,7 +230,7 @@ function Dashboard() {
             </Slider>
           </section>
 
-          <section className={`${styles.newsletter} animateOnScroll`}>
+          <section className={styles.newsletter}>
             <h3>Restez informé</h3>
             <p>Recevez nos meilleures offres</p>
             <form className={styles.newsletterForm}>

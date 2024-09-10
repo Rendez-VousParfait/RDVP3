@@ -18,12 +18,8 @@ function Login() {
 
   useEffect(() => {
     if (user) {
-      const from = location.state?.from;
-      if (from) {
-        navigate(from, { replace: true });
-      } else {
-        navigate("/"); // Redirection vers la page d'accueil si pas de 'from'
-      }
+      const from = location.state?.from || "/";
+      navigate(from, { replace: true });
     }
   }, [user, navigate, location]);
 
@@ -102,7 +98,7 @@ function Login() {
         </div>
         <div className="login-footer">
           <Link to="/forgot-password">Mot de passe oublié ?</Link>
-          <Link to="/signup">Créer un compte</Link>
+          <Link to="/signup" state={location.state}>Créer un compte</Link>
         </div>
         {error && <p className="error">{error}</p>}
       </div>

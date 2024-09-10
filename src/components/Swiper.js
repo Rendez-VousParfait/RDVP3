@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSwipeable } from "react-swipeable";
+import { useNavigate } from 'react-router-dom';
 import { bordeauxData } from "../data/bordeauxData";
 import styles from "./Swiper.module.css";
 import {
@@ -9,8 +10,9 @@ import {
   FaMoneyBillWave,
   FaBed,
   FaWalking,
+  FaBook
 } from "react-icons/fa";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, collection, addDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
 
 const Swiper = ({ formData, handleInputChange, nextStep }) => {
@@ -19,6 +21,7 @@ const Swiper = ({ formData, handleInputChange, nextStep }) => {
   const [userPreferences, setUserPreferences] = useState({});
   const [swipeCount, setSwipeCount] = useState(0);
   const [direction, setDirection] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadOffers();
@@ -59,6 +62,13 @@ const Swiper = ({ formData, handleInputChange, nextStep }) => {
 
         if (isLike) {
           newPreferences[currentOffer.type].likes += 1;
+          // Ajouter l'offre likée à la collection userLikes
+          if (auth.currentUser) {
+            await addDoc(collection(db, "userLikes"), {
+              userId: auth.currentUser.uid,
+              offer: currentOffer
+            });
+          }
         } else {
           newPreferences[currentOffer.type].dislikes += 1;
         }
@@ -88,6 +98,10 @@ const Swiper = ({ formData, handleInputChange, nextStep }) => {
     preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
+
+  const goToCatalog = () => {
+    navigate('/catalog');
+  };
 
   if (offers.length === 0) {
     return <div>Chargement des offres...</div>;
@@ -148,6 +162,12 @@ const Swiper = ({ formData, handleInputChange, nextStep }) => {
           onClick={() => handleSwipe(false)}
         >
           <FaTimes />
+        </button>
+        <button
+          className={styles["catalog-button"]}
+          onClick={goToCatalog}
+        >
+          <FaBook />
         </button>
         <button
           className={styles["like-button"]}

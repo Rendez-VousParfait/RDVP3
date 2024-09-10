@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { auth, db, storage } from "../firebase"; // Assurez-vous d'importer storage
+import { auth, db, storage } from "../firebase";
 import { signOut, deleteUser } from "firebase/auth";
 import {
   doc,
@@ -10,35 +10,30 @@ import {
   addDoc,
   getDocs,
 } from "firebase/firestore";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase Storage pour gérer les fichiers
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
 import "./Profile.css";
 
 function Profile() {
   const { user, userData } = useContext(AuthContext);
   const [preferences, setPreferences] = useState({
-    activities: false,
-    restaurants: false,
-    outdoor: false,
-    musicGenres: [],
-    favoriteCuisine: "",
-    preferredTime: "",
-    travel: false,
-    reading: false,
-    gaming: false,
-    favoriteSport: "",
+    hotelPreferences: "",
+    restaurantPreferences: "",
+    activityPreferences: "",
+    dietaryRestrictions: "",
+    interests: [],
   });
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [imageUpload, setImageUpload] = useState(null); // Nouvelle state pour l'image
-  const [uploadProgress, setUploadProgress] = useState(0); // Pour la barre de progression
+  const [imageUpload, setImageUpload] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [userInfo, setUserInfo] = useState({
     username: "",
     phone: "",
     address: "",
   });
   const [history, setHistory] = useState([]);
-  const [isDarkMode, setIsDarkMode] = useState(false); // State pour le thème sombre/clair
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,7 +43,16 @@ function Profile() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setPreferences(data.preferences || preferences);
+          setPreferences({
+            hotelPreferences: data.preferences?.hotelPreferences || "",
+            restaurantPreferences:
+              data.preferences?.restaurantPreferences || "",
+            activityPreferences: data.preferences?.activityPreferences || "",
+            dietaryRestrictions: data.preferences?.dietaryRestrictions || "",
+            interests: Array.isArray(data.preferences?.interests)
+              ? data.preferences.interests
+              : [],
+          });
           setUserInfo({
             username: data.username || "",
             phone: data.phone || "",
@@ -69,7 +73,7 @@ function Profile() {
   }, [user, navigate]);
 
   const handleImageChange = (e) => {
-    setImageUpload(e.target.files[0]); // Capture du fichier sélectionné
+    setImageUpload(e.target.files[0]);
   };
 
   const handleImageUpload = () => {
@@ -86,14 +90,13 @@ function Profile() {
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setUploadProgress(progress); // Met à jour la progression de l'upload
+        setUploadProgress(progress);
       },
       (error) => {
         console.error("Erreur lors de l'upload de l'image:", error);
       },
       async () => {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        // Mise à jour de la photo de profil dans Firestore
         const userDocRef = doc(db, "users", user.uid);
         await setDoc(userDocRef, { photoURL: downloadURL }, { merge: true });
         alert("Photo de profil mise à jour avec succès !");
@@ -102,10 +105,20 @@ function Profile() {
   };
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setPreferences((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
+    }));
+  };
+
+  const handleInterestsChange = (e) => {
+    const value = e.target.value;
+    setPreferences((prev) => ({
+      ...prev,
+      interests: prev.interests.includes(value)
+        ? prev.interests.filter((item) => item !== value)
+        : [...prev.interests, value],
     }));
   };
 
@@ -264,7 +277,6 @@ function Profile() {
         )}
       </div>
 
-      {/* Upload d'image */}
       <div className="image-upload-section">
         <label className="upload-label" htmlFor="profileImage">
           Choisir une photo
@@ -290,43 +302,56 @@ function Profile() {
       </div>
 
       <div className="preferences-section">
-        <h3>Vos préférences en matière de sorties</h3>
+        <h3>Vos préférences</h3>
         {editMode ? (
           <form onSubmit={handleSubmit} className="preferences-form">
-            <div className="form-group">
+            <textarea
+              name="hotelPreferences"
+              value={preferences.hotelPreferences}
+              onChange={handleChange}
+              placeholder="Préférences pour les hôtels"
+            />
+            <textarea
+              name="restaurantPreferences"
+              value={preferences.restaurantPreferences}
+              onChange={handleChange}
+              placeholder="Préférences pour les restaurants"
+            />
+            <textarea
+              name="activityPreferences"
+              value={preferences.activityPreferences}
+              onChange={handleChange}
+              placeholder="Préférences pour les activités"
+            />
+            <input
+              type="text"
+              name="dietaryRestrictions"
+              value={preferences.dietaryRestrictions}
+              onChange={handleChange}
+              placeholder="Régime alimentaire ou restrictions"
+            />
+            <div>
+              <p>Centres d'intérêt :</p>
               <label>
                 <input
                   type="checkbox"
-                  name="activities"
-                  checked={preferences.activities}
-                  onChange={handleChange}
+                  value="sport"
+                  checked={preferences.interests.includes("sport")}
+                  onChange={handleInterestsChange}
                 />
-                Activités
+                Sport
               </label>
-            </div>
-            <div className="form-group">
               <label>
                 <input
                   type="checkbox"
-                  name="restaurants"
-                  checked={preferences.restaurants}
-                  onChange={handleChange}
+                  value="culture"
+                  checked={preferences.interests.includes("culture")}
+                  onChange={handleInterestsChange}
                 />
-                Restaurants
+                Culture
               </label>
+              {/* Ajoutez d'autres intérêts selon vos besoins */}
             </div>
-            <div className="form-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="outdoor"
-                  checked={preferences.outdoor}
-                  onChange={handleChange}
-                />
-                Activités en plein air
-              </label>
-            </div>
-            {/* Ajoutez ici les autres champs de préférences */}
             <button type="submit" className="save-button">
               Enregistrer les préférences
             </button>
@@ -341,18 +366,26 @@ function Profile() {
         ) : (
           <div className="preferences-display">
             <p>
-              <span>Activités:</span>{" "}
-              <span>{preferences.activities ? "Oui" : "Non"}</span>
+              <span>Préférences hôtels :</span> {preferences.hotelPreferences}
             </p>
             <p>
-              <span>Restaurants:</span>{" "}
-              <span>{preferences.restaurants ? "Oui" : "Non"}</span>
+              <span>Préférences restaurants :</span>{" "}
+              {preferences.restaurantPreferences}
             </p>
             <p>
-              <span>Activités en plein air:</span>{" "}
-              <span>{preferences.outdoor ? "Oui" : "Non"}</span>
+              <span>Préférences activités :</span>{" "}
+              {preferences.activityPreferences}
             </p>
-            {/* Affichez ici les autres préférences */}
+            <p>
+              <span>Régime alimentaire :</span>{" "}
+              {preferences.dietaryRestrictions}
+            </p>
+            <p>
+              <span>Centres d'intérêt :</span>
+              {preferences.interests && Array.isArray(preferences.interests)
+                ? preferences.interests.join(", ")
+                : "Aucun centre d'intérêt spécifié"}
+            </p>
             <button className="edit-button" onClick={() => setEditMode(true)}>
               Modifier les préférences
             </button>
@@ -371,12 +404,7 @@ function Profile() {
               <ul className="history-changes">
                 {Object.entries(entry.preferences).map(([key, value]) => (
                   <li key={key}>
-                    {key}:{" "}
-                    {typeof value === "boolean"
-                      ? value
-                        ? "Oui"
-                        : "Non"
-                      : value}
+                    {key}: {Array.isArray(value) ? value.join(", ") : value}
                   </li>
                 ))}
               </ul>

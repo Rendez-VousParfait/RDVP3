@@ -1,0 +1,76 @@
+.catalog {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.catalog h1 {
+  font-size: 32px;
+  color: #fe3c72;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.offerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.offerCard {
+  background-color: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.offerCard:hover {
+  transform: translateY(-5px);
+}
+
+.offerImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.offerInfo {
+  padding: 20px;
+}
+
+.offerName {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.offerDescription {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+.offerDetails {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.offerType,
+.offerPrice {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #333;
+}
+
+.offerIcon {
+  margin-right: 8px;
+  font-size: 18px;
+  color: #fe3c72;
+}

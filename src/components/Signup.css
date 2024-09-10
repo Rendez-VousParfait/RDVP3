@@ -1,175 +1,337 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
-@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css");
-
-.signup-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: #f5f5f5;
-  padding: 20px;
-  font-family: "Poppins", sans-serif;
+.signupContainer {
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 2.5rem;
+  background: linear-gradient(135deg, #FF6B6B, #6B66FF);
+  border-radius: 25px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s ease-out;
+  animation: fadeIn 0.5s ease-out;
 }
 
-.signup-card {
-  background: white;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-  backdrop-filter: blur(10px);
-  transition: transform 0.3s ease;
-  text-align: center;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.signup-card:hover {
-  transform: translateY(-5px);
-}
-
-.signup-header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.user-icon {
-  font-size: 48px;
-  color: #6e8efb;
-  margin-bottom: 10px;
-}
-
-.signup-header h2 {
-  color: #333;
-  font-size: 28px;
-  margin-bottom: 5px;
-}
-
-.signup-header p {
-  color: #666;
-  font-size: 16px;
-}
-
-.signup-form {
+.formStep {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 2rem;
 }
 
-.form-group {
-  position: relative;
-  margin-bottom: 20px;
+h2,
+h3 {
+  font-size: 2.7rem;
+  color: #fff;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+input[type="file"] {
   width: 100%;
-}
-
-.input-icon {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6e8efb;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 12px 15px 12px 45px;
-  border: 2px solid #ddd;
-  border-radius: 50px;
-  font-size: 16px;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 2px solid #fff;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 1rem;
   transition: all 0.3s ease;
-  box-sizing: border-box;
 }
 
-.form-group input:focus {
-  border-color: #6e8efb;
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+input[type="number"]:focus {
+  background-color: rgba(255, 255, 255, 0.3);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(110, 142, 251, 0.3);
 }
 
-.signup-button {
-  background: #622b3a;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 50px;
-  font-size: 16px;
-  font-weight: 600;
+.travellerTypeOptions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.travellerTypeButton {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 20px;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(98, 43, 58, 0.4);
-  width: 100%;
 }
 
-.signup-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(98, 43, 58, 0.6);
+.travellerTypeButton:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
 }
 
-.separator {
+.travellerTypeButton.selected {
+  background-color: #6B66FF;
+  color: #fff;
+  border-color: #6B66FF;
+}
+
+.travellerTypeIcon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.sliderContainer {
+  margin-bottom: 2rem;
+}
+
+.sliderContainer label {
+  display: block;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.checkboxGroup {
   display: flex;
-  align-items: center;
-  text-align: center;
-  margin: 20px 0;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
 }
 
-.separator::before,
-.separator::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid #ddd;
-}
-
-.separator span {
-  padding: 0 10px;
-  color: #666;
-  font-size: 14px;
-}
-
-.social-login {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.social-button {
-  flex: 1;
-  padding: 12px 15px;
-  border: none;
-  border-radius: 50px;
-  font-size: 14px;
-  font-weight: 600;
+.checkboxGroup label {
+  flex: 1 1 calc(33% - 1rem);
+  max-width: 200px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 20px;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
 }
 
-.social-button i {
-  margin-right: 10px;
-  font-size: 18px;
+.checkboxGroup label:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
 }
 
-.google-button {
-  background-color: #db4437;
-  margin-right: 10px;
+.checkboxGroup input[type="checkbox"] {
+  display: none;
 }
 
-.facebook-button {
-  background-color: #4267b2;
+.checkboxGroup input[type="checkbox"]:checked+label {
+  background-color: #6B66FF;
+  color: #fff;
+  border-color: #6B66FF;
 }
 
-.social-button:hover {
-  opacity: 0.9;
-  transform: translateY(-2px);
+.navigationButtons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+.prevButton,
+.nextButton,
+.signupButton,
+.googleButton {
+  background-color: #fff;
+  color: #6B66FF;
+  border: none;
+  border-radius: 30px;
+  padding: 1rem 3rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.prevButton:hover,
+.nextButton:hover,
+.signupButton:hover,
+.googleButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.2);
+}
+
+.googleButton {
+  background-color: #4285F4;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 2rem;
 }
 
 .error {
-  color: #ff4757;
+  color: #fff;
   text-align: center;
-  margin-top: 10px;
-  font-size: 14px;
-  background-color: rgba(255, 71, 87, 0.1);
-  padding: 10px;
-  border-radius: 5px;
+  margin-top: 1rem;
+  font-size: 1rem;
+  background-color: rgba(255, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 20px;
+}
+
+/* Styles for react-tag-input */
+.ReactTags__tags {
+  position: relative;
+}
+
+.ReactTags__tagInput {
+  width: 100%;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.ReactTags__tagInput input.ReactTags__tagInputField {
+  width: 100%;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 2px solid #fff;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.ReactTags__selected span.ReactTags__tag {
+  background: #6B66FF;
+  color: white;
+  font-size: 1rem;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem 0.5rem 0;
+  border-radius: 20px;
+}
+
+.ReactTags__selected a.ReactTags__remove {
+  color: #fff;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+/* RC Slider styles */
+.rc-slider {
+  position: relative;
+  height: 14px;
+  padding: 5px 0;
+  width: 100%;
+  border-radius: 6px;
+  touch-action: none;
+}
+
+.rc-slider-rail {
+  position: absolute;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.2);
+  height: 4px;
+  border-radius: 6px;
+}
+
+.rc-slider-track {
+  position: absolute;
+  left: 0;
+  height: 4px;
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+.rc-slider-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  cursor: -webkit-grab;
+  margin-top: -8px;
+  cursor: grab;
+  border-radius: 50%;
+  border: solid 2px #fff;
+  background-color: #6B66FF;
+  touch-action: pan-x;
+}
+
+.rc-slider-handle:hover {
+  border-color: #fff;
+}
+
+.rc-slider-handle:active {
+  border-color: #fff;
+  box-shadow: 0 0 5px #fff;
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+
+.rc-slider-handle:focus {
+  border-color: #fff;
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.2);
+  outline: none;
+}
+
+@media (max-width: 768px) {
+  .signupContainer {
+    padding: 2rem;
+  }
+
+  h2 {
+    font-size: 2.2rem;
+  }
+
+  .checkboxGroup label {
+    flex: 1 1 calc(50% - 1rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .signupContainer {
+    padding: 1.5rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  .checkboxGroup label {
+    flex: 1 1 100%;
+  }
+
+  .navigationButtons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .prevButton,
+  .nextButton,
+  .signupButton,
+  .googleButton {
+    width: 100%;
+  }
 }
