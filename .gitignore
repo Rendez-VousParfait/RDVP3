@@ -103,3 +103,5 @@ pods/
 *.log
 *.tmp
 *.temp
+
+AccountPrivateKey.json
