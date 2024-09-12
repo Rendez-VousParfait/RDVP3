@@ -9,6 +9,10 @@ import {
   faChevronLeft,
   faChevronRight,
   faPencil,
+  faHandshake,
+  faGlobe,
+  faHeart,
+  faLeaf,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Home.module.css";
 import Slider from "react-slick";
@@ -121,23 +125,23 @@ function Home() {
       </header>
 
       <section className={styles.howItWorks}>
-        <h2>Notre Processus en 3 Étapes</h2>
+        <h2>Notre Processus en 3 Étapes Simples</h2>
         <div className={styles.steps}>
           {[
             {
               icon: faPencil,
               title: "Personnalisez Votre Profil",
-              description: "Exprimez vos Envies et Goûts Personnels, en Solo ou en Groupe",
+              description: "Exprimez vos passions, vos goûts et vos envies pour des expériences sur mesure.",
             },
             {
               icon: faCalendarAlt,
               title: "Choisissez Vos Dates",
-              description: "Sélectionnez les Dates qui Correspondent Parfaitement à Votre Planning",
+              description: "Sélectionnez les dates idéales pour votre aventure, en solo ou en groupe.",
             },
             {
               icon: faStar,
-              title: "Fixez Vos Préférences",
-              description: "Définissez Vos Préférences en Quelques Clics",
+              title: "Vivez l'Expérience",
+              description: "Profitez d'un voyage unique, créé spécialement pour vous par nos experts locaux.",
             },
           ].map((step, index) => (
             <motion.div
@@ -146,7 +150,9 @@ function Home() {
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <FontAwesomeIcon icon={step.icon} className={styles.stepIcon} />
+              <div className={styles.stepIconWrapper}>
+                <FontAwesomeIcon icon={step.icon} className={styles.stepIcon} />
+              </div>
               <h3>{step.title}</h3>
               <p>{step.description}</p>
             </motion.div>
@@ -202,6 +208,40 @@ function Home() {
         </Slider>
       </section>
 
+      <section className={styles.uniqueExperiences}>
+        <h2>Expériences Uniques</h2>
+        <div className={styles.experienceGrid}>
+          {[
+            {
+              title: "Dîner sur la Tour Eiffel",
+              description: "Savourez un repas gastronomique avec une vue imprenable sur Paris",
+              image: "https://images.pexels.com/photos/699466/pexels-photo-699466.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            },
+            {
+              title: "Dégustation de vins à Bordeaux",
+              description: "Découvrez les meilleurs crus dans les châteaux bordelais",
+              image: "https://images.pexels.com/photos/6033986/pexels-photo-6033986.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            },
+            {
+              title: "Randonnée dans les Alpes",
+              description: "Explorez les magnifiques paysages alpins en compagnie d'un guide expert",
+              image: "https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            },
+          ].map((experience, index) => (
+            <motion.div
+              key={index}
+              className={styles.experienceCard}
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <img src={experience.image} alt={experience.title} />
+              <h3>{experience.title}</h3>
+              <p>{experience.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
       <section className={styles.testimonials}>
         <h2>Ce que Disent nos Voyageurs</h2>
         <Slider {...testimonialSettings}>
@@ -245,6 +285,45 @@ function Home() {
             </div>
           </div>
         </Slider>
+      </section>
+
+      <section className={styles.whyChooseUs}>
+        <h2>Pourquoi Choisir Rendez-Vous Parfait ?</h2>
+        <div className={styles.reasonsGrid}>
+          {[
+            {
+              icon: faHandshake,
+              title: "Expériences Sur Mesure",
+              description: "Chaque voyage est unique et adapté à vos préférences personnelles."
+            },
+            {
+              icon: faGlobe,
+              title: "Experts Locaux",
+              description: "Nos guides connaissent les meilleures adresses et les trésors cachés."
+            },
+            {
+              icon: faHeart,
+              title: "Service Attentionné",
+              description: "Notre équipe est disponible 24/7 pour assurer votre satisfaction."
+            },
+            {
+              icon: faLeaf,
+              title: "Tourisme Responsable",
+              description: "Nous nous engageons pour un tourisme durable et respectueux."
+            }
+          ].map((reason, index) => (
+            <motion.div
+              key={index}
+              className={styles.reasonCard}
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <FontAwesomeIcon icon={reason.icon} className={styles.reasonIcon} />
+              <h3>{reason.title}</h3>
+              <p>{reason.description}</p>
+            </motion.div>
+          ))}
+        </div>
       </section>
 
       <section className={styles.newsletter}>

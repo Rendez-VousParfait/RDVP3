@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useCallback, useMemo } from "react";
-import { collection, addDoc, updateDoc, doc, serverTimestamp, getDoc } from "firebase/firestore";
+import { collection, addDoc, updateDoc, doc, serverTimestamp, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -11,8 +11,15 @@ import AccommodationPreferences from "../components/SearchSteps/AccommodationPre
 import ActivityPreferences from "../components/SearchSteps/ActivityPreferences";
 import SearchResults from "../components/SearchResults";
 import TripOrganizationChoice from "../components/TripOrganizationChoice";
-import { bordeauxData } from "../data/bordeauxData";
 import styles from "./Search.module.css";
+
+const COLLECTIONS = {
+  SEARCHES: 'searches',
+  GROUPS: 'groups',
+  HOTELS: 'hotels',
+  ACTIVITIES: 'activities',
+  RESTAURANTS: 'restaurants',
+};
 
 const Search = () => {
   const { user, loading } = useContext(AuthContext);
@@ -28,12 +35,12 @@ const Search = () => {
     restaurantPreferences: { cuisineTypes: [] },
     accommodationPreferences: { types: [] },
     activityPreferences: { types: [] },
-    needsGroupCreation: false,
-    groupName: "",
-    invitedUsers: [],
     personCount: 1,
     mainServices: [],
     ambiance: "",
+    personalizationType: null,
+    accessibility: "",
+    invitedUsers: [],
   });
   const [searchResults, setSearchResults] = useState(null);
   const [searchId, setSearchId] = useState(null);
@@ -41,6 +48,8 @@ const Search = () => {
   const [isGroupSearch, setIsGroupSearch] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [allMembersSubmitted, setAllMembersSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -58,39 +67,57 @@ const Search = () => {
   useEffect(() => {
     if (isGroupSearch && groupId) {
       const checkAllMembersSubmitted = async () => {
-        const groupDoc = await getDoc(doc(db, "groups", groupId));
-        if (groupDoc.exists()) {
-          const groupData = groupDoc.data();
-          const allSubmitted = groupData.members.every(member => 
-            groupData.memberPreferences && groupData.memberPreferences[member]
-          );
-          setAllMembersSubmitted(allSubmitted);
+        try {
+          const groupDoc = await getDoc(doc(db, COLLECTIONS.GROUPS, groupId));
+          if (groupDoc.exists()) {
+            const groupData = groupDoc.data();
+            const allSubmitted = groupData.members.every(member => 
+              groupData.memberPreferences && groupData.memberPreferences[member]
+            );
+            setAllMembersSubmitted(allSubmitted);
+          }
+        } catch (error) {
+          console.error("Error checking member submissions:", error);
+          setError("Erreur lors de la vérification des soumissions des membres.");
         }
       };
       checkAllMembersSubmitted();
     }
   }, [isGroupSearch, groupId]);
 
+  useEffect(() => {
+    if (formData.tripType === "amis" || formData.tripType === "famille") {
+      const invitedCount = formData.invitedUsers?.length || 0;
+      handleInputChange('personCount', invitedCount + 1); // +1 pour inclure le créateur
+    } else if (formData.tripType === "couple") {
+      handleInputChange('personCount', 2);
+    }
+  }, [formData.tripType, formData.invitedUsers]);
+
   const checkGroupRole = useCallback(async (groupId) => {
-    const groupDoc = await getDoc(doc(db, "groups", groupId));
-    if (groupDoc.exists()) {
-      const groupData = groupDoc.data();
-      const isCreator = groupData.createdBy === user.uid;
-      if (isCreator) {
-        setUserRole('creator');
-        setStep(0);  // Le créateur commence à l'étape ComposeTripType
-        setFormData(prevData => ({
-          ...prevData,
-          tripType: groupData.tripType || "",
-          dates: groupData.dates || { start: null, end: null },
-          budget: groupData.budget || "",
-          groupName: groupData.name || "",
-          personCount: groupData.members ? groupData.members.length : 1,
-        }));
-      } else {
-        setUserRole('member');
-        setStep(1);  // Les membres commencent à PersonalizeAdvanced
+    try {
+      const groupDoc = await getDoc(doc(db, COLLECTIONS.GROUPS, groupId));
+      if (groupDoc.exists()) {
+        const groupData = groupDoc.data();
+        const isCreator = groupData.createdBy === user.uid;
+        if (isCreator) {
+          setUserRole('creator');
+          setStep(0);
+          setFormData(prevData => ({
+            ...prevData,
+            tripType: groupData.tripType || "",
+            dates: groupData.dates || { start: null, end: null },
+            budget: groupData.budget || "",
+            personCount: groupData.members ? groupData.members.length : 1,
+          }));
+        } else {
+          setUserRole('member');
+          setStep(1);
+        }
       }
+    } catch (error) {
+      console.error("Error checking group role:", error);
+      setError("Erreur lors de la vérification du rôle dans le groupe.");
     }
   }, [user.uid]);
 
@@ -106,13 +133,14 @@ const Search = () => {
         timeoutId = setTimeout(async () => {
           if (searchId) {
             try {
-              await updateDoc(doc(db, "searches", searchId), {
+              await updateDoc(doc(db, COLLECTIONS.SEARCHES, searchId), {
                 [field]: value,
                 lastUpdated: serverTimestamp(),
               });
               console.log(`Firebase updated for ${field}`);
             } catch (error) {
               console.error("Error updating Firebase:", error);
+              setError("Erreur lors de la mise à jour des données.");
             }
           }
         }, 1000);
@@ -155,8 +183,9 @@ const Search = () => {
     });
   }, [updateFirebaseData]);
 
-  const saveSearchData = useCallback(async (includeGroup = false) => {
+  const saveSearchData = useCallback(async () => {
     try {
+      setIsLoading(true);
       const searchData = {
         userId: user.uid,
         lastUpdated: serverTimestamp(),
@@ -164,16 +193,19 @@ const Search = () => {
       };
 
       if (searchId) {
-        await updateDoc(doc(db, "searches", searchId), searchData);
+        await updateDoc(doc(db, COLLECTIONS.SEARCHES, searchId), searchData);
         console.log("Search data updated");
       } else {
         searchData.createdAt = serverTimestamp();
-        const docRef = await addDoc(collection(db, "searches"), searchData);
+        const docRef = await addDoc(collection(db, COLLECTIONS.SEARCHES), searchData);
         setSearchId(docRef.id);
         console.log("Search data saved with ID: ", docRef.id);
       }
     } catch (error) {
       console.error("Error saving data: ", error);
+      setError("Erreur lors de la sauvegarde des données de recherche.");
+    } finally {
+      setIsLoading(false);
     }
   }, [formData, searchId, user.uid]);
 
@@ -181,7 +213,8 @@ const Search = () => {
     if (!isGroupSearch || !groupId) return;
 
     try {
-      const groupRef = doc(db, "groups", groupId);
+      setIsLoading(true);
+      const groupRef = doc(db, COLLECTIONS.GROUPS, groupId);
       const groupDoc = await getDoc(groupRef);
 
       if (groupDoc.exists()) {
@@ -189,22 +222,27 @@ const Search = () => {
         const memberPreferences = groupData.memberPreferences || {};
 
         memberPreferences[user.uid] = {
-          activityPreferences: formData.activityPreferences,
-          accommodationPreferences: formData.accommodationPreferences,
-          restaurantPreferences: formData.restaurantPreferences,
+          activityPreferences: formData.activityPreferences || {},
+          accommodationPreferences: formData.accommodationPreferences || {},
+          restaurantPreferences: formData.restaurantPreferences || {},
           personalization: {
-            personalizationType: formData.personalizationType,
-            ambiance: formData.ambiance,
-            activities: formData.activities,
-            accessibility: formData.accessibility,
+            personalizationType: formData.personalizationType || null,
+            ambiance: formData.ambiance || "",
+            activities: formData.activities || [],
+            accessibility: formData.accessibility || "",
           },
         };
+
+        console.log("Saving member preferences:", memberPreferences[user.uid]);
 
         await updateDoc(groupRef, { memberPreferences });
         console.log("Member preferences saved successfully");
       }
     } catch (error) {
       console.error("Error saving member preferences:", error);
+      setError("Erreur lors de la sauvegarde des préférences du membre.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -213,13 +251,13 @@ const Search = () => {
     setStep((prevStep) => {
       const newStep = prevStep + 1;
       console.log(`Moving to next step. New step: ${newStep}`);
-      saveSearchData(newStep === 1);
+      saveSearchData();
       if (isGroupSearch) {
         saveGroupMemberPreferences();
       }
       return newStep;
     });
-  }, [saveSearchData, isGroupSearch]);
+  }, [saveSearchData, isGroupSearch, saveGroupMemberPreferences]);
 
   const prevStep = useCallback(() => {
     console.log("Previous step called");
@@ -230,182 +268,227 @@ const Search = () => {
     });
   }, []);
 
+  const getSeasonalEvents = useCallback(() => {
+    const currentDate = new Date();
+    const month = currentDate.getMonth();
+    if (month >= 5 && month <= 8) return "summer_events";
+    if (month >= 9 && month <= 11) return "autumn_events";
+    if (month === 11 || month <= 1) return "winter_events";
+    return "spring_events";
+  }, []);
+
+  const weightResults = useCallback((results, preferences) => {
+    const seasonalEvents = getSeasonalEvents();
+    return results.map(item => {
+      let score = 0;
+      let matchCount = 0;
+      preferences.forEach(pref => {
+        if (item.type && pref.accommodationPreferences?.types?.includes(item.type)) {
+          score += 2;
+          matchCount++;
+        }
+        if (item.category && pref.activityPreferences?.types?.includes(item.category)) {
+          score += 1.5;
+          matchCount++;
+        }
+        if (item.cuisine && pref.restaurantPreferences?.cuisineTypes?.includes(item.cuisine)) {
+          score += 1;
+          matchCount++;
+        }
+        if (item.seasonalEvents && item.seasonalEvents.includes(seasonalEvents)) {
+          score += 0.5;
+        }
+        if (pref.accessibility === "pmr" && item.accessibility === "pmr") {
+          score += 1;
+        }
+      });
+      const normalizedScore = matchCount > 0 ? score / (matchCount * preferences.length) : 0;
+      return { ...item, score: normalizedScore };
+    });
+  }, [getSeasonalEvents]);
+
   const performSearch = useCallback(async () => {
     console.log("Performing search with formData:", formData);
 
-    if (isGroupSearch && !allMembersSubmitted) {
-      alert("Tous les membres du groupe n'ont pas encore rempli leurs préférences.");
-      return;
-    }
+    try {
+      setIsLoading(true);
+      setError(null);
 
-    let groupPreferences = [];
-    if (groupId) {
-      const groupDoc = await getDoc(doc(db, "groups", groupId));
-      if (groupDoc.exists()) {
-        groupPreferences = Object.values(groupDoc.data().memberPreferences || {});
+      let groupPreferences = [];
+      if (groupId) {
+        const groupDoc = await getDoc(doc(db, COLLECTIONS.GROUPS, groupId));
+        if (groupDoc.exists()) {
+          groupPreferences = Object.values(groupDoc.data().memberPreferences || {});
+        }
       }
+
+      const fetchData = async (collectionName, filterFn) => {
+        const q = query(collection(db, collectionName), where("price", "<=", formData.budget));
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({id: doc.id, ...doc.data()})).filter(filterFn);
+      };
+
+      let [hotels, activities, restaurants] = await Promise.all([
+        fetchData(COLLECTIONS.HOTELS, hotel => formData.accommodationPreferences.types?.includes(hotel.type)),
+        fetchData(COLLECTIONS.ACTIVITIES, activity => formData.activityPreferences.types?.some(type => activity.category.includes(type))),
+        fetchData(COLLECTIONS.RESTAURANTS, restaurant => formData.restaurantPreferences.cuisineTypes?.some(type => restaurant.cuisine.includes(type)))
+      ]);
+
+      const preferencesToUse = groupPreferences.length > 0 ? [...groupPreferences, formData] : [formData];
+
+      hotels = weightResults(hotels, preferencesToUse);
+      activities = weightResults(activities, preferencesToUse);
+      restaurants = weightResults(restaurants, preferencesToUse);
+
+      const sortAndDiversify = (items) => {
+        items.sort((a, b) => b.score - a.score);
+        const topResults = items.slice(0, 10);
+        const remainingResults = items.slice(10);
+        const randomResults = remainingResults.sort(() => 0.5 - Math.random()).slice(0, 5);
+        return [...topResults, ...randomResults];
+      };
+
+      hotels = sortAndDiversify(hotels);
+      activities = sortAndDiversify(activities);
+      restaurants = sortAndDiversify(restaurants);
+
+      const results = { hotels, activities, restaurants };
+      console.log("Search results:", results);
+      setSearchResults(results);
+      saveSearchData();
+      nextStep();
+    } catch (error) {
+      console.error("Error performing search:", error);
+      setError("Une erreur est survenue lors de la recherche. Veuillez réessayer.");
+    } finally {
+      setIsLoading(false);
     }
-
-    const weightResults = (results, preferences) => {
-      return results.map(item => {
-        let score = 0;
-        preferences.forEach(pref => {
-          if (item.type && pref.accommodationPreferences?.types?.includes(item.type)) {
-            score += 1;
-          }
-          if (item.category && pref.activityPreferences?.types?.includes(item.category)) {
-            score += 1;
-          }
-          if (item.cuisine && pref.restaurantPreferences?.cuisineTypes?.includes(item.cuisine)) {
-            score += 1;
-          }
-          // Ajoutez d'autres critères de pondération ici
-        });
-        return { ...item, score: score / preferences.length };
-      });
-    };
-
-    let hotels = bordeauxData.hotels.filter(
-      (hotel) =>
-        hotel.price <= formData.budget &&
-        formData.accommodationPreferences.types?.includes(hotel.type)
-    );
-    let activities = bordeauxData.activities.filter(
-      (activity) =>
-        activity.price <= formData.budget &&
-        formData.activityPreferences.types?.some((type) =>
-          activity.category.includes(type)
-        )
-    );
-    let restaurants = bordeauxData.restaurants.filter(
-      (restaurant) =>
-        restaurant.price <= formData.budget &&
-        formData.restaurantPreferences.cuisineTypes?.some((type) =>
-          restaurant.cuisine.includes(type)
-        )
-    );
-
-    if (isGroupSearch && groupPreferences.length > 0) {
-      hotels = weightResults(hotels, [...groupPreferences, formData]);
-      activities = weightResults(activities, [...groupPreferences, formData]);
-      restaurants = weightResults(restaurants, [...groupPreferences, formData]);
-
-      hotels.sort((a, b) => b.score - a.score);
-      activities.sort((a, b) => b.score - a.score);
-      restaurants.sort((a, b) => b.score - a.score);
-    }
-
-    const results = { hotels, activities, restaurants };
-    console.log("Search results:", results);
-    setSearchResults(results);
-    saveSearchData();
-    nextStep();
-  }, [formData, groupId, isGroupSearch, allMembersSubmitted, saveSearchData, nextStep]);
+  }, [formData, groupId, saveSearchData, nextStep, weightResults]);
 
   const renderStep = useCallback(() => {
     console.log(`Rendering step ${step}`);
     const totalSteps = isGroupSearch ? (userRole === 'creator' ? 7 : 5) : 7;
 
+    const commonProps = {
+      formData: memoizedFormData,
+      handleInputChange,
+      isGroupSearch,
+      userRole,
+      currentStep: step + 1,
+      totalSteps,
+    };
+
     switch (step) {
       case 0:
         return (userRole === 'creator' || !isGroupSearch) ? (
           <ComposeTripType
-            formData={memoizedFormData}
-            handleInputChange={handleInputChange}
+            {...commonProps}
             nextStep={nextStep}
-            isGroupSearch={isGroupSearch}
-            userRole={userRole}
           />
         ) : null;
-      case 1:
-        return (userRole === 'creator' || !isGroupSearch) ? (
-          <ComposeTrip
-            formData={memoizedFormData}
-            handleInputChange={handleInputChange}
-            nextStep={nextStep}
-            prevStep={prevStep}
-            currentStep={step + 1}
-            totalSteps={totalSteps}
-            isGroupSearch={isGroupSearch}
-            userRole={userRole}
-          />
-        ) : (
-          <PersonalizeAdvanced
-            formData={memoizedFormData}
-            handleInputChange={handleInputChange}
-            nextStep={nextStep}
-            prevStep={null}
-            isGroupSearch={isGroupSearch}
-            userRole={userRole}
-          />
-        );
-      case 2:
-        return (
-          <RestaurantPreferences
-            formData={memoizedFormData}
-            handleInputChange={handleInputChange}
-            nextStep={nextStep}
-            prevStep={prevStep}
-            isGroupSearch={isGroupSearch}
-            userRole={userRole}
-          />
-        );
-      case 3:
-        return (
-          <AccommodationPreferences
-            formData={memoizedFormData}
-            handleInputChange={handleInputChange}
-            nextStep={nextStep}
-            prevStep={prevStep}
-            isGroupSearch={isGroupSearch}
-            userRole={userRole}
-          />
-        );
-      case 4:
-        return (
-          <ActivityPreferences
-            formData={memoizedFormData}
-            handleInputChange={handleInputChange}
-            nextStep={userRole === 'creator' ? nextStep : performSearch}
-            prevStep={prevStep}
-            isGroupSearch={isGroupSearch}
-            userRole={userRole}
-          />
-        );
-      case 5:
-        return userRole === 'creator' ? (
-          <PersonalizeAdvanced
-            formData={memoizedFormData}
-            handleInputChange={handleInputChange}
-            nextStep={nextStep}
-            prevStep={prevStep}
-            isGroupSearch={isGroupSearch}
-            userRole={userRole}
-          />
-        ) : (
-          <SearchResults results={searchResults} isGroupSearch={isGroupSearch} userRole={userRole} />
-        );
-      case 6:
-        return userRole === 'creator' ? performSearch() : null;
-      case 7:
-        return <SearchResults results={searchResults} isGroupSearch={isGroupSearch} userRole={userRole} />;
-      default:
-        return null;
-    }
-  }, [step, memoizedFormData, handleInputChange, nextStep, prevStep, performSearch, searchResults, isGroupSearch, userRole]);
+        case 1:
+                if (["amis", "famille", "couple"].includes(formData.tripType) && !isGroupSearch) {
+                  return (
+                    <TripOrganizationChoice
+                      nextStep={nextStep}
+                      currentStep={step + 1}
+                      totalSteps={totalSteps}
+                    />
+                  );
+                } else {
+                  return (
+                    <ComposeTrip
+                      {...commonProps}
+                      nextStep={nextStep}
+                      prevStep={prevStep}
+                    />
+                  );
+                }
+              case 2:
+                return (userRole === 'creator' || !isGroupSearch) ? (
+                  <ComposeTrip
+                    {...commonProps}
+                    nextStep={nextStep}
+                    prevStep={prevStep}
+                  />
+                ) : (
+                  <PersonalizeAdvanced
+                    {...commonProps}
+                    nextStep={nextStep}
+                    prevStep={null}
+                  />
+                );
+              case 3:
+                return (
+                  <RestaurantPreferences
+                    {...commonProps}
+                    nextStep={nextStep}
+                    prevStep={prevStep}
+                  />
+                );
+              case 4:
+                return (
+                  <AccommodationPreferences
+                    {...commonProps}
+                    nextStep={nextStep}
+                    prevStep={prevStep}
+                  />
+                );
+              case 5:
+                return (
+                  <ActivityPreferences
+                    {...commonProps}
+                    nextStep={userRole === 'creator' ? nextStep : performSearch}
+                    prevStep={prevStep}
+                  />
+                );
+              case 6:
+                return userRole === 'creator' ? (
+                  <PersonalizeAdvanced
+                    {...commonProps}
+                    nextStep={performSearch}
+                    prevStep={prevStep}
+                  />
+                ) : (
+                  <SearchResults results={searchResults} isGroupSearch={isGroupSearch} userRole={userRole} />
+                );
+              case 7:
+                return <SearchResults results={searchResults} isGroupSearch={isGroupSearch} userRole={userRole} />;
+              default:
+                return null;
+            }
+          }, [step, memoizedFormData, handleInputChange, nextStep, prevStep, performSearch, searchResults, isGroupSearch, userRole]);
 
-  return (
-    <div className={styles.searchPage}>
-      {isGroupSearch && userRole === 'creator' && (
-        <div className={styles.groupProgressIndicator}>
-          {allMembersSubmitted 
-            ? "Tous les membres ont rempli leurs préférences. Vous pouvez lancer la recherche."
-            : "En attente que tous les membres remplissent leurs préférences..."}
-        </div>
-      )}
-      {renderStep()}
-    </div>
-  );
-};
+          useEffect(() => {
+            if (isGroupSearch && searchResults) {
+              const updateSearchResults = async () => {
+                await performSearch();
+              };
+              updateSearchResults();
+            }
+          }, [isGroupSearch, searchResults, performSearch]);
 
-export default Search;
+          if (loading) {
+            return <div className={styles.loading}>Chargement...</div>;
+          }
+
+          if (error) {
+            return <div className={styles.error}>{error}</div>;
+          }
+
+          return (
+            <div className={styles.searchPage}>
+              {isLoading && <div className={styles.loadingOverlay}>Recherche en cours...</div>}
+              {isGroupSearch && userRole === 'creator' && (
+                <div className={styles.groupProgressIndicator}>
+                  {allMembersSubmitted 
+                    ? "Tous les membres ont rempli leurs préférences. Vous pouvez lancer la recherche."
+                    : "En attente que tous les membres remplissent leurs préférences..."}
+                </div>
+              )}
+              {renderStep()}
+            </div>
+          );
+        };
+
+        export default React.memo(Search);

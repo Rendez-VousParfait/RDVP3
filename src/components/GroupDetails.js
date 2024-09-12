@@ -15,6 +15,7 @@ const GroupDetails = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [membersWithPreferences, setMembersWithPreferences] = useState(0);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -27,7 +28,10 @@ const GroupDetails = () => {
     try {
       const groupDoc = await getDoc(doc(db, "groups", groupId));
       if (groupDoc.exists()) {
-        setGroup({ id: groupDoc.id, ...groupDoc.data() });
+        const groupData = groupDoc.data();
+        setGroup({ id: groupDoc.id, ...groupData });
+        const preferencesCount = Object.keys(groupData.memberPreferences || {}).length;
+        setMembersWithPreferences(preferencesCount);
       } else {
         console.log("No such group!");
       }
@@ -135,6 +139,9 @@ const GroupDetails = () => {
     <div className={styles["search-step"]}>
       <h2 className={styles["step-title"]}>{group.name}</h2>
       <p>Créé le : {group.createdAt.toDate().toLocaleDateString()}</p>
+      <div className={styles.progressIndicator}>
+        {membersWithPreferences}/{group.members.length} membres ont rempli leurs préférences
+      </div>
       <div className={styles["initial-options"]}>
         <button className={styles["refresh-button"]} onClick={fetchGroupDetails}>
           <FontAwesomeIcon icon={faSync} className={styles["button-icon"]} />

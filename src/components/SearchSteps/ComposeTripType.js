@@ -18,13 +18,27 @@ const ComposeTripType = ({
     { id: "couple", icon: faHeart, label: "Couple" },
     { id: "solo", icon: faUserAlt, label: "Solo" },
   ];
+
   const [showPersonCount, setShowPersonCount] = useState(false);
+  const [showGroupCreation, setShowGroupCreation] = useState(false);
 
   useEffect(() => {
     setShowPersonCount(
-      formData.tripType !== "solo" && formData.tripType !== "",
+      formData.tripType !== "solo" && formData.tripType !== ""
     );
-  }, [formData.tripType]);
+    setShowGroupCreation(
+      !isGroupSearch && (formData.tripType === "amis" || formData.tripType === "famille")
+    );
+  }, [formData.tripType, isGroupSearch]);
+
+  useEffect(() => {
+    if (formData.tripType === "amis" || formData.tripType === "famille") {
+      const invitedCount = formData.invitedUsers.length;
+      handleInputChange("personCount", invitedCount + 1); // +1 pour inclure le créateur
+    } else if (formData.tripType === "couple") {
+      handleInputChange("personCount", 2);
+    }
+  }, [formData.tripType, formData.invitedUsers, handleInputChange]);
 
   const handleTripTypeClick = (type) => {
     handleInputChange("tripType", type);
@@ -70,14 +84,16 @@ const ComposeTripType = ({
       <h2 className={styles["step-title"]}>Vous êtes :</h2>
       <div className={styles["trip-type-options"]}>
         {tripTypes.map(({ id, icon, label }) => (
-          <button
-            key={id}
-            onClick={() => handleTripTypeClick(id)}
-            className={`${styles["trip-type-button"]} ${formData.tripType === id ? styles["selected"] : ""}`}
-          >
-            <FontAwesomeIcon icon={icon} className={styles["trip-type-icon"]} />
-            <span>{label}</span>
-          </button>
+          (!isGroupSearch || id !== "solo") && (
+            <button
+              key={id}
+              onClick={() => handleTripTypeClick(id)}
+              className={`${styles["trip-type-button"]} ${formData.tripType === id ? styles["selected"] : ""}`}
+            >
+              <FontAwesomeIcon icon={icon} className={styles["trip-type-icon"]} />
+              <span>{label}</span>
+            </button>
+          )
         ))}
       </div>
       {showPersonCount && (
@@ -90,6 +106,22 @@ const ComposeTripType = ({
             onChange={handlePersonCountChange}
             min="1"
             required
+          />
+        </div>
+      )}
+      {showGroupCreation && (
+        <div className={styles["group-creation-container"]}>
+          <input 
+            type="text" 
+            placeholder="Nom du groupe" 
+            value={formData.groupName} 
+            onChange={(e) => handleInputChange('groupName', e.target.value)}
+          />
+          <input 
+            type="text" 
+            placeholder="Emails des invités (séparés par des virgules)" 
+            value={formData.invitedUsers.join(',')} 
+            onChange={(e) => handleInputChange('invitedUsers', e.target.value.split(','))}
           />
         </div>
       )}
