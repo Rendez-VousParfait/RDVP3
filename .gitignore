@@ -104,4 +104,4 @@ pods/
 *.tmp
 *.temp
 
-AccountPrivateKey.json
+src/components/DATA/serviceAccountKey.json
