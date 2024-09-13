@@ -105,3 +105,4 @@ pods/
 *.temp
 
 src/components/DATA/serviceAccountKey.json
+.env

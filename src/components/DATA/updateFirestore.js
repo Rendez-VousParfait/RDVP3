@@ -11,6 +11,43 @@ const activites = require("./activities.json");
 const hotels = require("./hotels.json");
 const restaurants = require("./restaurants.json");
 
+const restaurantMetadata = {
+  accessibilite: [
+    { id: "pmr", icon: "faWheelchair", label: "Accessible PMR" },
+    { id: "malentendants", icon: "faEar", label: "Adapté aux malentendants" },
+  ],
+  cadre: [
+    { id: "romantique", icon: "faHeart", label: "Romantique" },
+    { id: "familial", icon: "faUsers", label: "Familial" },
+    { id: "business", icon: "faBriefcase", label: "Business" },
+  ],
+  prix: [
+    { id: "economique", icon: "faDollarSign", label: "Économique" },
+    { id: "moyen", icon: "faDollarSign", label: "Moyen" },
+    { id: "gastronomique", icon: "faDollarSign", label: "Gastronomique" },
+  ],
+  typesDeCuisine: [
+    { id: "francaise", icon: "faFlag", label: "Française" },
+    { id: "italienne", icon: "faPizzaSlice", label: "Italienne" },
+    { id: "japonaise", icon: "faUtensils", label: "Japonaise" },
+  ],
+  services: [
+    { id: "reservation", icon: "faCalendar", label: "Réservation" },
+    { id: "livraison", icon: "faTruck", label: "Livraison" },
+    { id: "emporter", icon: "faShoppingBag", label: "À emporter" },
+  ],
+  equipements: [
+    { id: "wifi", icon: "faWifi", label: "Wi-Fi" },
+    { id: "terrasse", icon: "faUmbrellaBeach", label: "Terrasse" },
+    { id: "parking", icon: "faCar", label: "Parking" },
+  ],
+  typeDePublic: [
+    { id: "famille", icon: "faChild", label: "Famille" },
+    { id: "groupe", icon: "faUsers", label: "Groupe" },
+    { id: "couple", icon: "faHeart", label: "Couple" },
+  ],
+};
+
 async function updateCollection(collectionName, data) {
   const collectionRef = db.collection(collectionName);
 
@@ -31,11 +68,18 @@ async function updateCollection(collectionName, data) {
   }
 }
 
+async function updateRestaurantMetadata() {
+  const metadataRef = db.collection("metadata").doc("restaurants");
+  await metadataRef.set(restaurantMetadata);
+  console.log("Restaurant metadata updated successfully");
+}
+
 async function updateAllData() {
   try {
     await updateCollection("activities", activites);
     await updateCollection("hotels", hotels);
     await updateCollection("restaurants", restaurants);
+    await updateRestaurantMetadata();
     console.log("All data updated successfully");
   } catch (error) {
     console.error("Error updating data:", error);
