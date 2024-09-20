@@ -1,159 +1,320 @@
-import React from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import styles from "./RestaurantPreferences.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faGlobe,
-  faFlag,
-  faWheatAlt,
-  faCalendarDay,
+  faUtensils,
+  faWheelchair,
+  faTree,
+  faBuilding,
+  faEuroSign,
+  faUsers,
+  faHeart,
+  faWineGlass,
+  faLeaf,
+  faGlassCheers,
+  faSpa,
   faUmbrellaBeach,
-  faMusic,
-  faBaby,
+  faCoffee,
+  faHamburger,
+  faPizzaSlice,
+  faDrumstickBite,
+  faFish,
+  faCarrot,
 } from "@fortawesome/free-solid-svg-icons";
 
-const RestaurantPreferences = ({
-  formData,
-  handleInputChange,
-  nextStep,
-  prevStep,
-  currentStep,
-  totalSteps,
-  isGroupSearch,
-  userRole,
-}) => {
-  const cuisineTypes = [
-    { id: "duMonde", icon: faGlobe, label: "Du monde" },
-    { id: "francaise", icon: faFlag, label: "Française" },
-    { id: "sansGluten", icon: faWheatAlt, label: "Sans gluten" },
-    { id: "ephemere", icon: faCalendarDay, label: "Éphémère" },
-  ];
+const RestaurantPreferences = React.memo(
+  ({
+    formData,
+    handlePreferencesChange,
+    nextStep,
+    prevStep,
+    currentStep,
+    totalSteps,
+    isGroupSearch,
+    userRole,
+  }) => {
+    const [error, setError] = useState("");
 
-  const equipments = [
-    { id: "rooftop", icon: faUmbrellaBeach, label: "Roof-top" },
-    { id: "musique", icon: faMusic, label: "Musique" },
-    { id: "enfantsBas", icon: faBaby, label: "Enfants bas-âge" },
-  ];
+    useEffect(() => {
+      console.log("RestaurantPreferences formData:", formData);
+    }, [formData]);
 
-  const handlePreferenceClick = (category, value) => {
-    if (isGroupSearch && userRole !== 'creator') return;
+    const cuisineTypes = useMemo(
+      () => [
+        { id: "Française", icon: faUtensils, label: "Française" },
+        { id: "Européenne", icon: faWineGlass, label: "Européenne" },
+        { id: "Moderne", icon: faCoffee, label: "Moderne" },
+        { id: "Fusion", icon: faHamburger, label: "Fusion" },
+        { id: "Gastronomique", icon: faUtensils, label: "Gastronomique" },
+        { id: "Fruits de mer", icon: faFish, label: "Fruits de mer" },
+        {
+          id: "Traditionnelle",
+          icon: faDrumstickBite,
+          label: "Traditionnelle",
+        },
+        { id: "Brasserie", icon: faGlassCheers, label: "Brasserie" },
+        { id: "Régionale", icon: faUtensils, label: "Régionale" },
+        { id: "Créative", icon: faPizzaSlice, label: "Créative" },
+        { id: "Bistrot", icon: faWineGlass, label: "Bistrot" },
+        { id: "Fromagerie", icon: faCarrot, label: "Fromagerie" },
+        { id: "Saine", icon: faLeaf, label: "Saine" },
+      ],
+      [],
+    );
 
-    const currentPreferences = formData.restaurantPreferences[category] || [];
-    const updatedPreferences = currentPreferences.includes(value)
-      ? currentPreferences.filter((item) => item !== value)
-      : [...currentPreferences, value];
+    const ambiances = useMemo(
+      () => [
+        { id: "Chic", icon: faWineGlass, label: "Chic" },
+        { id: "Moderne", icon: faBuilding, label: "Moderne" },
+        { id: "Intime", icon: faHeart, label: "Intime" },
+        { id: "Convivial", icon: faUsers, label: "Convivial" },
+        { id: "Luxe", icon: faSpa, label: "Luxe" },
+        { id: "Rustique", icon: faTree, label: "Rustique" },
+        { id: "Élégant", icon: faWineGlass, label: "Élégant" },
+        { id: "Authentique", icon: faUmbrellaBeach, label: "Authentique" },
+      ],
+      [],
+    );
 
-    handleInputChange("restaurantPreferences", {
-      ...formData.restaurantPreferences,
-      [category]: updatedPreferences,
-    });
-  };
+    const services = useMemo(
+      () => [
+        { id: "Menu dégustation", icon: faUtensils, label: "Menu dégustation" },
+        { id: "Terrasse", icon: faUmbrellaBeach, label: "Terrasse" },
+        {
+          id: "Options végétarienne",
+          icon: faLeaf,
+          label: "Options végétarienne",
+        },
+        { id: "Service VIP", icon: faWineGlass, label: "Service VIP" },
+        { id: "Plats de saison", icon: faCarrot, label: "Plats de saison" },
+        { id: "Menu du jour", icon: faUtensils, label: "Menu du jour" },
+        { id: "Privatisation", icon: faUsers, label: "Privatisation" },
+        { id: "Cave à vins", icon: faWineGlass, label: "Cave à vins" },
+        {
+          id: "Fruits de mer frais",
+          icon: faFish,
+          label: "Fruits de mer frais",
+        },
+        {
+          id: "Cuisine régionale",
+          icon: faUtensils,
+          label: "Cuisine régionale",
+        },
+        { id: "Cheminée", icon: faTree, label: "Cheminée" },
+        { id: "Bar à vins", icon: faWineGlass, label: "Bar à vins" },
+        { id: "Sommelier", icon: faWineGlass, label: "Sommelier" },
+        { id: "Plats à partager", icon: faUsers, label: "Plats à partager" },
+        {
+          id: "Spécialités locales",
+          icon: faUtensils,
+          label: "Spécialités locales",
+        },
+        {
+          id: "Sélection de fromages",
+          icon: faCarrot,
+          label: "Sélection de fromages",
+        },
+        {
+          id: "Accord mets-vins",
+          icon: faWineGlass,
+          label: "Accord mets-vins",
+        },
+      ],
+      [],
+    );
 
-  if (isGroupSearch && userRole !== 'creator') {
+    const handlePreferenceClick = useCallback(
+      (category, value) => {
+        if (isGroupSearch && userRole !== "creator") return;
+        handlePreferencesChange(
+          "RestaurantPreferences",
+          category,
+          formData.RestaurantPreferences[category]?.includes(value)
+            ? formData.RestaurantPreferences[category].filter(
+                (item) => item !== value,
+              )
+            : [...(formData.RestaurantPreferences[category] || []), value],
+        );
+      },
+      [
+        isGroupSearch,
+        userRole,
+        handlePreferencesChange,
+        formData.RestaurantPreferences,
+      ],
+    );
+
+    const handleAccessibilityChange = useCallback(
+      (e) => {
+        handlePreferencesChange(
+          "RestaurantPreferences",
+          "accessibility",
+          e.target.checked,
+        );
+      },
+      [handlePreferencesChange],
+    );
+
+    const handleBudgetChange = useCallback(
+      (e) => {
+        const budget = e.target.value === "" ? null : Number(e.target.value);
+        handlePreferencesChange("RestaurantPreferences", "budget", budget);
+      },
+      [handlePreferencesChange],
+    );
+
+    const handleNext = useCallback(() => {
+      if (
+        !formData.RestaurantPreferences?.cuisinetype ||
+        formData.RestaurantPreferences.cuisinetype.length === 0
+      ) {
+        setError("Veuillez sélectionner au moins un type de cuisine");
+        return;
+      }
+      setError("");
+      nextStep();
+    }, [formData.RestaurantPreferences?.cuisinetype, nextStep]);
+
+    if (isGroupSearch && userRole !== "creator") {
+      return (
+        <div className={styles["search-step"]}>
+          <div className={styles["progress-indicator"]}>
+            Étape {currentStep} sur {totalSteps}
+          </div>
+          <h2 className={styles["step-title"]}>
+            Préférences Restaurants du Groupe
+          </h2>
+          <div className={styles["group-preferences-summary"]}>
+            {/* Afficher un résumé des préférences du groupe ici */}
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className={styles["search-step"]}>
         <div className={styles["progress-indicator"]}>
           Étape {currentStep} sur {totalSteps}
         </div>
-        <h2 className={styles["step-title"]}>Préférences Restaurants du Groupe</h2>
-        <div className={styles["group-preferences-summary"]}>
-          <h3>Types de cuisine sélectionnés :</h3>
-          <ul>
-            {formData.restaurantPreferences.cuisineTypes?.map(type => (
-              <li key={type}>
-                <FontAwesomeIcon icon={cuisineTypes.find(ct => ct.id === type)?.icon} />
-                {" "}
-                {cuisineTypes.find(ct => ct.id === type)?.label}
-              </li>
+        <h2 className={styles["step-title"]}>Préférences Restaurants</h2>
+
+        <div className={styles["preferences-section"]}>
+          <h3 className={styles["section-title"]}>Types de cuisine</h3>
+          <div className={styles["preferences-options"]}>
+            {cuisineTypes.map(({ id, icon, label }) => (
+              <button
+                key={id}
+                onClick={() => handlePreferenceClick("cuisinetype", id)}
+                className={`${styles["preference-button"]} ${
+                  formData.RestaurantPreferences?.cuisinetype?.includes(id)
+                    ? styles["selected"]
+                    : ""
+                }`}
+              >
+                <FontAwesomeIcon
+                  icon={icon}
+                  className={styles["preference-icon"]}
+                />
+                <span>{label}</span>
+              </button>
             ))}
-          </ul>
-          <h3>Équipements sélectionnés :</h3>
-          <ul>
-            {formData.restaurantPreferences.equipments?.map(eq => (
-              <li key={eq}>
-                <FontAwesomeIcon icon={equipments.find(e => e.id === eq)?.icon} />
-                {" "}
-                {equipments.find(e => e.id === eq)?.label}
-              </li>
-            ))}
-          </ul>
+          </div>
         </div>
+
+        <div className={styles["preferences-section"]}>
+          <h3 className={styles["section-title"]}>Ambiance</h3>
+          <div className={styles["preferences-options"]}>
+            {ambiances.map(({ id, icon, label }) => (
+              <button
+                key={id}
+                onClick={() => handlePreferenceClick("ambiance", id)}
+                className={`${styles["preference-button"]} ${
+                  formData.RestaurantPreferences?.ambiance?.includes(id)
+                    ? styles["selected"]
+                    : ""
+                }`}
+              >
+                <FontAwesomeIcon
+                  icon={icon}
+                  className={styles["preference-icon"]}
+                />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles["preferences-section"]}>
+          <h3 className={styles["section-title"]}>Services</h3>
+          <div className={styles["preferences-options"]}>
+            {services.map(({ id, icon, label }) => (
+              <button
+                key={id}
+                onClick={() => handlePreferenceClick("services", id)}
+                className={`${styles["preference-button"]} ${
+                  formData.RestaurantPreferences?.services?.includes(id)
+                    ? styles["selected"]
+                    : ""
+                }`}
+              >
+                <FontAwesomeIcon
+                  icon={icon}
+                  className={styles["preference-icon"]}
+                />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles["preferences-section"]}>
+          <h3 className={styles["section-title"]}>
+            Budget maximum par personne (en €)
+          </h3>
+          <div className={styles["price-input-container"]}>
+            <FontAwesomeIcon
+              icon={faEuroSign}
+              className={styles["euro-icon"]}
+            />
+            <input
+              type="number"
+              value={formData.RestaurantPreferences?.budget || ""}
+              onChange={handleBudgetChange}
+              placeholder="Budget maximum"
+              className={styles["price-input"]}
+            />
+          </div>
+        </div>
+
+        <div className={styles["preferences-section"]}>
+          <h3 className={styles["section-title"]}>Accessibilité PMR</h3>
+          <label className={styles["checkbox-label"]}>
+            <input
+              type="checkbox"
+              checked={formData.RestaurantPreferences?.accessibility || false}
+              onChange={handleAccessibilityChange}
+            />
+            <FontAwesomeIcon
+              icon={faWheelchair}
+              className={styles["preference-icon"]}
+            />
+            Accès PMR requis
+          </label>
+        </div>
+
+        {error && <p className={styles["error-message"]}>{error}</p>}
+
         <div className={styles["navigation-buttons"]}>
           <button className={styles["nav-button"]} onClick={prevStep}>
             Précédent
           </button>
-          <button className={styles["nav-button"]} onClick={nextStep}>
+          <button className={styles["nav-button"]} onClick={handleNext}>
             Suivant
           </button>
         </div>
       </div>
     );
-  }
-
-  return (
-    <div className={styles["search-step"]}>
-      <div className={styles["progress-indicator"]}>
-        Étape {currentStep} sur {totalSteps}
-      </div>
-      <h2 className={styles["step-title"]}>
-        {isGroupSearch ? "Préférences Restaurants du Groupe" : "Préférences Restaurants"}
-      </h2>
-
-      <div className={styles["preferences-section"]}>
-        <h3 className={styles["section-title"]}>Type de cuisine</h3>
-        <div className={styles["preferences-options"]}>
-          {cuisineTypes.map(({ id, icon, label }) => (
-            <button
-              key={id}
-              onClick={() => handlePreferenceClick("cuisineTypes", id)}
-              className={`${styles["preference-button"]} ${
-                formData.restaurantPreferences.cuisineTypes?.includes(id)
-                  ? styles["selected"]
-                  : ""
-              }`}
-            >
-              <FontAwesomeIcon
-                icon={icon}
-                className={styles["preference-icon"]}
-              />
-              <span>{label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className={styles["preferences-section"]}>
-        <h3 className={styles["section-title"]}>Équipements</h3>
-        <div className={styles["preferences-options"]}>
-          {equipments.map(({ id, icon, label }) => (
-            <button
-              key={id}
-              onClick={() => handlePreferenceClick("equipments", id)}
-              className={`${styles["preference-button"]} ${
-                formData.restaurantPreferences.equipments?.includes(id)
-                  ? styles["selected"]
-                  : ""
-              }`}
-            >
-              <FontAwesomeIcon
-                icon={icon}
-                className={styles["preference-icon"]}
-              />
-              <span>{label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className={styles["navigation-buttons"]}>
-        <button className={styles["nav-button"]} onClick={prevStep}>
-          Précédent
-        </button>
-        <button className={styles["nav-button"]} onClick={nextStep}>
-          Suivant
-        </button>
-      </div>
-    </div>
-  );
-};
+  },
+);
 
 export default RestaurantPreferences;

@@ -41,21 +41,21 @@
 }
 
 .preference-section h3 {
+  font-size: 1.8rem;
   color: #fff;
-  font-size: 1.5rem;
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 .option-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
   justify-content: center;
+  gap: 1rem;
 }
 
 .option-button {
-  flex: 1 1 calc(33% - 1rem);
-  max-width: 200px;
+  flex: 0 1 calc(33.33% - 1rem);
   background-color: rgba(255, 255, 255, 0.2);
   color: #fff;
   border: 2px solid #fff;
@@ -65,20 +65,51 @@
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.option-button:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-3px);
-}
-
+.option-button:hover,
 .option-button.selected {
   background-color: #6B66FF;
   color: #fff;
   border-color: #6B66FF;
+  transform: translateY(-5px);
+}
+
+.option-button svg {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.price-input-container {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  padding: 0.5rem 1rem;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.euro-icon {
+  color: #fff;
+  margin-right: 0.5rem;
+}
+
+.price-input {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  width: 100%;
+}
+
+.price-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .navigation-buttons {
@@ -105,31 +136,45 @@
   box-shadow: 0 7px 20px rgba(0, 0, 0, 0.2);
 }
 
+.group-preferences-summary {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 25px;
+  color: #fff;
+}
+
+.group-preferences-summary h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.group-preferences-summary ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.group-preferences-summary li {
+  margin-bottom: 0.3rem;
+}
+
 @media (max-width: 768px) {
-  .search-step {
-    padding: 2rem;
-  }
-
-  .step-title {
-    font-size: 2.2rem;
-  }
-
   .option-button {
-    flex: 1 1 calc(50% - 1rem);
+    flex: 0 1 calc(50% - 1rem);
   }
 }
 
 @media (max-width: 480px) {
+  .step-title {
+    font-size: 2.2rem;
+  }
+
   .search-step {
     padding: 1.5rem;
   }
 
-  .step-title {
-    font-size: 2rem;
-  }
-
   .option-button {
-    flex: 1 1 100%;
+    flex: 0 1 100%;
   }
 
   .navigation-buttons {

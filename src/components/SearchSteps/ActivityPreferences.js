@@ -1,421 +1,391 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import styles from "./ActivityPreferences.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faFutbol,
-  faBrain,
-  faLandmark,
-  faGlassCheers,
+  faDoorOpen,
+  faTree,
+  faStore,
   faSpa,
-  faUtensils,
-  faUsers,
-  faBirthdayCake,
-  faCalendarAlt,
-  faLeaf,
-  faHiking,
-  faSwimmer,
-  faBicycle,
-  faVolleyballBall,
-  faChess,
-  faBook,
-  faTheaterMasks,
-  faMusic,
-  faCocktail,
+  faCity,
+  faLandmark,
   faWineGlass,
-  faSeedling,
   faHotTub,
-  faPalette,
-  faCamera,
+  faSnowflake,
+  faUsers,
+  faHandPointer,
+  faRunning,
+  faGift,
+  faHome,
+  faUmbrellaBeach,
+  faWineBottle,
+  faWater,
+  faHeart,
+  faGlassCheers,
+  faUtensils,
+  faClock,
+  faEuroSign,
+  faWheelchair,
 } from "@fortawesome/free-solid-svg-icons";
 
-const ActivityPreferences = ({
-  formData,
-  handleInputChange,
-  nextStep,
-  prevStep,
-  currentStep,
-  totalSteps,
-  isGroupSearch,
-  userRole,
-}) => {
-  const [flippedCards, setFlippedCards] = useState({});
+const ActivityPreferences = React.memo(
+  ({
+    formData,
+    handleInputChange,
+    nextStep,
+    prevStep,
+    currentStep,
+    totalSteps,
+    isGroupSearch,
+    userRole,
+  }) => {
+    const [error, setError] = useState("");
 
-  const activityTypes = [
-    {
-      id: "sport",
-      icon: faFutbol,
-      label: "Sport",
-      subCategories: [
-        { id: "hiking", icon: faHiking, label: "Randonnée" },
-        { id: "swimming", icon: faSwimmer, label: "Natation" },
-        { id: "cycling", icon: faBicycle, label: "Cyclisme" },
-        { id: "ballSports", icon: faVolleyballBall, label: "Sports de balle" },
+    useEffect(() => {
+      console.log("ActivityPreferences formData:", formData);
+    }, [formData]);
+
+    const environments = useMemo(
+      () => [
+        { id: "Intérieur", icon: faDoorOpen, label: "Intérieur" },
+        { id: "Extérieur", icon: faTree, label: "Extérieur" },
       ],
-    },
-    {
-      id: "reflexion",
-      icon: faBrain,
-      label: "Réflexion",
-      subCategories: [
-        { id: "chess", icon: faChess, label: "Échecs" },
-        { id: "reading", icon: faBook, label: "Lecture" },
-      ],
-    },
-    {
-      id: "culturel",
-      icon: faLandmark,
-      label: "Culturel",
-      subCategories: [
-        { id: "theater", icon: faTheaterMasks, label: "Théâtre" },
-        { id: "music", icon: faMusic, label: "Musique" },
-      ],
-    },
-    {
-      id: "fete",
-      icon: faGlassCheers,
-      label: "Fête",
-      subCategories: [
-        { id: "nightclub", icon: faCocktail, label: "Boîte de nuit" },
-        { id: "wineTasting", icon: faWineGlass, label: "Dégustation de vin" },
-      ],
-    },
-    {
-      id: "detente",
-      icon: faSpa,
-      label: "Détente",
-      subCategories: [
-        { id: "yoga", icon: faSeedling, label: "Yoga" },
-        { id: "spa", icon: faHotTub, label: "Spa" },
-      ],
-    },
-    { id: "culinaire", icon: faUtensils, label: "Culinaire" },
-    {
-      id: "art",
-      icon: faPalette,
-      label: "Art",
-      subCategories: [
-        { id: "painting", icon: faPalette, label: "Peinture" },
-        { id: "sculpture", icon: faPalette, label: "Sculpture" },
-      ],
-    },
-    {
-      id: "photo",
-      icon: faCamera,
-      label: "Photographie",
-      subCategories: [
-        { id: "landscape", icon: faCamera, label: "Paysage" },
-        { id: "portrait", icon: faCamera, label: "Portrait" },
-      ],
-    },
-  ];
-
-  const specialInterests = [
-    { id: "jeuxEquipe", icon: faUsers, label: "Jeux en équipe" },
-    {
-      id: "anniversaires",
-      icon: faBirthdayCake,
-      label: "Lieux d'anniversaires",
-    },
-    {
-      id: "evenementsLocaux",
-      icon: faCalendarAlt,
-      label: "Des événements locaux",
-    },
-    { id: "ecoResponsabilite", icon: faLeaf, label: "Éco-responsabilité" },
-  ];
-
-  const handlePreferenceClick = (category, value) => {
-    if (isGroupSearch && userRole !== 'creator') return;
-    const currentPreferences = formData.activityPreferences[category] || [];
-    const updatedPreferences = currentPreferences.includes(value)
-      ? currentPreferences.filter((item) => item !== value)
-      : [...currentPreferences, value];
-
-    handleInputChange("activityPreferences", {
-      ...formData.activityPreferences,
-      [category]: updatedPreferences,
-    });
-  };
-
-  const handleSubCategoryClick = (activityId, subCategoryId) => {
-    if (isGroupSearch && userRole !== 'creator') return;
-    const currentSubCategories =
-      formData.activityPreferences.subCategories || {};
-    const updatedSubCategories = {
-      ...currentSubCategories,
-      [activityId]: currentSubCategories[activityId]?.includes(subCategoryId)
-        ? currentSubCategories[activityId].filter((id) => id !== subCategoryId)
-        : [...(currentSubCategories[activityId] || []), subCategoryId],
-    };
-
-    handleInputChange("activityPreferences", {
-      ...formData.activityPreferences,
-      subCategories: updatedSubCategories,
-    });
-
-    setTimeout(() => toggleFlip(activityId), 300);
-  };
-
-  const toggleFlip = (id) => {
-    if (isGroupSearch && userRole !== 'creator') return;
-    setFlippedCards((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const resetSelections = () => {
-    if (isGroupSearch && userRole !== 'creator') return;
-    handleInputChange("activityPreferences", {
-      types: [],
-      subCategories: {},
-      encadrement: "",
-      accessibility: "",
-      specialInterests: [],
-    });
-    setFlippedCards({});
-  };
-
-  const getTotalSelections = () => {
-    const { types, subCategories, specialInterests } =
-      formData.activityPreferences;
-    const subCategoriesCount = Object.values(subCategories || {}).flat().length;
-    return (
-      (types?.length || 0) +
-      subCategoriesCount +
-      (specialInterests?.length || 0)
+      [],
     );
-  };
 
-  const surpriseMe = () => {
-    if (isGroupSearch && userRole !== 'creator') return;
-    const randomTypes = activityTypes
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 3)
-      .map((type) => type.id);
+    const cadres = useMemo(
+      () => [
+        { id: "Atelier-boutique", icon: faStore, label: "Atelier-boutique" },
+        {
+          id: "Centre de bien-être",
+          icon: faSpa,
+          label: "Centre de bien-être",
+        },
+        { id: "Centre-ville", icon: faCity, label: "Centre-ville" },
+        {
+          id: "Centre historique",
+          icon: faLandmark,
+          label: "Centre historique",
+        },
+        { id: "Vignobles", icon: faWineGlass, label: "Vignobles" },
+        { id: "Spa", icon: faHotTub, label: "Spa" },
+        {
+          id: "Centre de cryothérapie",
+          icon: faSnowflake,
+          label: "Centre de cryothérapie",
+        },
+        { id: "Marché de Noël", icon: faGift, label: "Marché de Noël" },
+        {
+          id: "Salle d'escape game",
+          icon: faDoorOpen,
+          label: "Salle d'escape game",
+        },
+        { id: "Village viticole", icon: faHome, label: "Village viticole" },
+        { id: "Ville et vignoble", icon: faCity, label: "Ville et vignoble" },
+        { id: "Bord de mer", icon: faUmbrellaBeach, label: "Bord de mer" },
+        { id: "Cave à vin", icon: faWineBottle, label: "Cave à vin" },
+        { id: "Rivière", icon: faWater, label: "Rivière" },
+        { id: "Parc", icon: faTree, label: "Parc" },
+      ],
+      [],
+    );
 
-    const randomSubCategories = {};
-    randomTypes.forEach((typeId) => {
-      const type = activityTypes.find((t) => t.id === typeId);
-      if (type.subCategories) {
-        randomSubCategories[typeId] = [
-          type.subCategories[
-            Math.floor(Math.random() * type.subCategories.length)
-          ].id,
-        ];
-      }
-    });
+    const ambiances = useMemo(
+      () => [
+        { id: "Relaxante", icon: faSpa, label: "Relaxante" },
+        { id: "Ludique", icon: faGlassCheers, label: "Ludique" },
+        { id: "Culturelle", icon: faLandmark, label: "Culturelle" },
+        { id: "Aventureuse", icon: faTree, label: "Aventureuse" },
+        { id: "Gastronomique", icon: faUtensils, label: "Gastronomique" },
+        { id: "Conviviale", icon: faUsers, label: "Conviviale" },
+        { id: "Interactive", icon: faHandPointer, label: "Interactive" },
+        { id: "Festive", icon: faGlassCheers, label: "Festive" },
+        { id: "Romantique", icon: faHeart, label: "Romantique" },
+        { id: "Sportive", icon: faRunning, label: "Sportive" },
+      ],
+      [],
+    );
 
-    const randomSpecialInterests = specialInterests
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 2)
-      .map((interest) => interest.id);
+    const durations = useMemo(
+      () => [
+        { id: "30 minutes", icon: faClock, label: "30 minutes" },
+        { id: "1 heure", icon: faClock, label: "1 heure" },
+        {
+          id: "1 heure et 30 minutes",
+          icon: faClock,
+          label: "1 heure et 30 minutes",
+        },
+        { id: "2 heures", icon: faClock, label: "2 heures" },
+        {
+          id: "2 heures et 30 minutes",
+          icon: faClock,
+          label: "2 heures et 30 minutes",
+        },
+        { id: "3 heures", icon: faClock, label: "3 heures" },
+        {
+          id: "3 heures et 30 minutes",
+          icon: faClock,
+          label: "3 heures et 30 minutes",
+        },
+        { id: "4 heures", icon: faClock, label: "4 heures" },
+        {
+          id: "4 heures et 30 minutes",
+          icon: faClock,
+          label: "4 heures et 30 minutes",
+        },
+        { id: "5 heures", icon: faClock, label: "5 heures" },
+        {
+          id: "8 heures et 30 minutes",
+          icon: faClock,
+          label: "8 heures et 30 minutes",
+        },
+      ],
+      [],
+    );
 
-    const surpriseSelections = {
-      types: randomTypes,
-      subCategories: randomSubCategories,
-      encadrement: Math.random() < 0.5 ? "guide" : "autonome",
-      accessibility: Math.random() < 0.5 ? "tous" : "pmr",
-      specialInterests: randomSpecialInterests,
-    };
+    const handlePreferenceClick = useCallback(
+      (category, value) => {
+        if (isGroupSearch && userRole !== "creator") return;
+        handleInputChange({
+          target: {
+            name: "ActivityPreferences",
+            value: {
+              ...formData.ActivityPreferences,
+              [category]: formData.ActivityPreferences[category]?.includes(
+                value,
+              )
+                ? formData.ActivityPreferences[category].filter(
+                    (item) => item !== value,
+                  )
+                : [...(formData.ActivityPreferences[category] || []), value],
+            },
+          },
+        });
+      },
+      [
+        isGroupSearch,
+        userRole,
+        handleInputChange,
+        formData.ActivityPreferences,
+      ],
+    );
 
-    handleInputChange("activityPreferences", surpriseSelections);
-    setFlippedCards({});
-  };
+    const handleAccessibilityChange = useCallback(
+      (e) => {
+        handleInputChange({
+          target: {
+            name: "ActivityPreferences",
+            value: {
+              ...formData.ActivityPreferences,
+              accessibility: e.target.checked,
+            },
+          },
+        });
+      },
+      [handleInputChange, formData.ActivityPreferences],
+    );
 
-  if (isGroupSearch && userRole !== 'creator') {
+    const handleBudgetChange = useCallback(
+      (e) => {
+        const budget = e.target.value === "" ? null : Number(e.target.value);
+        handleInputChange({
+          target: {
+            name: "ActivityPreferences",
+            value: {
+              ...formData.ActivityPreferences,
+              budget,
+            },
+          },
+        });
+      },
+      [handleInputChange, formData.ActivityPreferences],
+    );
+
+    const handleNext = useCallback(() => {
+      setError("");
+      nextStep();
+    }, [nextStep]);
+
+    if (isGroupSearch && userRole !== "creator") {
+      return (
+        <div className={styles["search-step"]}>
+          <div className={styles["progress-indicator"]}>
+            Étape {currentStep} sur {totalSteps}
+          </div>
+          <h2 className={styles["step-title"]}>
+            Préférences Activités du Groupe
+          </h2>
+          <div className={styles["group-preferences-summary"]}>
+            {/* Afficher un résumé des préférences du groupe ici */}
+          </div>
+          <div className={styles["navigation-buttons"]}>
+            <button className={styles["nav-button"]} onClick={prevStep}>
+              Précédent
+            </button>
+            <button className={styles["nav-button"]} onClick={nextStep}>
+              Suivant
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className={styles["search-step"]}>
         <div className={styles["progress-indicator"]}>
           Étape {currentStep} sur {totalSteps}
         </div>
-        <h2 className={styles["step-title"]}>Préférences Activités du Groupe</h2>
-        <div className={styles["group-preferences-summary"]}>
-          <h3>Types d'activités sélectionnés :</h3>
-          <ul>
-            {formData.activityPreferences.types?.map(type => (
-              <li key={type}>{activityTypes.find(t => t.id === type)?.label}</li>
+        <h2 className={styles["step-title"]}>Préférences Activités</h2>
+
+        <div className={styles["preferences-section"]}>
+          <h3 className={styles["section-title"]}>Environnement</h3>
+          <div className={styles["preferences-options"]}>
+            {environments.map(({ id, icon, label }) => (
+              <button
+                key={id}
+                onClick={() => handlePreferenceClick("environment", id)}
+                className={`${styles["preference-button"]} ${
+                  formData.ActivityPreferences?.environment?.includes(id)
+                    ? styles["selected"]
+                    : ""
+                }`}
+              >
+                <FontAwesomeIcon
+                  icon={icon}
+                  className={styles["preference-icon"]}
+                />
+                <span>{label}</span>
+              </button>
             ))}
-          </ul>
-          <h3>Encadrement :</h3>
-          <p>{formData.activityPreferences.encadrement || "Non spécifié"}</p>
-          <h3>Accessibilité :</h3>
-          <p>{formData.activityPreferences.accessibility || "Non spécifié"}</p>
-          <h3>Intérêts particuliers :</h3>
-          <ul>
-            {formData.activityPreferences.specialInterests?.map(interest => (
-              <li key={interest}>{specialInterests.find(i => i.id === interest)?.label}</li>
-            ))}
-          </ul>
+          </div>
         </div>
+
+        <div className={styles["preferences-section"]}>
+          <h3 className={styles["section-title"]}>Cadre</h3>
+          <div className={styles["preferences-options"]}>
+            {cadres.map(({ id, icon, label }) => (
+              <button
+                key={id}
+                onClick={() => handlePreferenceClick("cadre", id)}
+                className={`${styles["preference-button"]} ${
+                  formData.ActivityPreferences?.cadre?.includes(id)
+                    ? styles["selected"]
+                    : ""
+                }`}
+              >
+                <FontAwesomeIcon
+                  icon={icon}
+                  className={styles["preference-icon"]}
+                />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles["preferences-section"]}>
+          <h3 className={styles["section-title"]}>Ambiance</h3>
+          <div className={styles["preferences-options"]}>
+            {ambiances.map(({ id, icon, label }) => (
+              <button
+                key={id}
+                onClick={() => handlePreferenceClick("ambiance", id)}
+                className={`${styles["preference-button"]} ${
+                  formData.ActivityPreferences?.ambiance?.includes(id)
+                    ? styles["selected"]
+                    : ""
+                }`}
+              >
+                <FontAwesomeIcon
+                  icon={icon}
+                  className={styles["preference-icon"]}
+                />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles["preferences-section"]}>
+          <h3 className={styles["section-title"]}>Durée</h3>
+          <div className={styles["preferences-options"]}>
+            {durations.map(({ id, icon, label }) => (
+              <button
+                key={id}
+                onClick={() =>
+                  handleInputChange({
+                    target: {
+                      name: "ActivityPreferences",
+                      value: {
+                        ...formData.ActivityPreferences,
+                        duration: id,
+                      },
+                    },
+                  })
+                }
+                className={`${styles["preference-button"]} ${
+                  formData.ActivityPreferences?.duration === id
+                    ? styles["selected"]
+                    : ""
+                }`}
+              >
+                <FontAwesomeIcon
+                  icon={icon}
+                  className={styles["preference-icon"]}
+                />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles["preferences-section"]}>
+          <h3 className={styles["section-title"]}>Accessibilité PMR</h3>
+          <label className={styles["checkbox-label"]}>
+            <input
+              type="checkbox"
+              checked={formData.ActivityPreferences?.accessibility || false}
+              onChange={handleAccessibilityChange}
+            />
+            <FontAwesomeIcon
+              icon={faWheelchair}
+              className={styles["preference-icon"]}
+            />
+            Accès PMR requis
+          </label>
+        </div>
+
+        <div className={styles["preferences-section"]}>
+          <h3 className={styles["section-title"]}>
+            Budget maximum par personne (en €)
+          </h3>
+          <div className={styles["price-input-container"]}>
+            <FontAwesomeIcon
+              icon={faEuroSign}
+              className={styles["euro-icon"]}
+            />
+            <input
+              type="number"
+              value={formData.ActivityPreferences?.budget || ""}
+              onChange={handleBudgetChange}
+              placeholder="Budget maximum"
+              className={styles["price-input"]}
+            />
+          </div>
+        </div>
+
+        {error && <p className={styles["error-message"]}>{error}</p>}
+
         <div className={styles["navigation-buttons"]}>
           <button className={styles["nav-button"]} onClick={prevStep}>
             Précédent
           </button>
-          <button className={styles["nav-button"]} onClick={nextStep}>
+          <button className={styles["nav-button"]} onClick={handleNext}>
             Suivant
           </button>
         </div>
       </div>
     );
-  }
-
-  return (
-    <div className={styles["search-step"]}>
-      <div className={styles["progress-indicator"]}>
-        Étape {currentStep} sur {totalSteps}
-      </div>
-      <h2 className={styles["step-title"]}>
-        {isGroupSearch ? "Préférences Activités du Groupe" : "Préférences Activités"}
-      </h2>
-
-      <div className={styles["selection-counter"]}>
-        Sélections totales : {getTotalSelections()}
-      </div>
-
-      <div className={styles["preferences-section"]}>
-        <h3 className={styles["section-title"]}>Choix du type d'activités</h3>
-        <div className={styles["preferences-options"]}>
-          {activityTypes.map(({ id, icon, label, subCategories }) => (
-            <div
-              key={id}
-              className={`${styles["flip-card"]} ${flippedCards[id] ? styles["flipped"] : ""} ${
-                formData.activityPreferences.subCategories?.[id]?.length > 0
-                  ? styles["has-selection"]
-                  : ""
-              }`}
-            >
-              <div className={styles["flip-card-inner"]}>
-                <div className={styles["flip-card-front"]}>
-                  <button
-                    className={`${styles["preference-button"]} ${
-                      formData.activityPreferences.types?.includes(id)
-                        ? styles["selected"]
-                        : ""
-                    }`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handlePreferenceClick("types", id);
-                      toggleFlip(id);
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      icon={icon}
-                      className={styles["preference-icon"]}
-                    />
-                    <span>{label}</span>
-                  </button>
-                </div>
-                <div className={styles["flip-card-back"]}>
-                  {subCategories && (
-                    <div className={styles["sub-categories"]}>
-                      {subCategories.map((subCat) => (
-                        <button
-                          key={subCat.id}
-                          className={`${styles["sub-category-button"]} ${
-                            formData.activityPreferences.subCategories?.[
-                              id
-                            ]?.includes(subCat.id)
-                              ? styles["selected"]
-                              : ""
-                          }`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSubCategoryClick(id, subCat.id);
-                          }}
-                        >
-                          <FontAwesomeIcon
-                            icon={subCat.icon}
-                            className={styles["sub-category-icon"]}
-                          />
-                          <span>{subCat.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className={styles["preferences-section"]}>
-        <h3 className={styles["section-title"]}>Encadrement</h3>
-        <select
-          className={styles["select-input"]}
-          value={formData.activityPreferences.encadrement || ""}
-          onChange={(e) =>
-            handleInputChange("activityPreferences", {
-              ...formData.activityPreferences,
-              encadrement: e.target.value,
-            })
-          }
-        >
-          <option value="">Sélectionnez un type d'encadrement</option>
-          <option value="guide">Avec guide</option>
-          <option value="autonome">En autonomie</option>
-        </select>
-      </div>
-
-      <div className={styles["preferences-section"]}>
-        <h3 className={styles["section-title"]}>Accessibilité</h3>
-        <select
-          className={styles["select-input"]}
-          value={formData.activityPreferences.accessibility || ""}
-          onChange={(e) =>
-            handleInputChange("activityPreferences", {
-              ...formData.activityPreferences,
-              accessibility: e.target.value,
-            })
-          }
-        >
-          <option value="">Sélectionnez une option d'accessibilité</option>
-          <option value="tous">Pour tous</option>
-          <option value="pmr">Accessible PMR</option>
-        </select>
-      </div>
-
-      <div className={styles["preferences-section"]}>
-        <h3 className={styles["section-title"]}>
-          Vous cherchez particulièrement :
-        </h3>
-        <div className={styles["preferences-options"]}>
-          {specialInterests.map(({ id, icon, label }) => (
-            <button
-              key={id}
-              onClick={() => handlePreferenceClick("specialInterests", id)}
-              className={`${styles["preference-button"]} ${
-                formData.activityPreferences.specialInterests?.includes(id)
-                  ? styles["selected"]
-                  : ""
-              }`}
-            >
-              <FontAwesomeIcon
-                icon={icon}
-                className={styles["preference-icon"]}
-              />
-              <span>{label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <button className={styles["reset-button"]} onClick={resetSelections}>
-        Réinitialiser les sélections
-      </button>
-
-      <button className={styles["surprise-button"]} onClick={surpriseMe}>
-        Surprise me!
-      </button>
-
-      <div className={styles["navigation-buttons"]}>
-        <button className={styles["nav-button"]} onClick={prevStep}>
-          Précédent
-        </button>
-        <button className={styles["nav-button"]} onClick={nextStep}>
-          {isGroupSearch ? "Suivant" : "Rechercher"}
-        </button>
-      </div>
-    </div>
-  );
-};
+  },
+);
 
 export default ActivityPreferences;

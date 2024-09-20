@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./PersonalizeAdvanced.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faRunning, faCar, faBus } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faRunning, faCar, faBus, faUtensils, faHotel, faUser } from "@fortawesome/free-solid-svg-icons";
 
 const PersonalizeAdvanced = ({
   formData,
@@ -24,13 +24,6 @@ const PersonalizeAdvanced = ({
     "Culturelle",
     "Festive",
   ];
-  const activities = [
-    "Concerts",
-    "Randonnées",
-    "Cinéma",
-    "Sport",
-    "Loisirs créatifs",
-  ];
 
   useEffect(() => {
     if (!isGroupSearch || userRole === 'creator') {
@@ -42,12 +35,16 @@ const PersonalizeAdvanced = ({
     if (isGroupSearch && userRole !== 'creator') return;
 
     if (selectionType === "activities") {
-      const updatedActivities = formData.activities?.includes(item)
-        ? formData.activities.filter(a => a !== item)
-        : [...(formData.activities || []), item];
-      handleInputChange("activities", updatedActivities);
+      handleInputChange("ActivityPreferences.type", prevTypes => {
+        const updatedTypes = prevTypes?.includes(item)
+          ? prevTypes.filter(a => a !== item)
+          : [...(prevTypes || []), item];
+        return updatedTypes;
+      });
     } else if (selectionType === "ambiances") {
-      handleInputChange("ambiance", item);
+      handleInputChange("AccommodationPreferences.ambiance", item);
+      handleInputChange("ActivityPreferences.ambiance", [item]);
+      handleInputChange("RestaurantPreferences.ambiances", [item]);
     }
   };
 
@@ -61,17 +58,20 @@ const PersonalizeAdvanced = ({
         <div className={styles["group-preferences-summary"]}>
           <h3>Type de personnalisation : {formData.personalizationType}</h3>
           {formData.personalizationType === "ambiance" && (
-            <p>Ambiance sélectionnée : {formData.ambiance}</p>
+            <>
+              <h4>Ambiance sélectionnée :</h4>
+              <p>{formData.AccommodationPreferences.ambiance}</p>
+            </>
           )}
           {formData.personalizationType === "preferences" && (
             <>
               <h4>Activités sélectionnées :</h4>
               <ul>
-                {formData.activities?.map(activity => (
+                {formData.ActivityPreferences.type?.map(activity => (
                   <li key={activity}>{activity}</li>
                 ))}
               </ul>
-              <p>Accessibilité : {formData.accessibility === "car" ? "En voiture" : "Transports en commun"}</p>
+              <p>Accessibilité : {formData.ActivityPreferences.accessibility ? "Accès PMR requis" : "Pas de besoin spécifique"}</p>
             </>
           )}
         </div>
@@ -118,7 +118,7 @@ const PersonalizeAdvanced = ({
             {ambiances.map((ambiance) => (
               <button
                 key={ambiance}
-                className={`${styles["option-button"]} ${formData.ambiance === ambiance ? styles["selected"] : ""}`}
+                className={`${styles["option-button"]} ${formData.AccommodationPreferences.ambiance === ambiance ? styles["selected"] : ""}`}
                 onClick={() => toggleSelection(ambiance, "ambiances")}
               >
                 {ambiance}
@@ -133,10 +133,10 @@ const PersonalizeAdvanced = ({
           <div className={styles["option-section"]}>
             <h3><FontAwesomeIcon icon={faRunning} /> Activités</h3>
             <div className={styles["option-buttons"]}>
-              {activities.map((activity) => (
+              {formData.ActivityPreferences.type?.map((activity) => (
                 <button
                   key={activity}
-                  className={`${styles["option-button"]} ${formData.activities?.includes(activity) ? styles["selected"] : ""}`}
+                  className={`${styles["option-button"]} ${formData.ActivityPreferences.type?.includes(activity) ? styles["selected"] : ""}`}
                   onClick={() => toggleSelection(activity, "activities")}
                 >
                   {activity}
@@ -148,16 +148,10 @@ const PersonalizeAdvanced = ({
             <h3>Accessibilité</h3>
             <div className={styles["option-buttons"]}>
               <button
-                className={`${styles["option-button"]} ${formData.accessibility === "car" ? styles["selected"] : ""}`}
-                onClick={() => handleInputChange("accessibility", "car")}
+                className={`${styles["option-button"]} ${formData.ActivityPreferences.accessibility ? styles["selected"] : ""}`}
+                onClick={() => handleInputChange("ActivityPreferences.accessibility", !formData.ActivityPreferences.accessibility)}
               >
-                <FontAwesomeIcon icon={faCar} /> En voiture
-              </button>
-              <button
-                className={`${styles["option-button"]} ${formData.accessibility === "publicTransport" ? styles["selected"] : ""}`}
-                onClick={() => handleInputChange("accessibility", "publicTransport")}
-              >
-                <FontAwesomeIcon icon={faBus} /> Transports en commun
+                <FontAwesomeIcon icon={faCar} /> Accès PMR requis
               </button>
             </div>
           </div>
@@ -176,4 +170,4 @@ const PersonalizeAdvanced = ({
   );
 };
 
-export default PersonalizeAdvanced;
+export default React.memo(PersonalizeAdvanced);

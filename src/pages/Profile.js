@@ -17,9 +17,9 @@ import "./Profile.css";
 function Profile() {
   const { user, userData } = useContext(AuthContext);
   const [preferences, setPreferences] = useState({
-    hotelPreferences: "",
-    restaurantPreferences: "",
-    activityPreferences: "",
+    AccommodationPreferences: "",
+    ReactestaurantPreferences: "",
+    ActivityPreferences: "",
     dietaryRestrictions: "",
     interests: [],
   });
@@ -44,10 +44,10 @@ function Profile() {
         if (docSnap.exists()) {
           const data = docSnap.data();
           setPreferences({
-            hotelPreferences: data.preferences?.hotelPreferences || "",
-            restaurantPreferences:
-              data.preferences?.restaurantPreferences || "",
-            activityPreferences: data.preferences?.activityPreferences || "",
+            AccommodationPreferences: data.preferences?.AccommodationPreferences || "",
+            ReactestaurantPreferences:
+              data.preferences?.RestaurantPreferences || "",
+            ActivityPreferences: data.preferences?.ActivityPreferences || "",
             dietaryRestrictions: data.preferences?.dietaryRestrictions || "",
             interests: Array.isArray(data.preferences?.interests)
               ? data.preferences.interests
@@ -306,20 +306,20 @@ function Profile() {
         {editMode ? (
           <form onSubmit={handleSubmit} className="preferences-form">
             <textarea
-              name="hotelPreferences"
-              value={preferences.hotelPreferences}
+              name="AccommodationPreferences"
+              value={preferences.AccommodationPreferences}
               onChange={handleChange}
               placeholder="Préférences pour les hôtels"
             />
             <textarea
-              name="restaurantPreferences"
-              value={preferences.restaurantPreferences}
+              name="RestaurantPreferences"
+              value={preferences.RestaurantPreferences}
               onChange={handleChange}
               placeholder="Préférences pour les restaurants"
             />
             <textarea
-              name="activityPreferences"
-              value={preferences.activityPreferences}
+              name="ActivityPreferences"
+              value={preferences.ActivityPreferences}
               onChange={handleChange}
               placeholder="Préférences pour les activités"
             />
@@ -366,15 +366,15 @@ function Profile() {
         ) : (
           <div className="preferences-display">
             <p>
-              <span>Préférences hôtels :</span> {preferences.hotelPreferences}
+              <span>Préférences hôtels :</span> {preferences.AccommodationPreferences}
             </p>
             <p>
               <span>Préférences restaurants :</span>{" "}
-              {preferences.restaurantPreferences}
+              {preferences.RestaurantPreferences}
             </p>
             <p>
               <span>Préférences activités :</span>{" "}
-              {preferences.activityPreferences}
+              {preferences.ActivityPreferences}
             </p>
             <p>
               <span>Régime alimentaire :</span>{" "}
