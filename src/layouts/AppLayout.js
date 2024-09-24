@@ -7,11 +7,14 @@ import Profile from "../pages/Profile";
 import BlogList from "../components/blog/BlogList";
 import BlogPost from "../components/blog/BlogPost";
 import SwiperPage from "../pages/SwiperPage";
-import GroupInvitation from '../components/GroupInvitation';
+import GroupInvitation from "../components/GroupInvitation";
 import GroupManagement from "../components/GroupManagement";
 import GroupDetails from "../components/GroupDetails";
-import JoinGroup from '../components/JoinGroup'; 
-import Catalog from "../components/Catalog";  // Assurez-vous que le chemin est correct
+import JoinGroup from "../components/JoinGroup";
+import SearchResults from "../components/SearchResults";
+import Catalog from "../components/Catalog";
+import ItineraryReview from "../components/ItineraryReview";
+import ItineraryHistory from "../components/ItineraryHistory"; // Nouvelle importation
 import styles from "./AppLayout.module.css";
 
 // Importations pour Slick
@@ -32,8 +35,15 @@ function AppLayout() {
           <Route path="/groups" element={<GroupManagement />} />
           <Route path="/invitation/:groupId" element={<GroupInvitation />} />
           <Route path="/groups/:groupId" element={<GroupDetails />} />
+          <Route path="/search-results/:groupId" element={<SearchResults />} />
           <Route path="/join-group/:groupId" element={<JoinGroup />} />
-          <Route path="/catalog" element={<Catalog />} />  {/* Nouvelle route pour le Catalog */}
+          <Route path="/catalog" element={<Catalog />} />
+          <Route
+            path="/itinerary-review/:itineraryId"
+            element={<ItineraryReview />}
+          />
+          <Route path="/itinerary-history" element={<ItineraryHistory />} />{" "}
+          {/* Nouvelle route */}
         </Routes>
       </main>
       <AppNavigation />

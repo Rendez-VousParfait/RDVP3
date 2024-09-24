@@ -35,19 +35,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
-  height: 60px;
-  margin: 0 10px;
+  width: 50px;
+  height: 50px;
+  margin: 0 5px;
   color: #333;
   text-decoration: none;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   transition: all 0.3s ease;
   overflow: hidden;
 }
 
 .appNavigation a svg {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   transition: all 0.3s ease;
   z-index: 2;
 }
@@ -56,7 +56,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
   opacity: 0;
   transition: all 0.3s ease;
   transform: scale(0);
@@ -64,7 +64,7 @@
 
 .appNavigation a span {
   position: absolute;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   white-space: nowrap;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -75,8 +75,8 @@
 
 .appNavigation a:hover,
 .appNavigation a.active {
-  width: 120px;
-  border-radius: 30px;
+  width: 100px;
+  border-radius: 25px;
   background: rgba(255, 255, 255, 0.2);
 }
 
@@ -99,9 +99,17 @@
 }
 
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
-  100% { transform: translateY(0px); }
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 .appNavigation a.active {
@@ -115,22 +123,22 @@
   }
 
   .appNavigation a {
-    width: 70px;
-    height: 70px;
-    margin: 0 15px;
+    width: 60px;
+    height: 60px;
+    margin: 0 10px;
   }
 
   .appNavigation a:hover,
   .appNavigation a.active {
-    width: 140px;
+    width: 120px;
   }
 
   .appNavigation a svg {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
   }
 
   .appNavigation a span {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 }
 
@@ -147,8 +155,13 @@
 }
 
 @keyframes particleMove {
-  0% { background-position: 0 0; }
-  100% { background-position: 300px 300px; }
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 300px 300px;
+  }
 }
 
 /* Effet de distorsion au survol */

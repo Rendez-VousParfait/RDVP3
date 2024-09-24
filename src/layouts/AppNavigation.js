@@ -6,6 +6,7 @@ import {
   faSearch,
   faSwatchbook,
   faUsers,
+  faHistory,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./AppNavigation.module.css";
 
@@ -39,6 +40,13 @@ function AppNavigation() {
       >
         <FontAwesomeIcon icon={faUsers} />
         <span>Groupes</span>
+      </NavLink>
+      <NavLink
+        to="/itinerary-history"
+        className={({ isActive }) => (isActive ? styles.active : "")}
+      >
+        <FontAwesomeIcon icon={faHistory} />
+        <span>Historique</span>
       </NavLink>
     </nav>
   );

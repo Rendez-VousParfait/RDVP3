@@ -30,7 +30,7 @@ start = "typescript-language-server --stdio"
 language = "nodejs"
 
 [system]
-maxUserWatches = 524288
+maxUserWatches = 999999
 
 [build]
 command = "npm run build"
