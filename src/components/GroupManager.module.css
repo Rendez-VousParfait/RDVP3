@@ -1,4 +1,4 @@
-.groupDetails {
+.groupManager {
   max-width: 800px;
   margin: 3rem auto;
   padding: 2.5rem;
@@ -22,7 +22,7 @@
   }
 }
 
-.groupDetails h2 {
+.groupManager h2 {
   font-size: 2.7rem;
   margin-bottom: 2rem;
   text-align: center;
@@ -30,57 +30,28 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.memberSection,
-.inviteSection {
+.section {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   padding: 1.5rem;
   margin-bottom: 2rem;
 }
 
-.memberSection h3,
-.inviteSection h3 {
+.section h3 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
 }
 
-.memberSection ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.memberSection li {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  padding: 0.8rem;
-  margin-bottom: 0.5rem;
-}
-
-.inviteSection {
+.options {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   gap: 1rem;
+  margin-bottom: 2rem;
 }
 
-.inviteSection input {
-  width: 100%;
-  padding: 1rem;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 25px;
-  font-size: 1rem;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-  transition: all 0.3s ease;
-}
-
-.inviteSection input:focus {
-  border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
-}
-
-.inviteSection button,
-.searchButton,
-.leaveButton {
+.options button,
+.createGroupForm button,
+.joinGroup button {
   padding: 1rem 2rem;
   background-color: white;
   color: #6B66FF;
@@ -96,36 +67,74 @@
   gap: 0.5rem;
 }
 
-.inviteSection button:hover,
-.searchButton:hover,
-.leaveButton:hover {
+.options button:hover,
+.createGroupForm button:hover,
+.joinGroup button:hover {
   background-color: rgba(255, 255, 255, 0.9);
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
 }
 
-.leaveButton {
-  background-color: #FF6B6B;
-  color: white;
-  margin-top: 2rem;
+.createGroupForm,
+.joinGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.leaveButton:hover {
-  background-color: #FF4F4F;
+.createGroupForm input,
+.joinGroup input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 25px;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.createGroupForm input:focus,
+.joinGroup input:focus {
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.groupList {
+  list-style-type: none;
+  padding: 0;
+}
+
+.groupItem {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 0.8rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.groupItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 480px) {
-  .groupDetails {
+  .groupManager {
     padding: 1.5rem;
   }
 
-  .groupDetails h2 {
+  .groupManager h2 {
     font-size: 2.2rem;
   }
 
-  .inviteSection,
-  .searchButton,
-  .leaveButton {
+  .options {
+    flex-direction: column;
+  }
+
+  .options button,
+  .createGroupForm button,
+  .joinGroup button {
     width: 100%;
   }
 }
