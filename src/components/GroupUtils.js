@@ -1,4 +1,3 @@
-// GroupUtils.js
 import { db, functions } from "../firebase";
 import {
   collection,
@@ -38,7 +37,8 @@ export const createGroup = async (name, userId, userEmail) => {
     const groupData = {
       name,
       createdAt: serverTimestamp(),
-      createdBy: userId,
+      createdBy: userEmail,
+      creator: userEmail,
       members: [userEmail],
       invitedMembers: [],
     };
@@ -86,6 +86,13 @@ export const inviteToGroup = async (groupId, email, groupName) => {
 export const leaveGroup = async (groupId, userEmail) => {
   try {
     const groupRef = doc(db, "groups", groupId);
+    const groupDoc = await getDoc(groupRef);
+    const groupData = groupDoc.data();
+
+    if (groupData.creator === userEmail) {
+      throw new Error("Le créateur ne peut pas quitter le groupe");
+    }
+
     await updateDoc(groupRef, {
       members: arrayRemove(userEmail),
     });
@@ -130,8 +137,12 @@ export const removeGroupMember = async (
     }
 
     const groupData = groupDoc.data();
-    if (groupData.createdBy !== currentUserEmail) {
+    if (groupData.creator !== currentUserEmail) {
       throw new Error("Seul le créateur du groupe peut supprimer des membres");
+    }
+
+    if (memberEmail === groupData.creator) {
+      throw new Error("Le créateur ne peut pas être supprimé du groupe");
     }
 
     await updateDoc(groupRef, {
@@ -159,7 +170,7 @@ export const updateGroupPreferences = async (groupId, preferences) => {
   }
 };
 
-export const checkGroupStatus = async (groupId) => {
+export const checkGroupStatus = async (groupId, userEmail) => {
   try {
     const groupDoc = await getDoc(doc(db, "groups", groupId));
     if (!groupDoc.exists()) {
@@ -172,6 +183,7 @@ export const checkGroupStatus = async (groupId) => {
     );
     return {
       allMembersSubmitted,
+      isCreator: groupData.creator === userEmail,
       groupData: {
         tripType: groupData.tripType,
         dates: groupData.dates,
@@ -183,4 +195,52 @@ export const checkGroupStatus = async (groupId) => {
     console.error("Erreur lors de la vérification du statut du groupe:", error);
     throw error;
   }
+};
+
+export const fetchSavedSearch = async (groupId) => {
+  try {
+    const groupDoc = await getDoc(doc(db, "groups", groupId));
+    if (groupDoc.exists()) {
+      const groupData = groupDoc.data();
+      return groupData.savedSearch || null;
+    } else {
+      throw new Error("Group not found");
+    }
+  } catch (error) {
+    console.error("Erreur lors de la récupération de la recherche sauvegardée:", error);
+    throw error;
+  }
+};
+
+export const saveGroupSearch = async (groupId, searchResults) => {
+  if (!groupId || typeof groupId !== 'string') {
+    throw new Error("GroupId invalide");
+  }
+  try {
+    console.log("Début de saveGroupSearch avec groupId:", groupId);
+    console.log("Résultats de recherche à sauvegarder:", searchResults);
+    const groupRef = doc(db, "groups", groupId);
+    await updateDoc(groupRef, {
+      savedSearch: searchResults,
+      lastUpdated: serverTimestamp(),
+    });
+    console.log("Recherche sauvegardée avec succès dans Firestore");
+  } catch (error) {
+    console.error("Erreur détaillée lors de la sauvegarde de la recherche de groupe:", error);
+    throw error;
+  }
+};
+
+export default {
+  fetchUserGroups,
+  createGroup,
+  fetchGroupDetails,
+  inviteToGroup,
+  leaveGroup,
+  joinGroup,
+  removeGroupMember,
+  updateGroupPreferences,
+  checkGroupStatus,
+  fetchSavedSearch,
+  saveGroupSearch,
 };

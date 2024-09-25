@@ -1,4 +1,3 @@
-// GroupManager.js
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -57,6 +56,12 @@ const GroupManager = () => {
       fetchGroups();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (currentStep === 4 && groupId) {
+      navigate(`/groups/${groupId}`);
+    }
+  }, [currentStep, groupId, navigate]);
 
   const fetchGroups = async () => {
     if (!user) return;
@@ -203,7 +208,6 @@ const GroupManager = () => {
         }
         break;
       case 4:
-        navigate(`/groups/${groupId}`);
         return null;
       default:
         return null;

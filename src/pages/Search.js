@@ -15,7 +15,6 @@ import RestaurantPreferences from "../components/SearchSteps/RestaurantPreferenc
 import AccommodationPreferences from "../components/SearchSteps/AccommodationPreferences";
 import ActivityPreferences from "../components/SearchSteps/ActivityPreferences";
 import SearchResults from "../components/SearchResults";
-import TripOrganizationChoice from "../components/TripOrganizationChoice";
 import styles from "./Search.module.css";
 
 const Search = () => {
@@ -58,7 +57,9 @@ const Search = () => {
   const [searchResults, setSearchResults] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isGroupSearch, setIsGroupSearch] = useState(false);
+  const [isGroupSearch, setIsGroupSearch] = useState(() => {
+    return !!(location.state && location.state.groupId);
+  });
   const [userRole, setUserRole] = useState("member");
   const [allMembersSubmitted, setAllMembersSubmitted] = useState(false);
   const [groupId, setGroupId] = useState(null);
@@ -68,15 +69,22 @@ const Search = () => {
       setIsGroupSearch(true);
       setGroupId(location.state.groupId);
       checkGroupStatus(location.state.groupId);
+    } else {
+      setIsGroupSearch(false);
+      setGroupId(null);
     }
   }, [location.state]);
+
+  useEffect(() => {
+    console.log("isGroupSearch:", isGroupSearch);
+  }, [isGroupSearch]);
 
   const checkGroupStatus = useCallback(async (groupId) => {
     try {
       const functions = getFunctions();
       const checkGroupStatusFunction = httpsCallable(
         functions,
-        "checkGroupStatus",
+        "checkGroupStatus"
       );
       const result = await checkGroupStatusFunction({ groupId });
       const { isCreator, allMembersSubmitted, groupData } = result.data;
@@ -89,10 +97,10 @@ const Search = () => {
     } catch (error) {
       console.error(
         "Erreur lors de la vérification du statut du groupe:",
-        error,
+        error
       );
       setError(
-        "Une erreur est survenue lors de la vérification du statut du groupe.",
+        "Une erreur est survenue lors de la vérification du statut du groupe."
       );
     }
   }, []);
@@ -111,6 +119,16 @@ const Search = () => {
       [category]: {
         ...prevFormData[category],
         [name]: value,
+      },
+    }));
+  }, []);
+
+  const handleDateChange = useCallback((type, date) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      dates: {
+        ...prevFormData.dates,
+        [type]: date,
       },
     }));
   }, []);
@@ -135,13 +153,13 @@ const Search = () => {
         setStep(6); // Passer à l'étape des résultats
       } else {
         throw new Error(
-          "Les données reçues ne sont pas dans le format attendu",
+          "Les données reçues ne sont pas dans le format attendu"
         );
       }
     } catch (error) {
       console.error("Erreur détaillée lors de la recherche:", error);
       setError(
-        `Une erreur est survenue lors de la recherche: ${error.message}`,
+        `Une erreur est survenue lors de la recherche: ${error.message}`
       );
       if (error.details) {
         console.error("Détails de l'erreur:", error.details);
@@ -152,34 +170,50 @@ const Search = () => {
     }
   }, [formData, groupId]);
 
+  const handleSaveSearch = useCallback(async () => {
+    try {
+      console.log("Sauvegarde de la recherche pour le groupe:", groupId);
+      const functions = getFunctions();
+      const saveSearchFunction = httpsCallable(functions, "saveGroupSearch");
+      await saveSearchFunction({ groupId, searchResults });
+      alert("La recherche a été enregistrée avec succès !");
+    } catch (error) {
+      console.error("Erreur lors de la sauvegarde de la recherche:", error);
+      setError("Une erreur est survenue lors de la sauvegarde de la recherche.");
+    }
+  }, [groupId, searchResults]);
+
   const commonProps = useMemo(
     () => ({
       formData,
       handleInputChange,
       handlePreferencesChange,
+      handleDateChange,
       currentStep: step + 1,
-      totalSteps: 7, // Augmenter le nombre total d'étapes à 7
+      totalSteps: 7,
     }),
-    [formData, handleInputChange, handlePreferencesChange, step],
+    [formData, handleInputChange, handlePreferencesChange, handleDateChange, step]
   );
+
+  const searchResultsProps = useMemo(() => ({
+    results: searchResults,
+    isGroupSearch,
+    userRole,
+    groupId,
+    onSaveSearch: handleSaveSearch
+  }), [searchResults, isGroupSearch, userRole, groupId, handleSaveSearch]);
 
   const renderStep = useMemo(() => {
     switch (step) {
       case 0:
         return <ComposeTripType {...commonProps} nextStep={nextStep} />;
       case 1:
-        return ["amis", "famille", "couple"].includes(formData.tripType) &&
-          !isGroupSearch ? (
-          <TripOrganizationChoice
-            nextStep={nextStep}
-            currentStep={step + 1}
-            totalSteps={commonProps.totalSteps}
-          />
-        ) : (
+        return (
           <ComposeTrip
             {...commonProps}
             nextStep={nextStep}
             prevStep={prevStep}
+            isGroupSearch={isGroupSearch}
           />
         );
       case 2:
@@ -213,15 +247,13 @@ const Search = () => {
             nextStep={performSearch}
             prevStep={prevStep}
           />
-        ) : null;
-      case 6:
-        return (
-          <SearchResults
-            results={searchResults}
-            isGroupSearch={isGroupSearch}
-            userRole={userRole}
-          />
+        ) : (
+          <div className={styles.waitingForCreator}>
+            En attente que le créateur lance la recherche...
+          </div>
         );
+      case 6:
+        return searchResults ? <SearchResults {...searchResultsProps} /> : null;
       default:
         return null;
     }
@@ -232,7 +264,7 @@ const Search = () => {
     prevStep,
     performSearch,
     userRole,
-    formData.tripType,
+    searchResultsProps,
     isGroupSearch,
     searchResults,
   ]);

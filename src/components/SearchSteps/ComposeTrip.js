@@ -105,7 +105,7 @@ const ComposeTrip = React.memo(
     const handleNext = useCallback(
       (e) => {
         e.preventDefault();
-        if (!formData.dates.start || !formData.dates.end) {
+        if (!formData.dates?.start || !formData.dates?.end) {
           setError("Veuillez sélectionner les dates de début et de fin.");
           return;
         }
@@ -139,53 +139,15 @@ const ComposeTrip = React.memo(
 
     const isAccessibilityChecked = useMemo(
       () =>
-        formData.AccommodationPreferences.accessibility &&
-        formData.ActivityPreferences.accessibility &&
-        formData.RestaurantPreferences.accessibility,
+        formData.AccommodationPreferences?.accessibility &&
+        formData.ActivityPreferences?.accessibility &&
+        formData.RestaurantPreferences?.accessibility,
       [
-        formData.AccommodationPreferences.accessibility,
-        formData.ActivityPreferences.accessibility,
-        formData.RestaurantPreferences.accessibility,
+        formData.AccommodationPreferences?.accessibility,
+        formData.ActivityPreferences?.accessibility,
+        formData.RestaurantPreferences?.accessibility,
       ],
     );
-
-    if (isGroupSearch && userRole !== "creator") {
-      return (
-        <div className={styles["search-step"]}>
-          <div className={styles["progress-indicator"]}>
-            Étape {currentStep} sur {totalSteps}
-          </div>
-          <h2 className={styles["step-title"]}>
-            <FontAwesomeIcon icon={faUsers} /> Détails du séjour de groupe
-          </h2>
-          <div className={styles["group-trip-details"]}>
-            <p>
-              <FontAwesomeIcon icon={faCalendarAlt} /> Dates du séjour :
-              {formData.dates.start && formData.dates.end
-                ? ` Du ${formData.dates.start.toLocaleDateString()} au ${formData.dates.end.toLocaleDateString()}`
-                : " Non définies"}
-            </p>
-            <p>
-              <FontAwesomeIcon icon={faWallet} /> Budget par personne :{" "}
-              {formData.budget ? `${formData.budget}€` : "Non défini"}
-            </p>
-            <p>
-              <FontAwesomeIcon icon={faUsers} /> Accessibilité PMR :
-              {isAccessibilityChecked ? "Oui" : "Non"}
-            </p>
-          </div>
-          <div className={styles["next-button-container"]}>
-            <button
-              type="button"
-              className={styles["next-button"]}
-              onClick={handleNext}
-            >
-              Suivant
-            </button>
-          </div>
-        </div>
-      );
-    }
 
     return (
       <div className={styles["search-step"]}>
@@ -202,25 +164,25 @@ const ComposeTrip = React.memo(
           </label>
           <div className={styles["date-picker-container"]}>
             <DatePicker
-              selected={formData.dates.start}
-              onChange={(date) => handleDateChange([date, formData.dates.end])}
+              selected={formData.dates?.start}
+              onChange={(date) => handleDateChange([date, formData.dates?.end])}
               selectsStart
-              startDate={formData.dates.start}
-              endDate={formData.dates.end}
+              startDate={formData.dates?.start}
+              endDate={formData.dates?.end}
               minDate={new Date()}
               dateFormat="dd/MM/yyyy"
               placeholderText="Date de début"
               className={styles["date-picker"]}
             />
             <DatePicker
-              selected={formData.dates.end}
+              selected={formData.dates?.end}
               onChange={(date) =>
-                handleDateChange([formData.dates.start, date])
+                handleDateChange([formData.dates?.start, date])
               }
               selectsEnd
-              startDate={formData.dates.start}
-              endDate={formData.dates.end}
-              minDate={formData.dates.start}
+              startDate={formData.dates?.start}
+              endDate={formData.dates?.end}
+              minDate={formData.dates?.start}
               dateFormat="dd/MM/yyyy"
               placeholderText="Date de fin"
               className={styles["date-picker"]}
@@ -228,10 +190,10 @@ const ComposeTrip = React.memo(
           </div>
         </div>
         <div className={styles["selected-dates"]}>
-          {formData.dates.start ? (
+          {formData.dates?.start ? (
             <p>
               Du {formData.dates.start.toLocaleDateString()}
-              {formData.dates.end
+              {formData.dates?.end
                 ? ` au ${formData.dates.end.toLocaleDateString()}`
                 : ""}
             </p>

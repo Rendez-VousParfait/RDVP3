@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { CircularProgress, Checkbox, FormGroup, FormControlLabel } from "@mui/material";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useParams } from "react-router-dom";
+import { CircularProgress, Checkbox, FormGroup, FormControlLabel, Button } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faStar,
@@ -14,18 +15,19 @@ import {
   faSwimmingPool,
   faWheelchair,
   faClock,
-  faCalendar,
   faLeaf,
   faGlassMartiniAlt,
   faUmbrellaBeach,
   faTree,
   faCity,
+  faSave,
 } from "@fortawesome/free-solid-svg-icons";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
+import { saveGroupSearch } from "./GroupUtils";
 import "./SearchResults.css";
 
-const SearchResults = ({ results, isGroupSearch, userRole }) => {
+const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch }) => {
   const [enhancedResults, setEnhancedResults] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState({
@@ -34,55 +36,68 @@ const SearchResults = ({ results, isGroupSearch, userRole }) => {
     restaurant: true,
   });
   const [imageLoadedStates, setImageLoadedStates] = useState({});
+  const { groupId: paramGroupId } = useParams();
 
-  useEffect(() => {
-    const fetchImageUrls = async () => {
-      setIsLoading(true);
-      console.log("Initial results:", results);
-      const enhancedData = { ...results };
+  console.log("SearchResults rendered", { results, isGroupSearch, groupId });
 
-      const getImageUrls = async (collectionName, resultKey) => {
-        if (!enhancedData[resultKey]) {
-          console.log(`No data for ${resultKey}`);
-          return;
-        }
+  const fetchImageUrls = useCallback(async () => {
+    if (!results) return;
+    setIsLoading(true);
+    console.log("Initial results:", results);
+    const enhancedData = { ...results };
 
-        const querySnapshot = await getDocs(collection(db, collectionName));
-        const imageMap = {};
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          imageMap[data.id] = data.image1 || "/placeholder.jpg";
-        });
+    const getImageUrls = async (collectionName, resultKey) => {
+      if (!enhancedData[resultKey]) {
+        console.log(`No data for ${resultKey}`);
+        return;
+      }
 
-        enhancedData[resultKey] = enhancedData[resultKey].map((item) => ({
-          ...item,
-          imageUrl: imageMap[item.id] || "/placeholder.jpg",
-        }));
-      };
+      const querySnapshot = await getDocs(collection(db, collectionName));
+      const imageMap = {};
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        imageMap[data.id] = data.image1 || "/placeholder.jpg";
+      });
 
-      await getImageUrls("ActivityPreferences", "activities");
-      await getImageUrls("RestaurantPreferences", "restaurants");
-      await getImageUrls("AccomodationPreferences", "accommodations");
+      enhancedData[resultKey] = enhancedData[resultKey].map((item) => ({
+        ...item,
+        imageUrl: imageMap[item.id] || "/placeholder.jpg",
+      }));
+    };
 
-      console.log("Enhanced data:", enhancedData);
-      setEnhancedResults(enhancedData);
-      setIsLoading(false);
+    await getImageUrls("ActivityPreferences", "activities");
+    await getImageUrls("RestaurantPreferences", "restaurants");
+    await getImageUrls("AccomodationPreferences", "accommodations");
 
-      const initialImageLoadedStates = {};
-      Object.values(enhancedData).forEach(category => {
+    console.log("Enhanced data:", enhancedData);
+    setEnhancedResults(enhancedData);
+    setIsLoading(false);
+  }, [results]);
+
+  const initialImageLoadedStates = useMemo(() => {
+    const states = {};
+    if (results) {
+      Object.values(results).forEach(category => {
         if (Array.isArray(category)) {
           category.forEach(item => {
-            initialImageLoadedStates[item.id] = false;
+            states[item.id] = false;
           });
         }
       });
-      setImageLoadedStates(initialImageLoadedStates);
-    };
+    }
+    return states;
+  }, [results]);
 
-    if (results) {
+  useEffect(() => {
+    console.log("useEffect triggered", { results });
+    if (results && Object.keys(results).length > 0) {
       fetchImageUrls();
     }
-  }, [results]);
+  }, [results, fetchImageUrls]);
+
+  useEffect(() => {
+    setImageLoadedStates(initialImageLoadedStates);
+  }, [initialImageLoadedStates]);
 
   const handleFilterChange = (event) => {
     setFilters({ ...filters, [event.target.name]: event.target.checked });
@@ -96,7 +111,7 @@ const SearchResults = ({ results, isGroupSearch, userRole }) => {
           key={i}
           icon={faStar}
           className={i <= rating ? "star filled" : "star"}
-        />,
+        />
       );
     }
     return stars;
@@ -107,7 +122,7 @@ const SearchResults = ({ results, isGroupSearch, userRole }) => {
     if (type === "hotel") {
       if (item.wifi || item.equipments1 === "Wi-Fi gratuit")
         amenities.push(
-          <FontAwesomeIcon key="wifi" icon={faWifi} className="amenityIcon" />,
+          <FontAwesomeIcon key="wifi" icon={faWifi} className="amenityIcon" />
         );
       if (item.parking || item.equipments3 === "Parking")
         amenities.push(
@@ -115,7 +130,7 @@ const SearchResults = ({ results, isGroupSearch, userRole }) => {
             key="parking"
             icon={faParking}
             className="amenityIcon"
-          />,
+          />
         );
       if (item.pool)
         amenities.push(
@@ -123,7 +138,7 @@ const SearchResults = ({ results, isGroupSearch, userRole }) => {
             key="pool"
             icon={faSwimmingPool}
             className="amenityIcon"
-          />,
+          />
         );
     }
     if (item.accessibility === "Oui") {
@@ -132,7 +147,7 @@ const SearchResults = ({ results, isGroupSearch, userRole }) => {
           key="accessible"
           icon={faWheelchair}
           className="amenityIcon"
-        />,
+        />
       );
     }
     return amenities;
@@ -288,6 +303,30 @@ const SearchResults = ({ results, isGroupSearch, userRole }) => {
     );
   };
 
+  const handleSaveSearch = async () => {
+    if (isGroupSearch && enhancedResults && groupId) {
+      try {
+        console.log("Tentative d'enregistrement de la recherche pour le groupe:", groupId);
+        console.log("Données à enregistrer:", enhancedResults);
+        await saveGroupSearch(groupId, enhancedResults);
+        console.log("Recherche enregistrée avec succès");
+        alert("Recherche enregistrée avec succès !");
+        if (onSaveSearch) {
+          onSaveSearch();
+        }
+      } catch (error) {
+        console.error("Erreur détaillée lors de l'enregistrement de la recherche:", error);
+        alert(`Une erreur est survenue lors de la sauvegarde de la recherche: ${error.message}`);
+      }
+    } else {
+      console.log("Impossible d'enregistrer la recherche:", { isGroupSearch, enhancedResults, groupId });
+    }
+  };
+
+  if (!results) {
+    return <div className="loadingContainer">Chargement des résultats...</div>;
+  }
+
   if (isLoading) {
     return (
       <div className="loadingContainer">
@@ -305,9 +344,20 @@ const SearchResults = ({ results, isGroupSearch, userRole }) => {
     );
   }
 
+  console.log("isGroupSearch:", isGroupSearch);
+
   return (
     <div className="searchResults">
       <h1 className="resultsTitle">Résultats de recherche</h1>
+      {isGroupSearch && (
+        <Button
+          onClick={handleSaveSearch}
+          className="saveSearchBtn"
+          startIcon={<FontAwesomeIcon icon={faSave} />}
+        >
+          Enregistrer la recherche
+        </Button>
+      )}
       <div className="filtersContainer">
         <FormGroup row>
           <FormControlLabel
@@ -346,19 +396,19 @@ const SearchResults = ({ results, isGroupSearch, userRole }) => {
         enhancedResults.accommodations,
         "Hébergements",
         faHotel,
-        "hotel",
+        "hotel"
       )}
       {enhancedResults?.activities && renderResultSection(
         enhancedResults.activities,
         "Activités",
         faRunning,
-        "activity",
+        "activity"
       )}
       {enhancedResults?.restaurants && renderResultSection(
         enhancedResults.restaurants,
         "Restaurants",
         faUtensils,
-        "restaurant",
+        "restaurant"
       )}
     </div>
   );

@@ -15,14 +15,13 @@
     opacity: 0;
     transform: translateY(20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.groupDetails h2 {
+.groupName {
   font-size: 2.7rem;
   margin-bottom: 2rem;
   text-align: center;
@@ -31,7 +30,8 @@
 }
 
 .memberSection,
-.inviteSection {
+.inviteSection,
+.invitedSection {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   padding: 1.5rem;
@@ -39,21 +39,33 @@
 }
 
 .memberSection h3,
-.inviteSection h3 {
+.inviteSection h3,
+.invitedSection h3 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
 }
 
-.memberSection ul {
+.memberList,
+.invitedList {
   list-style-type: none;
   padding: 0;
 }
 
-.memberSection li {
+.memberItem,
+.invitedItem {
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 10px;
   padding: 0.8rem;
   margin-bottom: 0.5rem;
+}
+
+.creatorBadge {
+  background-color: #FFD700;
+  color: #333;
+  padding: 0.2rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
 }
 
 .inviteSection {
@@ -62,7 +74,7 @@
   gap: 1rem;
 }
 
-.inviteSection input {
+.inviteInput {
   width: 100%;
   padding: 1rem;
   border: 2px solid rgba(255, 255, 255, 0.2);
@@ -73,14 +85,15 @@
   transition: all 0.3s ease;
 }
 
-.inviteSection input:focus {
+.inviteInput:focus {
   border-color: rgba(255, 255, 255, 0.5);
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
 }
 
-.inviteSection button,
+.inviteButton,
 .searchButton,
-.leaveButton {
+.leaveButton,
+.viewSavedSearchButton {
   padding: 1rem 2rem;
   background-color: white;
   color: #6B66FF;
@@ -96,9 +109,10 @@
   gap: 0.5rem;
 }
 
-.inviteSection button:hover,
+.inviteButton:hover,
 .searchButton:hover,
-.leaveButton:hover {
+.leaveButton:hover,
+.viewSavedSearchButton:hover {
   background-color: rgba(255, 255, 255, 0.9);
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
@@ -114,18 +128,51 @@
   background-color: #FF4F4F;
 }
 
+.viewSavedSearchButton {
+  background-color: #4CAF50;
+  color: white;
+  margin-top: 1rem;
+}
+
+.viewSavedSearchButton:hover {
+  background-color: #45a049;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top: 2rem;
+}
+
+.error {
+  background-color: #FF6B6B;
+  color: white;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.notFound {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  color: #FF6B6B;
+}
+
 @media (max-width: 480px) {
   .groupDetails {
     padding: 1.5rem;
   }
 
-  .groupDetails h2 {
+  .groupName {
     font-size: 2.2rem;
   }
 
   .inviteSection,
   .searchButton,
-  .leaveButton {
+  .leaveButton,
+  .viewSavedSearchButton {
     width: 100%;
   }
 }

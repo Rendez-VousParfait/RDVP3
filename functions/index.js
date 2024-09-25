@@ -452,3 +452,37 @@ exports.checkGroupStatus = functions.https.onCall(async (data, context) => {
     );
   }
 });
+
+exports.saveGroupSearch = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated',
+      'L\'utilisateur doit être authentifié pour sauvegarder une recherche de groupe.'
+    );
+  }
+
+  const { groupId, searchResults } = data;
+
+  if (!groupId || !searchResults) {
+    throw new functions.https.HttpsError(
+      'invalid-argument',
+      'GroupId et searchResults sont requis.'
+    );
+  }
+
+  try {
+    await admin.firestore().collection('groups').doc(groupId).update({
+      savedSearch: searchResults,
+      lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    console.log(`Recherche sauvegardée avec succès pour le groupe ${groupId}`);
+    return { success: true, message: 'Recherche sauvegardée avec succès' };
+  } catch (error) {
+    console.error('Erreur lors de la sauvegarde de la recherche:', error);
+    throw new functions.https.HttpsError(
+      'internal',
+      `Une erreur est survenue lors de la sauvegarde de la recherche: ${error.message}`
+    );
+  }
+});
