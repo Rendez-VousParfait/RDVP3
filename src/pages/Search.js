@@ -15,6 +15,7 @@ import RestaurantPreferences from "../components/SearchSteps/RestaurantPreferenc
 import AccommodationPreferences from "../components/SearchSteps/AccommodationPreferences";
 import ActivityPreferences from "../components/SearchSteps/ActivityPreferences";
 import SearchResults from "../components/SearchResults";
+import GroupSearchResults from "../components/GroupSearchResults";
 import styles from "./Search.module.css";
 
 const Search = () => {
@@ -84,7 +85,7 @@ const Search = () => {
       const functions = getFunctions();
       const checkGroupStatusFunction = httpsCallable(
         functions,
-        "checkGroupStatus"
+        "checkGroupStatus",
       );
       const result = await checkGroupStatusFunction({ groupId });
       const { isCreator, allMembersSubmitted, groupData } = result.data;
@@ -97,10 +98,10 @@ const Search = () => {
     } catch (error) {
       console.error(
         "Erreur lors de la vérification du statut du groupe:",
-        error
+        error,
       );
       setError(
-        "Une erreur est survenue lors de la vérification du statut du groupe."
+        "Une erreur est survenue lors de la vérification du statut du groupe.",
       );
     }
   }, []);
@@ -153,13 +154,13 @@ const Search = () => {
         setStep(6); // Passer à l'étape des résultats
       } else {
         throw new Error(
-          "Les données reçues ne sont pas dans le format attendu"
+          "Les données reçues ne sont pas dans le format attendu",
         );
       }
     } catch (error) {
       console.error("Erreur détaillée lors de la recherche:", error);
       setError(
-        `Une erreur est survenue lors de la recherche: ${error.message}`
+        `Une erreur est survenue lors de la recherche: ${error.message}`,
       );
       if (error.details) {
         console.error("Détails de l'erreur:", error.details);
@@ -179,7 +180,9 @@ const Search = () => {
       alert("La recherche a été enregistrée avec succès !");
     } catch (error) {
       console.error("Erreur lors de la sauvegarde de la recherche:", error);
-      setError("Une erreur est survenue lors de la sauvegarde de la recherche.");
+      setError(
+        "Une erreur est survenue lors de la sauvegarde de la recherche.",
+      );
     }
   }, [groupId, searchResults]);
 
@@ -192,16 +195,25 @@ const Search = () => {
       currentStep: step + 1,
       totalSteps: 7,
     }),
-    [formData, handleInputChange, handlePreferencesChange, handleDateChange, step]
+    [
+      formData,
+      handleInputChange,
+      handlePreferencesChange,
+      handleDateChange,
+      step,
+    ],
   );
 
-  const searchResultsProps = useMemo(() => ({
-    results: searchResults,
-    isGroupSearch,
-    userRole,
-    groupId,
-    onSaveSearch: handleSaveSearch
-  }), [searchResults, isGroupSearch, userRole, groupId, handleSaveSearch]);
+  const searchResultsProps = useMemo(
+    () => ({
+      results: searchResults,
+      isGroupSearch,
+      userRole,
+      groupId,
+      onSaveSearch: handleSaveSearch,
+    }),
+    [searchResults, isGroupSearch, userRole, groupId, handleSaveSearch],
+  );
 
   const renderStep = useMemo(() => {
     switch (step) {
@@ -253,7 +265,13 @@ const Search = () => {
           </div>
         );
       case 6:
-        return searchResults ? <SearchResults {...searchResultsProps} /> : null;
+        return searchResults ? (
+          isGroupSearch ? (
+            <GroupSearchResults {...searchResultsProps} />
+          ) : (
+            <SearchResults {...searchResultsProps} />
+          )
+        ) : null;
       default:
         return null;
     }

@@ -26,6 +26,13 @@ exports.createUser = functions.https.onCall((data, context) => {
 
   const { name, email } = data;
 
+  if (!name || !email) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Name and email are required.",
+    );
+  }
+
   return admin
     .firestore()
     .collection("users")
@@ -35,6 +42,7 @@ exports.createUser = functions.https.onCall((data, context) => {
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     })
     .then(() => {
+      console.log(`User created successfully: ${email}`);
       return { success: true, message: "User created successfully" };
     })
     .catch((error) => {
@@ -171,6 +179,13 @@ exports.performSearch = functions.https.onCall(async (data, context) => {
   const { formData, groupId } = data;
   const userId = context.auth.uid;
 
+  if (!formData) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Les données du formulaire sont requises.",
+    );
+  }
+
   try {
     console.log(
       "Début de performSearch avec formData:",
@@ -190,6 +205,8 @@ exports.performSearch = functions.https.onCall(async (data, context) => {
         groupPreferences = Object.values(
           groupDoc.data().memberPreferences || {},
         );
+      } else {
+        console.log(`Groupe avec l'ID ${groupId} non trouvé`);
       }
     }
 
@@ -394,27 +411,34 @@ exports.performSearch = functions.https.onCall(async (data, context) => {
       activities,
       restaurants,
     };
-  } catch (error) {
+    } catch (error) {
     console.error("Error performing search:", error);
     throw new functions.https.HttpsError(
       "internal",
       `Une erreur est survenue lors de la recherche: ${error.message}`,
     );
-  }
-});
+    }
+    });
 
-exports.checkGroupStatus = functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
+    exports.checkGroupStatus = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
       "L'utilisateur doit être authentifié pour vérifier le statut du groupe.",
     );
-  }
+    }
 
-  const { groupId } = data;
-  const userId = context.auth.uid;
+    const { groupId } = data;
+    const userId = context.auth.uid;
 
-  try {
+    if (!groupId) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "L'ID du groupe est requis.",
+    );
+    }
+
+    try {
     const groupDoc = await admin
       .firestore()
       .collection("groups")
@@ -444,33 +468,33 @@ exports.checkGroupStatus = functions.https.onCall(async (data, context) => {
         personCount: groupData.members ? groupData.members.length : 1,
       },
     };
-  } catch (error) {
+    } catch (error) {
     console.error("Error checking group status:", error);
     throw new functions.https.HttpsError(
       "internal",
       "Une erreur est survenue lors de la vérification du statut du groupe.",
     );
-  }
-});
+    }
+    });
 
-exports.saveGroupSearch = functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
+    exports.saveGroupSearch = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
     throw new functions.https.HttpsError(
       'unauthenticated',
       'L\'utilisateur doit être authentifié pour sauvegarder une recherche de groupe.'
     );
-  }
+    }
 
-  const { groupId, searchResults } = data;
+    const { groupId, searchResults } = data;
 
-  if (!groupId || !searchResults) {
+    if (!groupId || !searchResults) {
     throw new functions.https.HttpsError(
       'invalid-argument',
       'GroupId et searchResults sont requis.'
     );
-  }
+    }
 
-  try {
+    try {
     await admin.firestore().collection('groups').doc(groupId).update({
       savedSearch: searchResults,
       lastUpdated: admin.firestore.FieldValue.serverTimestamp()
@@ -478,11 +502,55 @@ exports.saveGroupSearch = functions.https.onCall(async (data, context) => {
 
     console.log(`Recherche sauvegardée avec succès pour le groupe ${groupId}`);
     return { success: true, message: 'Recherche sauvegardée avec succès' };
-  } catch (error) {
+    } catch (error) {
     console.error('Erreur lors de la sauvegarde de la recherche:', error);
     throw new functions.https.HttpsError(
       'internal',
       `Une erreur est survenue lors de la sauvegarde de la recherche: ${error.message}`
     );
-  }
-});
+    }
+    });
+
+    exports.fetchSavedGroupSearch = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated',
+      'L\'utilisateur doit être authentifié pour récupérer une recherche de groupe sauvegardée.'
+    );
+    }
+
+    const { groupId } = data;
+
+    if (!groupId) {
+    throw new functions.https.HttpsError(
+      'invalid-argument',
+      'GroupId est requis.'
+    );
+    }
+
+    try {
+    const groupDoc = await admin.firestore().collection('groups').doc(groupId).get();
+
+    if (!groupDoc.exists) {
+      throw new functions.https.HttpsError('not-found', 'Groupe non trouvé');
+    }
+
+    const groupData = groupDoc.data();
+
+    if (!groupData.savedSearch) {
+      return { exists: false, message: 'Aucune recherche sauvegardée pour ce groupe' };
+    }
+
+    return { 
+      exists: true, 
+      savedSearch: groupData.savedSearch,
+      lastUpdated: groupData.lastUpdated
+    };
+    } catch (error) {
+    console.error('Erreur lors de la récupération de la recherche sauvegardée:', error);
+    throw new functions.https.HttpsError(
+      'internal',
+      `Une erreur est survenue lors de la récupération de la recherche sauvegardée: ${error.message}`
+    );
+    }
+    });

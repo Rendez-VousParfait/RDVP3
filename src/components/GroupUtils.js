@@ -207,13 +207,16 @@ export const fetchSavedSearch = async (groupId) => {
       throw new Error("Group not found");
     }
   } catch (error) {
-    console.error("Erreur lors de la récupération de la recherche sauvegardée:", error);
+    console.error(
+      "Erreur lors de la récupération de la recherche sauvegardée:",
+      error,
+    );
     throw error;
   }
 };
 
 export const saveGroupSearch = async (groupId, searchResults) => {
-  if (!groupId || typeof groupId !== 'string') {
+  if (!groupId || typeof groupId !== "string") {
     throw new Error("GroupId invalide");
   }
   try {
@@ -226,7 +229,10 @@ export const saveGroupSearch = async (groupId, searchResults) => {
     });
     console.log("Recherche sauvegardée avec succès dans Firestore");
   } catch (error) {
-    console.error("Erreur détaillée lors de la sauvegarde de la recherche de groupe:", error);
+    console.error(
+      "Erreur détaillée lors de la sauvegarde de la recherche de groupe:",
+      error,
+    );
     throw error;
   }
 };

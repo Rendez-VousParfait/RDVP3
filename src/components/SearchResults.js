@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { CircularProgress, Checkbox, FormGroup, FormControlLabel, Button } from "@mui/material";
+import {
+  CircularProgress,
+  Checkbox,
+  FormGroup,
+  FormControlLabel,
+  Button,
+} from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faStar,
@@ -27,7 +33,13 @@ import { db } from "../firebase";
 import { saveGroupSearch } from "./GroupUtils";
 import "./SearchResults.css";
 
-const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch }) => {
+const SearchResults = ({
+  results,
+  isGroupSearch,
+  userRole,
+  groupId,
+  onSaveSearch,
+}) => {
   const [enhancedResults, setEnhancedResults] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState({
@@ -77,9 +89,9 @@ const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch
   const initialImageLoadedStates = useMemo(() => {
     const states = {};
     if (results) {
-      Object.values(results).forEach(category => {
+      Object.values(results).forEach((category) => {
         if (Array.isArray(category)) {
-          category.forEach(item => {
+          category.forEach((item) => {
             states[item.id] = false;
           });
         }
@@ -111,7 +123,7 @@ const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch
           key={i}
           icon={faStar}
           className={i <= rating ? "star filled" : "star"}
-        />
+        />,
       );
     }
     return stars;
@@ -122,7 +134,7 @@ const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch
     if (type === "hotel") {
       if (item.wifi || item.equipments1 === "Wi-Fi gratuit")
         amenities.push(
-          <FontAwesomeIcon key="wifi" icon={faWifi} className="amenityIcon" />
+          <FontAwesomeIcon key="wifi" icon={faWifi} className="amenityIcon" />,
         );
       if (item.parking || item.equipments3 === "Parking")
         amenities.push(
@@ -130,7 +142,7 @@ const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch
             key="parking"
             icon={faParking}
             className="amenityIcon"
-          />
+          />,
         );
       if (item.pool)
         amenities.push(
@@ -138,7 +150,7 @@ const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch
             key="pool"
             icon={faSwimmingPool}
             className="amenityIcon"
-          />
+          />,
         );
     }
     if (item.accessibility === "Oui") {
@@ -147,7 +159,7 @@ const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch
           key="accessible"
           icon={faWheelchair}
           className="amenityIcon"
-        />
+        />,
       );
     }
     return amenities;
@@ -174,33 +186,43 @@ const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch
 
     const handleImageLoad = () => {
       console.log("Image chargée:", item.image1);
-      setImageLoadedStates(prev => ({ ...prev, [item.id]: true }));
+      setImageLoadedStates((prev) => ({ ...prev, [item.id]: true }));
     };
 
     const handleImageError = (e) => {
       console.error("Erreur de chargement de l'image:", item.image1);
       e.target.onerror = null;
       e.target.src = "/placeholder.jpg";
-      setImageLoadedStates(prev => ({ ...prev, [item.id]: true }));
+      setImageLoadedStates((prev) => ({ ...prev, [item.id]: true }));
     };
 
     return (
       <div className="resultCard" key={item.id}>
         <div className="cardContent">
           <div className="imageContainer">
-            {!imageLoaded && <div className="imagePlaceholder">Chargement...</div>}
+            {!imageLoaded && (
+              <div className="imagePlaceholder">Chargement...</div>
+            )}
             <img
               src={item.image1 || "/placeholder.jpg"}
-              alt={item.name_hotel || item.name_activty || item.name_restaurant || "Image non disponible"}
+              alt={
+                item.name_hotel ||
+                item.name_activty ||
+                item.name_restaurant ||
+                "Image non disponible"
+              }
               className="resultImage"
-              style={{ display: imageLoaded ? 'block' : 'none' }}
+              style={{ display: imageLoaded ? "block" : "none" }}
               onLoad={handleImageLoad}
               onError={handleImageError}
             />
           </div>
           <div className="detailsContainer">
             <h2 className="cardTitle">
-              {item.name_hotel || item.name_activty || item.name_restaurant || "Nom non disponible"}
+              {item.name_hotel ||
+                item.name_activty ||
+                item.name_restaurant ||
+                "Nom non disponible"}
             </h2>
             <p className="location">
               <FontAwesomeIcon icon={faMapMarkerAlt} />{" "}
@@ -209,21 +231,42 @@ const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch
             <div className="infoContainer">
               {type === "hotel" && (
                 <>
-                  <span className="infoBadge"><FontAwesomeIcon icon={faHotel} /> {item.accomodation_type || "Type non spécifié"}</span>
-                  <span className="infoBadge"><FontAwesomeIcon icon={faStar} /> {item.standing || "Standing non spécifié"}</span>
-                  <span className="infoBadge"><FontAwesomeIcon icon={faLeaf} /> {item.style || "Style non spécifié"}</span>
+                  <span className="infoBadge">
+                    <FontAwesomeIcon icon={faHotel} />{" "}
+                    {item.accomodation_type || "Type non spécifié"}
+                  </span>
+                  <span className="infoBadge">
+                    <FontAwesomeIcon icon={faStar} />{" "}
+                    {item.standing || "Standing non spécifié"}
+                  </span>
+                  <span className="infoBadge">
+                    <FontAwesomeIcon icon={faLeaf} />{" "}
+                    {item.style || "Style non spécifié"}
+                  </span>
                 </>
               )}
               {type === "restaurant" && (
                 <>
-                  <span className="infoBadge"><FontAwesomeIcon icon={faUtensils} /> {item.cuisine_origine || "Origine non spécifiée"}</span>
-                  <span className="infoBadge"><FontAwesomeIcon icon={faLeaf} /> {item.cuisinetype || "Type non spécifié"}</span>
+                  <span className="infoBadge">
+                    <FontAwesomeIcon icon={faUtensils} />{" "}
+                    {item.cuisine_origine || "Origine non spécifiée"}
+                  </span>
+                  <span className="infoBadge">
+                    <FontAwesomeIcon icon={faLeaf} />{" "}
+                    {item.cuisinetype || "Type non spécifié"}
+                  </span>
                 </>
               )}
               {type === "activity" && (
                 <>
-                  <span className="infoBadge"><FontAwesomeIcon icon={faRunning} /> {item.activity_type || "Type non spécifié"}</span>
-                  <span className="infoBadge"><FontAwesomeIcon icon={faUmbrellaBeach} /> {item.cadre || "Cadre non spécifié"}</span>
+                  <span className="infoBadge">
+                    <FontAwesomeIcon icon={faRunning} />{" "}
+                    {item.activity_type || "Type non spécifié"}
+                  </span>
+                  <span className="infoBadge">
+                    <FontAwesomeIcon icon={faUmbrellaBeach} />{" "}
+                    {item.cadre || "Cadre non spécifié"}
+                  </span>
                 </>
               )}
             </div>
@@ -231,9 +274,7 @@ const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch
               {item.description || "Description non disponible"}
             </p>
             {item.public_cible && (
-              <p className="publicCible">
-                Public cible: {item.public_cible}
-              </p>
+              <p className="publicCible">Public cible: {item.public_cible}</p>
             )}
             {item.environment && (
               <p className="environment">
@@ -247,30 +288,49 @@ const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch
             )}
             {(item.ambiance || item.ambiances) && (
               <p className="ambiance">
-                <FontAwesomeIcon icon={faGlassMartiniAlt} /> Ambiance: {item.ambiance || item.ambiances}
+                <FontAwesomeIcon icon={faGlassMartiniAlt} /> Ambiance:{" "}
+                {item.ambiance || item.ambiances}
               </p>
             )}
             <div className="ratingContainer">
-              <div className="ratingStars">{renderStars(item.notation || item.evaluation || 0)}</div>
-              <span className="ratingScore">{item.notation || item.evaluation || "N/A"}</span>
+              <div className="ratingStars">
+                {renderStars(item.notation || item.evaluation || 0)}
+              </div>
+              <span className="ratingScore">
+                {item.notation || item.evaluation || "N/A"}
+              </span>
             </div>
             <div className="amenities">
               {renderAmenities(type, item)}
-              {item.equipments1 && <span className="amenityChip">{item.equipments1}</span>}
-              {item.equipments2 && <span className="amenityChip">{item.equipments2}</span>}
-              {item.equipments3 && <span className="amenityChip">{item.equipments3}</span>}
-              {item.services1 && <span className="amenityChip">{item.services1}</span>}
-              {item.services2 && <span className="amenityChip">{item.services2}</span>}
+              {item.equipments1 && (
+                <span className="amenityChip">{item.equipments1}</span>
+              )}
+              {item.equipments2 && (
+                <span className="amenityChip">{item.equipments2}</span>
+              )}
+              {item.equipments3 && (
+                <span className="amenityChip">{item.equipments3}</span>
+              )}
+              {item.services1 && (
+                <span className="amenityChip">{item.services1}</span>
+              )}
+              {item.services2 && (
+                <span className="amenityChip">{item.services2}</span>
+              )}
             </div>
             {item.accessibility && (
               <p className="accessibility">
-                <FontAwesomeIcon icon={faWheelchair} /> Accessibilité: {item.accessibility}
+                <FontAwesomeIcon icon={faWheelchair} /> Accessibilité:{" "}
+                {item.accessibility}
               </p>
             )}
             {item.score !== undefined && (
               <p className="score">
                 <FontAwesomeIcon icon={faPercent} /> Correspondance:{" "}
-                {typeof item.score === "number" ? item.score.toFixed(0) : item.score}%
+                {typeof item.score === "number"
+                  ? item.score.toFixed(0)
+                  : item.score}
+                %
               </p>
             )}
           </div>
@@ -278,7 +338,9 @@ const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch
             <p className="price">
               <FontAwesomeIcon icon={faEuroSign} />
               {item.price || item.budget
-                ? `${item.price || item.budget}${type === "hotel" ? " /nuit" : " /personne"}`
+                ? `${item.price || item.budget}${
+                    type === "hotel" ? " /nuit" : " /personne"
+                  }`
                 : "Prix non disponible"}
             </p>
             <button className="moreInfoBtn">Voir l'offre</button>
@@ -306,20 +368,32 @@ const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch
   const handleSaveSearch = async () => {
     if (isGroupSearch && enhancedResults && groupId) {
       try {
-        console.log("Tentative d'enregistrement de la recherche pour le groupe:", groupId);
+        console.log(
+          "Tentative d'enregistrement de la recherche pour le groupe:",
+          groupId,
+        );
         console.log("Données à enregistrer:", enhancedResults);
         await saveGroupSearch(groupId, enhancedResults);
         console.log("Recherche enregistrée avec succès");
         alert("Recherche enregistrée avec succès !");
         if (onSaveSearch) {
-          onSaveSearch();
+          onSaveSearch(enhancedResults);
         }
       } catch (error) {
-        console.error("Erreur détaillée lors de l'enregistrement de la recherche:", error);
-        alert(`Une erreur est survenue lors de la sauvegarde de la recherche: ${error.message}`);
+        console.error(
+          "Erreur détaillée lors de l'enregistrement de la recherche:",
+          error,
+        );
+        alert(
+          `Une erreur est survenue lors de la sauvegarde de la recherche: ${error.message}`,
+        );
       }
     } else {
-      console.log("Impossible d'enregistrer la recherche:", { isGroupSearch, enhancedResults, groupId });
+      console.log("Impossible d'enregistrer la recherche:", {
+        isGroupSearch,
+        enhancedResults,
+        groupId,
+      });
     }
   };
 
@@ -337,18 +411,16 @@ const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch
   }
 
   if (!enhancedResults || Object.keys(enhancedResults).length === 0) {
-    return (
-      <p className="noResults">
-        Aucun résultat trouvé
-      </p>
-    );
+    return <p className="noResults">Aucun résultat trouvé</p>;
   }
-
-  console.log("isGroupSearch:", isGroupSearch);
 
   return (
     <div className="searchResults">
-      <h1 className="resultsTitle">Résultats de recherche</h1>
+      {isGroupSearch ? (
+        <h1 className="resultsTitle">Résultats de recherche de groupe</h1>
+      ) : (
+        <h1 className="resultsTitle">Résultats de recherche</h1>
+      )}
       {isGroupSearch && (
         <Button
           onClick={handleSaveSearch}
@@ -390,28 +462,31 @@ const SearchResults = ({ results, isGroupSearch, userRole, groupId, onSaveSearch
             }
             label="Restaurants"
           />
-        </FormGroup>
-      </div>
-      {enhancedResults?.accommodations && renderResultSection(
-        enhancedResults.accommodations,
-        "Hébergements",
-        faHotel,
-        "hotel"
-      )}
-      {enhancedResults?.activities && renderResultSection(
-        enhancedResults.activities,
-        "Activités",
-        faRunning,
-        "activity"
-      )}
-      {enhancedResults?.restaurants && renderResultSection(
-        enhancedResults.restaurants,
-        "Restaurants",
-        faUtensils,
-        "restaurant"
-      )}
-    </div>
-  );
-};
+          </FormGroup>
+          </div>
+          {enhancedResults?.accommodations &&
+          renderResultSection(
+          enhancedResults.accommodations,
+          "Hébergements",
+          faHotel,
+          "hotel",
+          )}
+          {enhancedResults?.activities &&
+          renderResultSection(
+          enhancedResults.activities,
+          "Activités",
+          faRunning,
+          "activity",
+          )}
+          {enhancedResults?.restaurants &&
+          renderResultSection(
+          enhancedResults.restaurants,
+          "Restaurants",
+          faUtensils,
+          "restaurant",
+          )}
+          </div>
+          );
+          };
 
-export default SearchResults;
+          export default SearchResults;

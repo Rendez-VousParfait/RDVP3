@@ -1,0 +1,60 @@
+.groupSearchResultsDetail {
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 2.5rem;
+  background: linear-gradient(135deg, #FF6B6B, #6B66FF);
+  border-radius: 25px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  color: white;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.groupSearchResultsDetail h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.groupSearchResultsDetail p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 15px;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  color: white;
+}
+
+@media (max-width: 480px) {
+  .groupSearchResultsDetail {
+    padding: 1.5rem;
+  }
+
+  .groupSearchResultsDetail h1 {
+    font-size: 2rem;
+  }
+
+  .groupSearchResultsDetail p {
+    font-size: 1rem;
+  }
+}
