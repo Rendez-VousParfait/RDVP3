@@ -72,7 +72,8 @@ exports.sendInvitationEmail = functions.https.onCall(async (data, context) => {
     );
   }
 
-  const searchLink = `https://03180a26-2db9-48f9-96be-160405a77d05-00-2ilb0tmq75o6f.spock.replit.dev/search?groupId=${encodeURIComponent(groupId)}`;
+  // Modifié pour pointer vers une page de rejoindre le groupe
+  const joinGroupLink = `https://03180a26-2db9-48f9-96be-160405a77d05-00-2ilb0tmq75o6f.spock.replit.dev/join-group/${encodeURIComponent(groupId)}`;
 
   const mailOptions = {
     from: "Rendez-Vous Parfait <noreply@rendez-vous-parfait.com>",
@@ -81,8 +82,8 @@ exports.sendInvitationEmail = functions.https.onCall(async (data, context) => {
     html: `
       <h1>Vous avez été invité à rejoindre un groupe de voyage !</h1>
       <p>Vous avez été invité à rejoindre le groupe "${groupName}" sur Rendez-Vous Parfait, notre application de planification de voyage.</p>
-      <p>Pour accepter l'invitation et remplir vos préférences, cliquez sur le lien suivant :</p>
-      <a href="${searchLink}">Rejoindre le groupe et remplir mes préférences</a>
+      <p>Pour accepter l'invitation et rejoindre le groupe, cliquez sur le lien suivant :</p>
+      <a href="${joinGroupLink}">Rejoindre le groupe</a>
     `,
   };
 
@@ -411,34 +412,34 @@ exports.performSearch = functions.https.onCall(async (data, context) => {
       activities,
       restaurants,
     };
-    } catch (error) {
+  } catch (error) {
     console.error("Error performing search:", error);
     throw new functions.https.HttpsError(
       "internal",
       `Une erreur est survenue lors de la recherche: ${error.message}`,
     );
-    }
-    });
+  }
+});
 
-    exports.checkGroupStatus = functions.https.onCall(async (data, context) => {
-    if (!context.auth) {
+exports.checkGroupStatus = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
       "L'utilisateur doit être authentifié pour vérifier le statut du groupe.",
     );
-    }
+  }
 
-    const { groupId } = data;
-    const userId = context.auth.uid;
+  const { groupId } = data;
+  const userId = context.auth.uid;
 
-    if (!groupId) {
+  if (!groupId) {
     throw new functions.https.HttpsError(
       "invalid-argument",
       "L'ID du groupe est requis.",
     );
-    }
+  }
 
-    try {
+  try {
     const groupDoc = await admin
       .firestore()
       .collection("groups")
@@ -468,89 +469,101 @@ exports.performSearch = functions.https.onCall(async (data, context) => {
         personCount: groupData.members ? groupData.members.length : 1,
       },
     };
-    } catch (error) {
+  } catch (error) {
     console.error("Error checking group status:", error);
     throw new functions.https.HttpsError(
       "internal",
       "Une erreur est survenue lors de la vérification du statut du groupe.",
     );
-    }
-    });
+  }
+});
 
-    exports.saveGroupSearch = functions.https.onCall(async (data, context) => {
-    if (!context.auth) {
+exports.saveGroupSearch = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
     throw new functions.https.HttpsError(
-      'unauthenticated',
-      'L\'utilisateur doit être authentifié pour sauvegarder une recherche de groupe.'
+      "unauthenticated",
+      "L'utilisateur doit être authentifié pour sauvegarder une recherche de groupe.",
     );
-    }
+  }
 
-    const { groupId, searchResults } = data;
+  const { groupId, searchResults } = data;
 
-    if (!groupId || !searchResults) {
+  if (!groupId || !searchResults) {
     throw new functions.https.HttpsError(
-      'invalid-argument',
-      'GroupId et searchResults sont requis.'
+      "invalid-argument",
+      "GroupId et searchResults sont requis.",
     );
-    }
+  }
 
-    try {
-    await admin.firestore().collection('groups').doc(groupId).update({
+  try {
+    await admin.firestore().collection("groups").doc(groupId).update({
       savedSearch: searchResults,
-      lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+      lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
     });
 
     console.log(`Recherche sauvegardée avec succès pour le groupe ${groupId}`);
-    return { success: true, message: 'Recherche sauvegardée avec succès' };
-    } catch (error) {
-    console.error('Erreur lors de la sauvegarde de la recherche:', error);
+    return { success: true, message: "Recherche sauvegardée avec succès" };
+  } catch (error) {
+    console.error("Erreur lors de la sauvegarde de la recherche:", error);
     throw new functions.https.HttpsError(
-      'internal',
-      `Une erreur est survenue lors de la sauvegarde de la recherche: ${error.message}`
+      "internal",
+      `Une erreur est survenue lors de la sauvegarde de la recherche: ${error.message}`,
     );
-    }
-    });
+  }
+});
 
-    exports.fetchSavedGroupSearch = functions.https.onCall(async (data, context) => {
+exports.fetchSavedGroupSearch = functions.https.onCall(
+  async (data, context) => {
     if (!context.auth) {
-    throw new functions.https.HttpsError(
-      'unauthenticated',
-      'L\'utilisateur doit être authentifié pour récupérer une recherche de groupe sauvegardée.'
-    );
+      throw new functions.https.HttpsError(
+        "unauthenticated",
+        "L'utilisateur doit être authentifié pour récupérer une recherche de groupe sauvegardée.",
+      );
     }
 
     const { groupId } = data;
 
     if (!groupId) {
-    throw new functions.https.HttpsError(
-      'invalid-argument',
-      'GroupId est requis.'
-    );
+      throw new functions.https.HttpsError(
+        "invalid-argument",
+        "GroupId est requis.",
+      );
     }
 
     try {
-    const groupDoc = await admin.firestore().collection('groups').doc(groupId).get();
+      const groupDoc = await admin
+        .firestore()
+        .collection("groups")
+        .doc(groupId)
+        .get();
 
-    if (!groupDoc.exists) {
-      throw new functions.https.HttpsError('not-found', 'Groupe non trouvé');
-    }
+      if (!groupDoc.exists) {
+        throw new functions.https.HttpsError("not-found", "Groupe non trouvé");
+      }
 
-    const groupData = groupDoc.data();
+      const groupData = groupDoc.data();
 
-    if (!groupData.savedSearch) {
-      return { exists: false, message: 'Aucune recherche sauvegardée pour ce groupe' };
-    }
+      if (!groupData.savedSearch) {
+        return {
+          exists: false,
+          message: "Aucune recherche sauvegardée pour ce groupe",
+        };
+      }
 
-    return { 
-      exists: true, 
-      savedSearch: groupData.savedSearch,
-      lastUpdated: groupData.lastUpdated
-    };
+      return {
+        exists: true,
+        savedSearch: groupData.savedSearch,
+        lastUpdated: groupData.lastUpdated,
+      };
     } catch (error) {
-    console.error('Erreur lors de la récupération de la recherche sauvegardée:', error);
-    throw new functions.https.HttpsError(
-      'internal',
-      `Une erreur est survenue lors de la récupération de la recherche sauvegardée: ${error.message}`
-    );
+      console.error(
+        "Erreur lors de la récupération de la recherche sauvegardée:",
+        error,
+      );
+      throw new functions.https.HttpsError(
+        "internal",
+        `Une erreur est survenue lors de la récupération de la recherche sauvegardée: ${error.message}`,
+      );
     }
-    });
+  },
+);

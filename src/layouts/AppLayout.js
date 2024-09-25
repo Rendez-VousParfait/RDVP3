@@ -44,6 +44,8 @@ function AppLayout() {
             element={<ItineraryReview />}
           />
           <Route path="/itinerary-history" element={<ItineraryHistory />} />
+          {/* Nouvelle route pour rejoindre un groupe */}
+          <Route path="/join-group/:groupId" element={<GroupManager />} />
         </Routes>
       </main>
       <AppNavigation />

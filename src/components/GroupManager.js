@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUsers,
@@ -47,8 +47,10 @@ const GroupManager = () => {
   const [userGroups, setUserGroups] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [invitationGroupId, setInvitationGroupId] = useState(null);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { groupId: urlGroupId } = useParams();
 
   useEffect(() => {
     if (user) {
@@ -62,6 +64,15 @@ const GroupManager = () => {
       navigate(`/groups/${groupId}`);
     }
   }, [currentStep, groupId, navigate]);
+
+  useEffect(() => {
+    if (urlGroupId) {
+      setInvitationGroupId(urlGroupId);
+      setCurrentStep(3);
+      setSelectedOption("join");
+      setGroupId(urlGroupId);
+    }
+  }, [urlGroupId]);
 
   const fetchGroups = async () => {
     if (!user) return;
@@ -100,16 +111,18 @@ const GroupManager = () => {
   };
 
   const handleJoinGroup = async () => {
-    if (groupId.trim()) {
+    const idToJoin = invitationGroupId || groupId.trim();
+    if (idToJoin) {
       try {
-        await joinGroup(groupId.trim(), user.email);
+        await joinGroup(idToJoin, user.email);
         fetchGroups();
-        navigate(`/groups/${groupId.trim()}`);
+        navigate(`/groups/${idToJoin}`);
       } catch (error) {
         console.error(
           "Erreur lors de la tentative de rejoindre le groupe:",
           error,
         );
+        // Gérer l'erreur (par exemple, afficher un message à l'utilisateur)
       }
     }
   };
@@ -191,15 +204,24 @@ const GroupManager = () => {
         } else if (selectedOption === "join") {
           return (
             <div className={styles.section}>
-              <h3>Rejoindre un groupe existant</h3>
+              <h3>
+                {invitationGroupId
+                  ? "Rejoindre le groupe via invitation"
+                  : "Rejoindre un groupe existant"}
+              </h3>
               <div className={styles.joinGroup}>
-                <input
-                  type="text"
-                  value={groupId}
-                  onChange={(e) => setGroupId(e.target.value)}
-                  placeholder="Identifiant du groupe"
-                />
-                <button onClick={handleJoinGroup} disabled={!groupId}>
+                {!invitationGroupId && (
+                  <input
+                    type="text"
+                    value={groupId}
+                    onChange={(e) => setGroupId(e.target.value)}
+                    placeholder="Identifiant du groupe"
+                  />
+                )}
+                <button
+                  onClick={handleJoinGroup}
+                  disabled={!groupId && !invitationGroupId}
+                >
                   <FontAwesomeIcon icon={faUserPlus} /> Rejoindre
                 </button>
               </div>
