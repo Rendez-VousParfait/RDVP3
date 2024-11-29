@@ -11,6 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 const ComposeTrip = React.memo(
   ({
@@ -21,9 +22,8 @@ const ComposeTrip = React.memo(
     currentStep,
     totalSteps,
     isGroupSearch,
+    groupId,
     userRole,
-    searchId,
-    userId,
   }) => {
     const [localBudget, setLocalBudget] = useState(formData.budget || "");
     const [error, setError] = useState("");
@@ -34,17 +34,25 @@ const ComposeTrip = React.memo(
         activities: false,
       },
     );
+    const [groupPreferences, setGroupPreferences] = useState(null);
+
+    const functions = getFunctions();
 
     useEffect(() => {
-      setLocalBudget(formData.budget || "");
-      setSelectedOptions(
-        formData.selectedOptions || {
-          hotels: false,
-          restaurants: false,
-          activities: false,
-        },
-      );
-    }, [formData.budget, formData.selectedOptions]);
+      if (isGroupSearch && groupId) {
+        const fetchGroupPreferences = async () => {
+          try {
+            const getGroupPreferences = httpsCallable(functions, "getGroupPreferences");
+            const result = await getGroupPreferences({ groupId });
+            setGroupPreferences(result.data);
+          } catch (error) {
+            console.error("Erreur lors de la récupération des préférences du groupe:", error);
+            setError("Impossible de récupérer les préférences du groupe.");
+          }
+        };
+        fetchGroupPreferences();
+      }
+    }, [isGroupSearch, groupId, functions]);
 
     const handleDateChange = useCallback(
       (dates) => {
@@ -103,7 +111,7 @@ const ComposeTrip = React.memo(
     );
 
     const handleNext = useCallback(
-      (e) => {
+      async (e) => {
         e.preventDefault();
         if (!formData.dates?.start || !formData.dates?.end) {
           setError("Veuillez sélectionner les dates de début et de fin.");
@@ -126,7 +134,7 @@ const ComposeTrip = React.memo(
         setError("");
         nextStep();
       },
-      [formData, nextStep, selectedOptions],
+      [formData, nextStep, selectedOptions]
     );
 
     const handlePrev = useCallback(
@@ -269,21 +277,29 @@ const ComposeTrip = React.memo(
         </div>
         {error && <p className={styles["error-message"]}>{error}</p>}
         <div className={styles["next-button-container"]}>
-          <button
-            type="button"
-            className={styles["prev-button"]}
-            onClick={handlePrev}
-          >
-            Précédent
-          </button>
+          {prevStep && (
+            <button
+              type="button"
+              className={styles["prev-button"]}
+              onClick={handlePrev}
+            >
+              Précédent
+            </button>
+          )}
           <button
             type="button"
             className={styles["next-button"]}
             onClick={handleNext}
           >
-            Suivant
+            {isGroupSearch && userRole === "creator" ? "Lancer la recherche de groupe" : "Suivant"}
           </button>
         </div>
+        {groupPreferences && (
+          <div className={styles["group-preferences"]}>
+            <h3>Préférences du groupe :</h3>
+            <pre>{JSON.stringify(groupPreferences, null, 2)}</pre>
+          </div>
+        )}
       </div>
     );
   },

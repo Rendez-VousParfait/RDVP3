@@ -1,0 +1,95 @@
+.searchResults {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.resultsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.section {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.section h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 1.5em;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+}
+
+.item {
+  background-color: white;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 0.3s ease;
+}
+
+.item:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.item h4 {
+  color: #007bff;
+  margin-bottom: 10px;
+  font-size: 1.2em;
+}
+
+.item p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.itemImage {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.saveButton {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 20px;
+}
+
+.saveButton:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 600px) {
+  .searchResults {
+    padding: 10px;
+  }
+
+  .section {
+    padding: 15px;
+  }
+
+  .item {
+    padding: 10px;
+  }
+
+  .saveButton {
+    padding: 10px 15px;
+  }
+}

@@ -211,11 +211,8 @@ const AccommodationPreferences = React.memo(
               ...formData.AccommodationPreferences,
               [category]: formData.AccommodationPreferences[category]?.includes(
                 value,
-              )
-                ? formData.AccommodationPreferences[category].filter(
-                    (item) => item !== value,
-                  )
-                : [
+              ) ? formData.AccommodationPreferences[category].filter(
+                    (item) => item !== value,) : [
                     ...(formData.AccommodationPreferences[category] || []),
                     value,
                   ],
@@ -231,8 +228,7 @@ const AccommodationPreferences = React.memo(
       ],
     );
 
-    const handlePriceChange = useCallback(
-      (e) => {
+    const handlePriceChange = useCallback((e) => {
         const price = e.target.value === "" ? null : Number(e.target.value);
         handleInputChange({
           target: {

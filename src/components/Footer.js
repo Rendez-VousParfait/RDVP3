@@ -6,17 +6,15 @@ import {
   faLinkedin,
 } from "@fortawesome/free-brands-svg-icons";
 import {
-  faEnvelope,
   faArrowUp,
   faPaperPlane,
   faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import "./Footer.css";
 
-function Footer() {
+const Footer = () => {
   const [email, setEmail] = useState("");
   const [isVisible, setIsVisible] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const toggleVisibility = () => {
@@ -27,16 +25,10 @@ function Footer() {
       }
     };
 
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-
     window.addEventListener("scroll", toggleVisibility);
-    window.addEventListener("mousemove", handleMouseMove);
 
     return () => {
       window.removeEventListener("scroll", toggleVisibility);
-      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
 

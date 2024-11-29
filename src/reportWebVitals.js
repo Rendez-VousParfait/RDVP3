@@ -1,12 +1,17 @@
-import { onCLS, onFID, onFCP, onLCP, onTTFB } from 'web-vitals';
-
-const reportWebVitals = (onPerfEntry) => {
+const reportWebVitals = async (onPerfEntry) => {
   if (onPerfEntry && onPerfEntry instanceof Function) {
-    onCLS(onPerfEntry);
-    onFID(onPerfEntry);
-    onFCP(onPerfEntry);
-    onLCP(onPerfEntry);
-    onTTFB(onPerfEntry);
+    try {
+      const webVitals = await import('web-vitals');
+      const { getCLS, getFID, getFCP, getLCP, getTTFB } = webVitals;
+
+      getCLS(onPerfEntry);
+      getFID(onPerfEntry);
+      getFCP(onPerfEntry);
+      getLCP(onPerfEntry);
+      getTTFB(onPerfEntry);
+    } catch (error) {
+      console.error('Erreur lors du chargement de web-vitals:', error);
+    }
   }
 };
 

@@ -1,22 +1,39 @@
-import React, { useContext } from "react";
+import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
-import { AuthProvider, AuthContext } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 import WebsiteLayout from "./layouts/WebSiteLayout";
 import AppLayout from "./layouts/AppLayout";
 import "./App.module.css";
+import { useAuth } from "./hooks/useAuth";
+import { AppProvider } from "./context/AppContext";
+import { NavbarProvider } from "./contexts/NavbarContext";
+import MoodForm from './pages/MoodForm';
 
 function AppContent() {
-  const { user } = useContext(AuthContext);
-  return user ? <AppLayout /> : <WebsiteLayout />;
+  const { user, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div>Chargement...</div>;
+  }
+  
+  return user ? (
+    <NavbarProvider>
+      <AppLayout />
+    </NavbarProvider>
+  ) : (
+    <WebsiteLayout />
+  );
 }
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+    <AppProvider>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
+    </AppProvider>
   );
 }
 

@@ -2,23 +2,27 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import DatePicker from "react-datepicker";
+import DatePicker, { registerLocale } from "react-datepicker";
+import fr from "date-fns/locale/fr";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "./ItineraryReview.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  FaCalendar,
-  FaCreditCard,
-  FaUtensils,
-  FaBed,
-  FaWalking,
-  FaMoneyBillWave,
-  FaBookOpen,
-  FaMapMarkerAlt,
-  FaClock,
-  FaWheelchair,
-  FaStar,
-  FaUsers,
-} from "react-icons/fa";
+  faCalendar,
+  faCreditCard,
+  faUtensils,
+  faBed,
+  faWalking,
+  faEuroSign,
+  faBookOpen,
+  faMapMarkerAlt,
+  faClock,
+  faWheelchair,
+  faStar,
+  faUsers,
+} from "@fortawesome/free-solid-svg-icons";
+
+registerLocale("fr", fr);
 
 const ItineraryReview = () => {
   const { itineraryId } = useParams();
@@ -77,42 +81,56 @@ const ItineraryReview = () => {
   };
 
   const generateStoryTelling = () => {
-    if (
-      !itinerary ||
-      Object.keys(offerDates).length !== itinerary.offers.length
-    )
-      return "";
+    if (!itinerary || Object.keys(offerDates).length !== itinerary.offers.length) {
+      return "Sélectionnez des dates pour toutes vos activités pour générer votre histoire.";
+    }
 
-    const sortedOffers = [...itinerary.offers].sort(
-      (a, b) => offerDates[a.id] - offerDates[b.id],
-    );
-    const startDate = new Date(Math.min(...Object.values(offerDates)));
-    const endDate = new Date(Math.max(...Object.values(offerDates)));
-    const duration =
-      Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+    const sortedOffers = [...itinerary.offers].sort((a, b) => {
+      const dateA = offerDates[a.id];
+      const dateB = offerDates[b.id];
+      if (!dateA || !dateB) return 0;
+      return dateA - dateB;
+    });
 
-    let story = `Préparez-vous pour une aventure inoubliable de ${duration} jours${itinerary.name ? ` avec votre itinéraire "${itinerary.name}"` : ""} ! `;
-    story += `Votre voyage commence le ${startDate.toLocaleDateString()} et se termine le ${endDate.toLocaleDateString()}. `;
+    const validDates = Object.values(offerDates).filter(date => date !== null);
+    if (validDates.length === 0) {
+      return "Sélectionnez des dates pour générer votre histoire.";
+    }
 
-    sortedOffers.forEach((offer, index) => {
-      const offerDate = offerDates[offer.id].toLocaleDateString();
+    const startDate = new Date(Math.min(...validDates));
+    const endDate = new Date(Math.max(...validDates));
+    const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+
+    let story = `Préparez-vous pour une aventure inoubliable de ${duration} jours${
+      itinerary.name ? ` avec votre itinéraire "${itinerary.name}"` : ""
+    } ! `;
+    
+    story += `Votre voyage commence le ${startDate.toLocaleDateString("fr-FR")} et se termine le ${endDate.toLocaleDateString("fr-FR")}. `;
+
+    sortedOffers.forEach((offer) => {
+      const offerDate = offerDates[offer.id];
+      if (!offerDate) return;
+
+      const dateStr = offerDate.toLocaleDateString("fr-FR");
 
       switch (offer.type) {
         case "AccomodationPreferences":
-          story += `Le ${offerDate}, vous vous installerez dans le confortable ${offer.name_hotel}. `;
+          story += `Le ${dateStr}, vous vous installerez dans le confortable ${offer.name_hotel}. `;
           break;
         case "RestaurantPreferences":
-          story += `${index === 0 ? "Pour commencer, vous" : "Vous"} dégusterez un délicieux repas au ${offer.name_restaurant} le ${offerDate}. `;
+          story += `Le ${dateStr}, vous dégusterez un délicieux repas au ${offer.name_restaurant}. `;
           break;
         case "ActivityPreferences":
-          story += `Le ${offerDate}, l'aventure continue avec ${offer.name_activty}. `;
+          story += `Le ${dateStr}, l'aventure continue avec ${offer.name_activty}. `;
           break;
         default:
-          story += `Le ${offerDate}, vous profiterez de ${offer.name_hotel || offer.name_restaurant || offer.name_activty}. `;
+          story += `Le ${dateStr}, vous profiterez de ${
+            offer.name_hotel || offer.name_restaurant || offer.name_activty
+          }. `;
       }
     });
 
-    story += `Cette escapade promet d'être riche en découvertes et en moments mémorables. Êtes-vous prêt à vivre cette expérience unique ?`;
+    story += "Cette escapade promet d'être riche en découvertes et en moments mémorables. Êtes-vous prêt à vivre cette expérience unique ?";
 
     return story;
   };
@@ -135,32 +153,31 @@ const ItineraryReview = () => {
           <h3>
             {offer.name_hotel || offer.name_restaurant || offer.name_activty}
           </h3>
-          <p>{offer.description}</p>
           <div className={styles.offerInfo}>
             <p className={styles.offerPrice}>
-              <FaMoneyBillWave className={styles.offerIcon} />
+              <FontAwesomeIcon icon={faEuroSign} className={styles.offerIcon} />
               Prix : {offer.price || offer.budget}€
             </p>
             <p className={styles.offerLocation}>
-              <FaMapMarkerAlt className={styles.offerIcon} />
+              <FontAwesomeIcon icon={faMapMarkerAlt} className={styles.offerIcon} />
               {offer.adress || offer.location}
             </p>
             {offer.type === "AccomodationPreferences" && (
               <>
                 <p className={styles.offerType}>
-                  <FaBed className={styles.offerIcon} />
+                  <FontAwesomeIcon icon={faBed} className={styles.offerIcon} />
                   {offer.accomodation_type}
                 </p>
                 <p className={styles.offerStanding}>
-                  <FaStar className={styles.offerIcon} />
+                  <FontAwesomeIcon icon={faStar} className={styles.offerIcon} />
                   {offer.standing}
                 </p>
                 <p className={styles.offerRating}>
-                  <FaStar className={styles.offerIcon} />
+                  <FontAwesomeIcon icon={faStar} className={styles.offerIcon} />
                   Note : {offer.notation}/5
                 </p>
                 <p className={styles.offerEnvironment}>
-                  <FaMapMarkerAlt className={styles.offerIcon} />
+                  <FontAwesomeIcon icon={faMapMarkerAlt} className={styles.offerIcon} />
                   {offer.environment}
                 </p>
                 <p className={styles.offerEquipments}>
@@ -174,14 +191,14 @@ const ItineraryReview = () => {
             {offer.type === "RestaurantPreferences" && (
               <>
                 <p className={styles.offerCuisine}>
-                  <FaUtensils className={styles.offerIcon} />
+                  <FontAwesomeIcon icon={faUtensils} className={styles.offerIcon} />
                   Cuisine {offer.cuisine_origine}, {offer.cuisinetype}
                 </p>
                 <p className={styles.offerAmbiance}>
                   Ambiance : {offer.ambiances}
                 </p>
                 <p className={styles.offerRating}>
-                  <FaStar className={styles.offerIcon} />
+                  <FontAwesomeIcon icon={faStar} className={styles.offerIcon} />
                   Note : {offer.evaluation}/5
                 </p>
                 <p className={styles.offerServices}>
@@ -195,37 +212,70 @@ const ItineraryReview = () => {
             {offer.type === "ActivityPreferences" && (
               <>
                 <p className={styles.offerActivityType}>
-                  <FaWalking className={styles.offerIcon} />
+                  <FontAwesomeIcon icon={faWalking} className={styles.offerIcon} />
                   {offer.activity_type}
                 </p>
                 <p className={styles.offerDuration}>
-                  <FaClock className={styles.offerIcon} />
+                  <FontAwesomeIcon icon={faClock} className={styles.offerIcon} />
                   Durée : {offer.duration}
                 </p>
                 <p className={styles.offerAmbiance}>
                   Ambiance : {offer.ambiance}
                 </p>
                 <p className={styles.offerEnvironment}>
-                  <FaMapMarkerAlt className={styles.offerIcon} />
+                  <FontAwesomeIcon icon={faMapMarkerAlt} className={styles.offerIcon} />
                   {offer.environment}
                 </p>
                 <p className={styles.offerPublicCible}>
-                  <FaUsers className={styles.offerIcon} />
+                  <FontAwesomeIcon icon={faUsers} className={styles.offerIcon} />
                   Public : {offer.public_cible}
                 </p>
               </>
             )}
             <p className={styles.offerAccessibility}>
-              <FaWheelchair className={styles.offerIcon} />
+              <FontAwesomeIcon icon={faWheelchair} className={styles.offerIcon} />
               Accessibilité : {offer.accessibility}
             </p>
           </div>
-          <div className={styles.offerDatePicker}>
-            <DatePicker
-              selected={offerDates[offer.id]}
-              onChange={(date) => handleOfferDateChange(date, offer.id)}
-              placeholderText="Choisir une date pour cette offre"
-            />
+          
+          <div className={styles.datePickerWrapper}>
+            <div className={styles.datePickerLabel}>
+              <FontAwesomeIcon icon={faCalendar} />
+              <span>Date prévue</span>
+            </div>
+            <div className={styles.datePickerControl}>
+              <DatePicker
+                selected={offerDates[offer.id]}
+                onChange={(date) => handleOfferDateChange(date, offer.id)}
+                dateFormat="dd/MM/yyyy"
+                locale="fr"
+                placeholderText="Sélectionner une date"
+                minDate={new Date()}
+                className={styles.customDatePicker}
+                calendarClassName={styles.customCalendar}
+                wrapperClassName={styles.datePickerContainer}
+                showPopperArrow={false}
+                customInput={
+                  <button className={styles.dateButton}>
+                    {offerDates[offer.id] 
+                      ? new Date(offerDates[offer.id]).toLocaleDateString("fr-FR")
+                      : "Choisir une date"}
+                  </button>
+                }
+              />
+              {offerDates[offer.id] && (
+                <button 
+                  className={styles.clearDateButton}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOfferDateChange(null, offer.id);
+                  }}
+                  title="Effacer la date"
+                >
+                  ×
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -236,51 +286,105 @@ const ItineraryReview = () => {
 
   return (
     <div className={styles.itineraryReview}>
-      <h1>{itinerary.name || "Récapitulatif de votre itinéraire"}</h1>
+      <header className={styles.header}>
+        <h1>{itinerary.name || "Récapitulatif de votre itinéraire"}</h1>
+      </header>
 
-      <div className={styles.storyTelling}>
-        <h2>
-          <FaBookOpen /> Votre aventure en un coup d'œil
-        </h2>
-        <p>{generateStoryTelling()}</p>
+      <div className={styles.statsSection}>
+        <div className={styles.statCard}>
+          <FontAwesomeIcon icon={faBookOpen} className={styles.statIcon} />
+          <div className={styles.statInfo}>
+            <span className={styles.statNumber}>
+              {itinerary.offers.filter(o => o.type === "AccomodationPreferences").length}
+            </span>
+            <span className={styles.statLabel}>Hébergements</span>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <FontAwesomeIcon icon={faUtensils} className={styles.statIcon} />
+          <div className={styles.statInfo}>
+            <span className={styles.statNumber}>
+              {itinerary.offers.filter(o => o.type === "RestaurantPreferences").length}
+            </span>
+            <span className={styles.statLabel}>Restaurants</span>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <FontAwesomeIcon icon={faWalking} className={styles.statIcon} />
+          <div className={styles.statInfo}>
+            <span className={styles.statNumber}>
+              {itinerary.offers.filter(o => o.type === "ActivityPreferences").length}
+            </span>
+            <span className={styles.statLabel}>Activités</span>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <FontAwesomeIcon icon={faEuroSign} className={styles.statIcon} />
+          <div className={styles.statInfo}>
+            <span className={styles.statNumber}>
+              {itinerary.offers.reduce(
+                (sum, offer) => sum + (offer.price || offer.budget || 0),
+                0,
+              )}€
+            </span>
+            <span className={styles.statLabel}>Budget total</span>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <FontAwesomeIcon icon={faCalendar} className={styles.statIcon} />
+          <div className={styles.statInfo}>
+            <span className={styles.statNumber}>
+              {Object.keys(offerDates).length}/{itinerary.offers.length}
+            </span>
+            <span className={styles.statLabel}>Dates planifiées</span>
+          </div>
+        </div>
       </div>
 
-      <div className={styles.offersList}>
-        <h2>
-          <FaBed /> Hébergements
-        </h2>
-        {renderOffersByType("AccomodationPreferences")}
+      <main className={styles.mainContent}>
+        <div className={styles.storyTelling}>
+          <h2>
+            <FontAwesomeIcon icon={faBookOpen} /> Votre aventure en un coup d'œil
+          </h2>
+          <p>{generateStoryTelling()}</p>
+        </div>
 
-        <h2>
-          <FaUtensils /> Restaurants
-        </h2>
-        {renderOffersByType("RestaurantPreferences")}
+        <div className={styles.offersList}>
+          <div className={styles.offerTypeSection}>
+            <h3>
+              <FontAwesomeIcon icon={faBed} /> Hébergements
+            </h3>
+            {renderOffersByType("AccomodationPreferences")}
+          </div>
 
-        <h2>
-          <FaWalking /> Activités
-        </h2>
-        {renderOffersByType("ActivityPreferences")}
-      </div>
+          <div className={styles.offerTypeSection}>
+            <h3>
+              <FontAwesomeIcon icon={faUtensils} /> Restaurants
+            </h3>
+            {renderOffersByType("RestaurantPreferences")}
+          </div>
 
-      <div className={styles.totalPrice}>
-        <h2>
-          Prix total :{" "}
-          {itinerary.offers.reduce(
-            (sum, offer) => sum + (offer.price || offer.budget || 0),
-            0,
-          )}
-          €
-        </h2>
-      </div>
+          <div className={styles.offerTypeSection}>
+            <h3>
+              <FontAwesomeIcon icon={faWalking} /> Activités
+            </h3>
+            {renderOffersByType("ActivityPreferences")}
+          </div>
+        </div>
 
-      <div className={styles.actionButtons}>
-        <button onClick={handleDateChange} className={styles.updateDates}>
-          <FaCalendar /> Mettre à jour les dates
-        </button>
-        <button onClick={handlePayment} className={styles.paymentButton}>
-          <FaCreditCard /> Procéder au paiement
-        </button>
-      </div>
+        <div className={styles.actionButtons}>
+          <button onClick={handleDateChange} className={styles.updateDates}>
+            <FontAwesomeIcon icon={faCalendar} /> Mettre à jour les dates
+          </button>
+          <button onClick={handlePayment} className={styles.paymentButton}>
+            <FontAwesomeIcon icon={faCreditCard} /> Procéder au paiement
+          </button>
+        </div>
+      </main>
     </div>
   );
 };

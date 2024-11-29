@@ -71,9 +71,13 @@ body {
 
 .resultImage {
   width: 100%;
-  height: 100%;
+  height: 200px;
   object-fit: cover;
-  transition: transform 0.3s ease;
+}
+
+.resultImage[src="/placeholder.jpg"] {
+  object-fit: contain;
+  background-color: #f0f0f0;
 }
 
 .resultCard:hover .resultImage {

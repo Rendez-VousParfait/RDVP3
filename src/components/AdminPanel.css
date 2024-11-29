@@ -1,0 +1,88 @@
+.admin-panel {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-title {
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.stats-container {
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  padding: 20px;
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-title {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.stat-value {
+  color: #2196f3;
+  font-weight: bold;
+}
+
+.offer-form {
+  padding: 20px;
+  margin-bottom: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-title {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.form-grid {
+  margin-top: 20px;
+}
+
+.submit-button {
+  margin-top: 20px;
+}
+
+.offers-list {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.offer-item {
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+}
+
+.offer-item:last-child {
+  border-bottom: none;
+}
+
+.delete-button {
+  color: #f44336;
+}
+
+@media (max-width: 600px) {
+  .admin-panel {
+    padding: 10px;
+  }
+
+  .stat-card, .offer-form, .offers-list {
+    padding: 15px;
+  }
+}

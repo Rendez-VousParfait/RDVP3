@@ -15,14 +15,82 @@
   font-weight: bold;
 }
 
-.saveSearchBtn {
+.filtersContainer {
+  margin-bottom: 20px;
+}
+
+.resultSection {
+  margin-bottom: 30px;
+}
+
+.resultSection h3 {
+  font-size: 24px;
+  color: #444;
+  margin-bottom: 15px;
   display: flex;
   align-items: center;
+}
+
+.resultSection h3 svg {
+  margin-right: 10px;
+}
+
+.resultList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.resultItem {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.resultItem:hover {
+  transform: translateY(-5px);
+}
+
+.resultImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.resultImage[src="/placeholder.jpg"] {
+  object-fit: contain;
+  background-color: #f0f0f0;
+}
+
+.resultInfo {
+  padding: 15px;
+}
+
+.resultInfo h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.resultInfo p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.groupActions {
+  display: flex;
   justify-content: center;
-  margin: 0 auto 20px;
+  margin-top: 30px;
+}
+
+.saveSearchBtn,
+.saveParticipationBtn {
+  margin: 0 10px;
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
@@ -31,44 +99,29 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.saveSearchBtn:hover {
-  background-color: #45a049;
+.saveSearchBtn {
+  background-color: #4caf50;
+}
+
+.saveParticipationBtn {
+  background-color: #2196f3;
+}
+
+.saveSearchBtn:hover,
+.saveParticipationBtn:hover {
   transform: translateY(-2px);
 }
 
-.saveSearchBtn:active {
+.saveSearchBtn:active,
+.saveParticipationBtn:active {
   transform: translateY(0);
 }
 
-.saveSearchBtn svg {
-  margin-right: 10px;
-}
-
-.loadingContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-}
-
-.loadingContainer p {
-  margin-top: 10px;
+.loading {
+  text-align: center;
+  font-size: 18px;
   color: #666;
-}
-
-.errorMessage {
-  color: #d32f2f;
-  text-align: center;
-  font-size: 18px;
-  margin-top: 20px;
-}
-
-.successMessage {
-  color: #4caf50;
-  text-align: center;
-  font-size: 18px;
-  margin-top: 20px;
+  margin-top: 50px;
 }
 
 @media (max-width: 768px) {
@@ -76,8 +129,29 @@
     font-size: 24px;
   }
 
-  .saveSearchBtn {
+  .resultList {
+    grid-template-columns: 1fr;
+  }
+
+  .saveSearchBtn,
+  .saveParticipationBtn {
     font-size: 14px;
     padding: 8px 16px;
   }
+}
+
+.filters {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.filters label {
+  margin: 0 10px;
+  display: flex;
+  align-items: center;
+}
+
+.filters input[type="checkbox"] {
+  margin-right: 5px;
 }

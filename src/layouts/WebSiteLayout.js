@@ -10,6 +10,8 @@ import Signup from "../components/Signup";
 import BlogList from "../components/blog/BlogList";
 import BlogPost from "../components/blog/BlogPost";
 import styles from "./WebSiteLayout.module.css";
+import SwiperPage from "../pages/SwiperPage";
+import GroupManager from "../components/GroupManager";
 
 function WebsiteLayout() {
   return (
@@ -26,6 +28,9 @@ function WebsiteLayout() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/blog" element={<BlogList />} />
           <Route path="/blog/:id" element={<BlogPost />} />
+          <Route path="/swiper" element={<SwiperPage />} />
+          <Route path="/groups" element={<GroupManager />} />
+          <Route path="/groups/:groupId" element={<GroupManager />} />
         </Routes>
       </main>
       <footer className={styles.footer}>

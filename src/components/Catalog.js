@@ -10,24 +10,26 @@ import {
   doc,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import styles from "./Catalog.module.css";
-import {
-  FaUtensils,
-  FaMoneyBillWave,
-  FaBed,
-  FaWalking,
-  FaStar,
-  FaMapMarkerAlt,
-  FaWheelchair,
-  FaSmile,
-  FaClock,
-  FaCalendarPlus,
-  FaEye,
-  FaPen,
-  FaTrash,
-} from "react-icons/fa";
 import confetti from "canvas-confetti";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { 
+  faEuroSign, 
+  faPlus, 
+  faCheck, 
+  faStar,
+  faMapMarkerAlt,
+  faSmile,
+  faClock,
+  faUsers,
+  faBed,
+  faUtensils,
+  faWalking,
+  faTrash,
+  faPen,
+  faEye,
+  faHeart,
+} from "@fortawesome/free-solid-svg-icons";
 
 const Catalog = () => {
   const [likedOffers, setLikedOffers] = useState([]);
@@ -66,7 +68,11 @@ const Catalog = () => {
             ActivityPreferences: [],
           };
         }
-        acc[date][offer.type].push(offer);
+        if (offer.type && acc[date][offer.type]) {
+          acc[date][offer.type].push(offer);
+        } else {
+          console.warn(`Type d'offre non reconnu : ${offer.type}`);
+        }
         return acc;
       }, {});
       setLikedOffersByDay(offersByDay);
@@ -92,19 +98,6 @@ const Catalog = () => {
     }
   };
 
-  const getTypeIcon = (type) => {
-    switch (type) {
-      case "AccomodationPreferences":
-        return <FaBed className={styles["offer-icon"]} />;
-      case "RestaurantPreferences":
-        return <FaUtensils className={styles["offer-icon"]} />;
-      case "ActivityPreferences":
-        return <FaWalking className={styles["offer-icon"]} />;
-      default:
-        return null;
-    }
-  };
-
   const handleSelectOffer = (offer) => {
     setSelectedOffers((prev) => {
       if (prev.some((o) => o.id === offer.id)) {
@@ -117,15 +110,11 @@ const Catalog = () => {
 
   const createItinerary = async () => {
     if (selectedOffers.length === 0) {
-      alert(
-        "Veuillez sélectionner au moins une offre pour créer un itinéraire.",
-      );
-      return;
+      return <p>Veuillez sélectionner au moins une offre pour créer un itinéraire.</p>
     }
 
     if (!itineraryName.trim()) {
-      alert("Veuillez donner un nom à votre itinéraire.");
-      return;
+      return <p>Veuillez donner un nom à votre itinéraire.</p>
     }
 
     try {
@@ -167,113 +156,145 @@ const Catalog = () => {
     const offerType = offer.type || "UnknownType";
     const isSelected = selectedOffers.some((o) => o.id === offer.id);
 
+    const renderSpecificDetails = () => {
+      switch (offerType) {
+        case "AccomodationPreferences":
+          return (
+            <>
+              <div className={styles.cardDetail}>
+                <FontAwesomeIcon icon={faStar} className={styles.icon} />
+                <span>Standing: {offer.standing || "Non spécifié"}</span>
+              </div>
+              <div className={styles.cardDetail}>
+                <FontAwesomeIcon icon={faBed} className={styles.icon} />
+                <span>Type: {offer.accomodation_type || "Non spécifié"}</span>
+              </div>
+              {offer.equipments1 && (
+                <div className={styles.cardEquipments}>
+                  <h4>Équipements:</h4>
+                  <ul>
+                    {[offer.equipments1, offer.equipments2, offer.equipments3]
+                      .filter(Boolean)
+                      .map((eq, index) => (
+                        <li key={index}>{eq}</li>
+                      ))}
+                  </ul>
+                </div>
+              )}
+            </>
+          );
+
+        case "RestaurantPreferences":
+          return (
+            <>
+              <div className={styles.cardDetail}>
+                <FontAwesomeIcon icon={faUtensils} className={styles.icon} />
+                <span>Cuisine: {offer.cuisine_origine || "Non spécifié"}</span>
+              </div>
+              <div className={styles.cardDetail}>
+                <FontAwesomeIcon icon={faSmile} className={styles.icon} />
+                <span>Ambiance: {offer.ambiances || "Non spécifié"}</span>
+              </div>
+              {offer.services1 && (
+                <div className={styles.cardServices}>
+                  <h4>Services:</h4>
+                  <ul>
+                    {[offer.services1, offer.services2]
+                      .filter(Boolean)
+                      .map((service, index) => (
+                        <li key={index}>{service}</li>
+                      ))}
+                  </ul>
+                </div>
+              )}
+            </>
+          );
+
+        case "ActivityPreferences":
+          return (
+            <>
+              <div className={styles.cardDetail}>
+                <FontAwesomeIcon icon={faClock} className={styles.icon} />
+                <span>Durée: {offer.duration || "Non spécifié"}</span>
+              </div>
+              <div className={styles.cardDetail}>
+                <FontAwesomeIcon icon={faUsers} className={styles.icon} />
+                <span>Type: {offer.activity_type || "Non spécifié"}</span>
+              </div>
+              <div className={styles.cardDetail}>
+                <FontAwesomeIcon icon={faSmile} className={styles.icon} />
+                <span>Ambiance: {offer.ambiance || "Non spécifié"}</span>
+              </div>
+            </>
+          );
+
+        default:
+          return null;
+      }
+    };
+
     return (
       <div
-        className={`${styles["offer-card"]} ${isSelected ? styles["selected"] : ""}`}
+        className={`${styles["offer-card"]} ${isSelected ? styles.selected : ""}`}
         onClick={() => handleSelectOffer(offer)}
       >
-        <img
-          src={offer.image1}
-          alt={
-            offer.name_hotel ||
-            offer.name_restaurant ||
-            offer.name_activty ||
-            "Offre sans nom"
-          }
-          className={styles["offer-image"]}
-        />
-        <div className={styles["offer-info"]}>
-          <h3 className={styles["offer-title"]}>
-            {offer.name_hotel ||
-              offer.name_restaurant ||
-              offer.name_activty ||
-              "Offre sans nom"}
-          </h3>
-          <p className={styles["offer-description"]}>
-            {offer.description || "Aucune description disponible"}
-          </p>
-          <div className={styles["offer-details"]}>
-            <p className={styles["offer-type"]}>
-              {getTypeIcon(offerType)}
-              {offer.accomodation_type ||
-                offer.activity_type ||
-                offer.cuisinetype ||
-                offerType.replace("Preferences", "")}
-            </p>
-            <p className={styles["offer-price"]}>
-              <FaMoneyBillWave className={styles["offer-icon"]} />
-              {offer.price || offer.budget || "Prix non spécifié"}€
-            </p>
-            {offerType === "AccomodationPreferences" && (
-              <>
-                <p className={styles["offer-standing"]}>
-                  <FaStar className={styles["offer-icon"]} />
-                  {offer.standing || "Non spécifié"}
-                </p>
-                <p className={styles["offer-rating"]}>
-                  <FaStar className={styles["offer-icon"]} />
-                  {offer.notation || "Non spécifié"}
-                </p>
-              </>
-            )}
-            {offerType === "RestaurantPreferences" && (
-              <>
-                <p className={styles["offer-cuisine"]}>
-                  <FaUtensils className={styles["offer-icon"]} />
-                  {offer.cuisine_origine || "Non spécifié"}
-                </p>
-                <p className={styles["offer-ambiance"]}>
-                  <FaSmile className={styles["offer-icon"]} />
-                  {offer.ambiances || "Non spécifié"}
-                </p>
-              </>
-            )}
-            {offerType === "ActivityPreferences" && (
-              <>
-                <p className={styles["offer-duration"]}>
-                  <FaClock className={styles["offer-icon"]} />
-                  {offer.duration || "Non spécifié"}
-                </p>
-                <p className={styles["offer-ambiance"]}>
-                  <FaSmile className={styles["offer-icon"]} />
-                  {offer.ambiance || "Non spécifié"}
-                </p>
-              </>
-            )}
-            <p className={styles["offer-location"]}>
-              <FaMapMarkerAlt className={styles["offer-icon"]} />
-              {offer.adress || offer.location || "Adresse non spécifiée"}
-            </p>
-            <p className={styles["offer-accessibility"]}>
-              <FaWheelchair className={styles["offer-icon"]} />
-              {offer.accessibility || "Non spécifié"}
-            </p>
-          </div>
-          {offerType === "AccomodationPreferences" && (
-            <p className={styles["offer-equipment"]}>
-              Équipements:{" "}
-              {[offer.equipments1, offer.equipments2, offer.equipments3]
-                .filter(Boolean)
-                .join(", ") || "Non spécifié"}
-            </p>
-          )}
-          {offerType === "RestaurantPreferences" && (
-            <p className={styles["offer-services"]}>
-              Services:{" "}
-              {[offer.services1, offer.services2].filter(Boolean).join(", ") ||
-                "Non spécifié"}
-            </p>
-          )}
+        <div className={styles.cardImageContainer}>
+          <img
+            src={offer.image1}
+            alt={offer.name_hotel || offer.name_restaurant || offer.name_activty || "Offre"}
+            className={styles.cardImage}
+          />
+          <span className={styles.cardTag}>
+            {offerType === "AccomodationPreferences" ? "HÔTEL" :
+             offerType === "RestaurantPreferences" ? "RESTAURANT" : "ACTIVITÉ"}
+          </span>
         </div>
-        <div className={styles["offer-actions"]}>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleSelectOffer(offer);
-            }}
-          >
-            {isSelected ? "Désélectionner" : "Sélectionner"}
-          </button>
+
+        <div className={styles.cardContent}>
+          <h3 className={styles.cardTitle}>
+            {offer.name_hotel || offer.name_restaurant || offer.name_activty || "Offre sans nom"}
+          </h3>
+          
+          <div className={styles.cardDetails}>
+            <div className={styles.cardPrice}>
+              <FontAwesomeIcon icon={faEuroSign} className={styles.icon} />
+              {offer.price || offer.budget || "N/A"}€
+            </div>
+            
+            {offer.rating && (
+              <div className={styles.cardRating}>
+                {Array.from({ length: 5 }, (_, i) => (
+                  <FontAwesomeIcon
+                    key={i}
+                    icon={faStar}
+                    className={i < offer.rating ? styles.starFilled : styles.starEmpty}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className={styles.cardLocation}>
+            <FontAwesomeIcon icon={faMapMarkerAlt} className={styles.icon} />
+            {offer.adress || offer.location || "Adresse non spécifiée"}
+          </div>
+
+          <div className={styles.cardSpecificDetails}>
+            {renderSpecificDetails()}
+          </div>
+
+          <div className={styles.cardActions}>
+            <button 
+              className={`${styles.actionButton} ${isSelected ? styles.selected : ""}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSelectOffer(offer);
+              }}
+            >
+              <FontAwesomeIcon icon={isSelected ? faCheck : faPlus} />
+              {isSelected ? "Sélectionné" : "Ajouter"}
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -304,51 +325,58 @@ const Catalog = () => {
     <div className={styles.catalog}>
       <main className={styles["main-content"]}>
         <header className={styles.header}>
-          <h1>Catalogue des offres likées</h1>
+          <h1>Mon Catalogue Personnalisé</h1>
           <div className={styles["quick-filters"]}>
             <button onClick={() => setActiveTab("all")}>Tous</button>
             <button onClick={() => setActiveTab("hotels")}>
-              <FaBed /> Hôtels
+              <FontAwesomeIcon icon={faBed} /> Hôtels
             </button>
             <button onClick={() => setActiveTab("restaurants")}>
-              <FaUtensils /> Restaurants
+              <FontAwesomeIcon icon={faUtensils} /> Restaurants
             </button>
             <button onClick={() => setActiveTab("activities")}>
-              <FaWalking /> Activités
+              <FontAwesomeIcon icon={faWalking} /> Activités
             </button>
           </div>
         </header>
 
-        <div className={styles.travelProgress}>
-          <div className={styles.road}>
-            {selectedOffers.map((offer, index) => (
-              <div key={index} className={styles.roadSegment}>
-                <div className={styles.milestone}>
-                  <div className={styles.milestoneIcon}>
-                    {offer.type === "AccomodationPreferences"
-                      ? "🏨"
-                      : offer.type === "RestaurantPreferences"
-                        ? "🍽️"
-                        : offer.type === "ActivityPreferences"
-                          ? "🎭"
-                          : "❓"}
-                  </div>
-                  <span className={styles.milestoneLabel}>
-                    {offer.name_hotel ||
-                      offer.name_restaurant ||
-                      offer.name_activty ||
-                      "Offre"}
-                  </span>
-                </div>
-              </div>
-            ))}
-            <motion.div
-              className={styles.character}
-              animate={{
-                left: `${(selectedOffers.length / (selectedOffers.length + 1)) * 100}%`,
-              }}
-              transition={{ type: "spring", stiffness: 60 }}
-            />
+        <div className={styles.statsSection}>
+          <div className={styles.statCard}>
+            <FontAwesomeIcon icon={faHeart} className={styles.statIcon} />
+            <div className={styles.statInfo}>
+              <span className={styles.statNumber}>{likedOffers.length}</span>
+              <span className={styles.statLabel}>Offres likées</span>
+            </div>
+          </div>
+          
+          <div className={styles.statCard}>
+            <FontAwesomeIcon icon={faBed} className={styles.statIcon} />
+            <div className={styles.statInfo}>
+              <span className={styles.statNumber}>
+                {likedOffers.filter(o => o.type === "AccomodationPreferences").length}
+              </span>
+              <span className={styles.statLabel}>Hôtels</span>
+            </div>
+          </div>
+          
+          <div className={styles.statCard}>
+            <FontAwesomeIcon icon={faUtensils} className={styles.statIcon} />
+            <div className={styles.statInfo}>
+              <span className={styles.statNumber}>
+                {likedOffers.filter(o => o.type === "RestaurantPreferences").length}
+              </span>
+              <span className={styles.statLabel}>Restaurants</span>
+            </div>
+          </div>
+          
+          <div className={styles.statCard}>
+            <FontAwesomeIcon icon={faWalking} className={styles.statIcon} />
+            <div className={styles.statInfo}>
+              <span className={styles.statNumber}>
+                {likedOffers.filter(o => o.type === "ActivityPreferences").length}
+              </span>
+              <span className={styles.statLabel}>Activités</span>
+            </div>
           </div>
         </div>
 
@@ -364,7 +392,7 @@ const Catalog = () => {
                 onClick={() => handleClearLikes(date)}
                 className={styles.clearButton}
               >
-                <FaTrash /> Vider les likes de ce jour
+                <FontAwesomeIcon icon={faTrash} /> Vider les likes de ce jour
               </button>
               {activeTab === "all" || activeTab === "hotels"
                 ? renderOffersByType(
@@ -391,7 +419,7 @@ const Catalog = () => {
           onClick={() => handleClearLikes()}
           className={styles.clearAllButton}
         >
-          <FaTrash /> Vider tous les likes
+          <FontAwesomeIcon icon={faTrash} /> Vider tous les likes
         </button>
         {selectedOffers.length > 0 && (
           <div className={styles.itineraryActions}>
@@ -405,17 +433,17 @@ const Catalog = () => {
                   className={styles.nameInput}
                 />
                 <button onClick={createItinerary}>
-                  <FaCalendarPlus /> Créer l'itinéraire
+                  <FontAwesomeIcon icon={faPlus} /> Créer l'itinéraire
                 </button>
               </div>
             ) : (
               <button onClick={() => setShowNameInput(true)}>
-                <FaPen /> Nommer et créer l'itinéraire
+                <FontAwesomeIcon icon={faPen} /> Nommer et créer l'itinéraire
               </button>
             )}
             {itineraryId && (
               <button onClick={handleReviewItinerary}>
-                <FaEye /> Consulter l'itinéraire
+                <FontAwesomeIcon icon={faEye} /> Consulter l'itinéraire
               </button>
             )}
           </div>

@@ -15,5 +15,12 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if request.time < timestamp.date(2024, 9, 19);
     }
+
+    match /moodforms/{document} {
+      allow create: if request.auth != null 
+        && request.resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null 
+        && resource.data.userId == request.auth.uid;
+    }
   }
 }

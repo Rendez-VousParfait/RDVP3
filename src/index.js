@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-console.log("index.js is being executed");
+// console.log("index.js is being executed");
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

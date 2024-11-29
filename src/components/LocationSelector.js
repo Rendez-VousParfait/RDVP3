@@ -1,24 +1,24 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt, faSearch, faChevronDown, faTimes } from '@fortawesome/free-solid-svg-icons';
-import styles from './LocationSelector.module.css';
+import React, { useState, useEffect, useRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMapMarkerAlt, faSearch, faChevronDown, faTimes } from "@fortawesome/free-solid-svg-icons";
+import styles from "./LocationSelector.module.css";
 
 const cities = [
-  { name: 'Paris', icon: '🗼', description: "La ville de l'amour" },
-  { name: 'Marseille', icon: '⚓', description: 'Cité phocéenne' },
-  { name: 'Lyon', icon: '🍽️', description: 'Capitale gastronomique' },
-  { name: 'Toulouse', icon: '🚀', description: 'La ville rose' },
-  { name: 'Nice', icon: '🏖️', description: "Perle de la Côte d'Azur" },
-  { name: 'Nantes', icon: '🐘', description: 'Cité des Ducs de Bretagne' },
-  { name: 'Strasbourg', icon: '🏰', description: 'Capitale européenne' },
-  { name: 'Montpellier', icon: '☀️', description: 'Ville ensoleillée du sud' },
-  { name: 'Bordeaux', icon: '🍷', description: 'Capitale mondiale du vin' },
-  { name: 'Lille', icon: '🧱', description: 'Capitale des Flandres' },
+  { name: "Paris", icon: "🗼", description: "La ville de l'amour" },
+  { name: "Marseille", icon: "⚓", description: "Cité phocéenne" },
+  { name: "Lyon", icon: "🍽️", description: "Capitale gastronomique" },
+  { name: "Toulouse", icon: "🚀", description: "La ville rose" },
+  { name: "Nice", icon: "🏖️", description: "Perle de la Côte d'Azur" },
+  { name: "Nantes", icon: "🐘", description: "Cité des Ducs de Bretagne" },
+  { name: "Strasbourg", icon: "🏰", description: "Capitale européenne" },
+  { name: "Montpellier", icon: "☀️", description: "Ville ensoleillée du sud" },
+  { name: "Bordeaux", icon: "🍷", description: "Capitale mondiale du vin" },
+  { name: "Lille", icon: "🧱", description: "Capitale des Flandres" },
 ];
 
 const LocationSelector = ({ selectedLocation, setSelectedLocation }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const dropdownRef = useRef(null);
 
@@ -33,9 +33,9 @@ const LocationSelector = ({ selectedLocation, setSelectedLocation }) => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -46,15 +46,15 @@ const LocationSelector = ({ selectedLocation, setSelectedLocation }) => {
   }, [isOpen]);
 
   const handleKeyDown = (e) => {
-    if (e.key === 'ArrowDown') {
+    if (e.key === "ArrowDown") {
       e.preventDefault();
       setHighlightedIndex((prevIndex) =>
         prevIndex < filteredCities.length - 1 ? prevIndex + 1 : prevIndex
       );
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setHighlightedIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : 0));
-    } else if (e.key === 'Enter' && highlightedIndex !== -1) {
+    } else if (e.key === "Enter" && highlightedIndex !== -1) {
       setSelectedLocation(filteredCities[highlightedIndex].name);
       setIsOpen(false);
     }
@@ -63,14 +63,14 @@ const LocationSelector = ({ selectedLocation, setSelectedLocation }) => {
   return (
     <div className={styles.locationSelector} ref={dropdownRef}>
       <div
-        className={`${styles.selectedLocation} ${isOpen ? styles.open : ''}`}
+        className={`${styles.selectedLocation} ${isOpen ? styles.open : ""}`}
         onClick={() => setIsOpen(!isOpen)}
       >
         <FontAwesomeIcon icon={faMapMarkerAlt} className={styles.locationIcon} />
         <span>{selectedLocation}</span>
         <FontAwesomeIcon
           icon={faChevronDown}
-          className={`${styles.dropdownIcon} ${isOpen ? styles.open : ''}`}
+          className={`${styles.dropdownIcon} ${isOpen ? styles.open : ""}`}
         />
       </div>
       {isOpen && (
@@ -89,7 +89,7 @@ const LocationSelector = ({ selectedLocation, setSelectedLocation }) => {
               <FontAwesomeIcon
                 icon={faTimes}
                 className={styles.clearIcon}
-                onClick={() => setSearchTerm('')}
+                onClick={() => setSearchTerm("")}
               />
             )}
           </div>
@@ -102,8 +102,8 @@ const LocationSelector = ({ selectedLocation, setSelectedLocation }) => {
                   setIsOpen(false);
                 }}
                 className={`
-                  ${city.name === selectedLocation ? styles.active : ''}
-                  ${index === highlightedIndex ? styles.highlighted : ''}
+                  ${city.name === selectedLocation ? styles.active : ""}
+                  ${index === highlightedIndex ? styles.highlighted : ""}
                 `}
               >
                 <div className={styles.cityInfo}>

@@ -237,3 +237,187 @@
     font-size: 1.2rem;
   }
 }
+
+.statsSection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+  padding: 1rem;
+}
+
+.statCard {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.statIcon {
+  font-size: 2rem;
+  color: var(--primary-color);
+  background: rgba(254, 60, 114, 0.1);
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.statInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.statNumber {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-color);
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: var(--light-text-color);
+  margin-top: 0.3rem;
+}
+
+@media (max-width: 768px) {
+  .statsSection {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 0.5rem;
+  }
+
+  .statCard {
+    padding: 1rem;
+  }
+
+  .statIcon {
+    font-size: 1.5rem;
+    padding: 0.8rem;
+  }
+
+  .statNumber {
+    font-size: 1.5rem;
+  }
+}
+
+.datePickerWrapper {
+  margin-top: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.2rem;
+}
+
+.datePickerLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.datePickerLabel svg {
+  color: var(--primary-color);
+}
+
+.datePickerControl {
+  position: relative;
+  width: 100%;
+}
+
+.dateButton {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text-color);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dateButton:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(254, 60, 114, 0.1);
+}
+
+.clearDateButton {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--light-text-color);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  line-height: 1;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.clearDateButton:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--primary-color);
+}
+
+.customCalendar {
+  font-family: inherit !important;
+  border: none !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+  padding: 1rem !important;
+}
+
+/* Styles spécifiques pour le calendrier */
+:global(.react-datepicker) {
+  border: none !important;
+  font-family: inherit !important;
+}
+
+:global(.react-datepicker__header) {
+  background: white !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+  padding: 1rem !important;
+}
+
+:global(.react-datepicker__day) {
+  border-radius: 50% !important;
+  transition: all 0.2s ease !important;
+}
+
+:global(.react-datepicker__day:hover) {
+  background: rgba(254, 60, 114, 0.1) !important;
+  color: var(--primary-color) !important;
+}
+
+:global(.react-datepicker__day--selected) {
+  background: var(--primary-color) !important;
+  color: white !important;
+}
+
+:global(.react-datepicker__day--keyboard-selected) {
+  background: rgba(254, 60, 114, 0.2) !important;
+  color: var(--primary-color) !important;
+}
+
+:global(.react-datepicker__current-month) {
+  color: var(--text-color) !important;
+  font-weight: 600 !important;
+}
+
+:global(.react-datepicker__day-name) {
+  color: var(--light-text-color) !important;
+}

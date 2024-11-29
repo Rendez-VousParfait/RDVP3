@@ -1,4 +1,4 @@
-import { db } from '../../firebase'; // Assurez-vous que le chemin est correct
+import { db } from "../../firebase";
 
 import {
   collection,

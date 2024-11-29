@@ -17,7 +17,8 @@ import "./Header.css";
 import logo from "../assets/logo.png"; // Assurez-vous que le chemin vers votre logo est correct
 
 function Header() {
-  const { user } = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
+  const user = authContext ? authContext.user : null;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);

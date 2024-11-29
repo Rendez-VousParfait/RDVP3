@@ -7,57 +7,46 @@ import {
   faPlus,
   faSync,
   faSearch,
+  faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./GroupManager.module.css";
-import { AuthContext } from "../context/AuthContext";
 import { fetchUserGroups, createGroup, joinGroup } from "./GroupUtils";
-
-const GroupCreationStep = ({ onGroupCreated }) => {
-  const [groupName, setGroupName] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (groupName.trim()) {
-      await onGroupCreated(groupName.trim());
-      setGroupName("");
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className={styles.createGroupForm}>
-      <input
-        type="text"
-        value={groupName}
-        onChange={(e) => setGroupName(e.target.value)}
-        placeholder="Nom du groupe"
-        required
-      />
-      <button type="submit">
-        <FontAwesomeIcon icon={faPlus} /> Créer le groupe
-      </button>
-    </form>
-  );
-};
+import { useAuth } from "../hooks/useAuth";
+import { AppContext } from "../context/AppContext";
+import GroupCreationStep from "./GroupCreationStep"; // Ajoutez cette ligne
 
 const GroupManager = () => {
-  const [showOptions, setShowOptions] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("");
-  const [currentStep, setCurrentStep] = useState(1);
-  const [groupId, setGroupId] = useState("");
-  const [userGroups, setUserGroups] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [invitationGroupId, setInvitationGroupId] = useState(null);
-  const { user } = useContext(AuthContext);
+  const { user, isLoading: authLoading } = useAuth();
+  const { state, dispatch } = useContext(AppContext);
   const navigate = useNavigate();
   const { groupId: urlGroupId } = useParams();
 
+  const [selectedOption, setSelectedOption] = useState("");
+  const [currentStep, setCurrentStep] = useState(1);
+  const [groupId, setGroupId] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [invitationGroupId, setInvitationGroupId] = useState(null);
+
+  // Supprimez ces lignes car elles ne sont plus utilisées
+  // const [userGroups, setUserGroups] = useState([]);
+  // const [error, setError] = useState(null);
+
   useEffect(() => {
-    if (user) {
-      console.log("User changed, fetching groups for:", user.email);
-      fetchGroups();
+    if (user && !authLoading && !state.userGroups) {
+      dispatch({ type: "SET_LOADING", payload: true });
+      fetchUserGroups(user.email)
+        .then(groups => {
+          dispatch({ type: "SET_USER_GROUPS", payload: groups });
+        })
+        .catch(error => {
+          dispatch({ type: "SET_ERROR", payload: error.message });
+        })
+        .finally(() => {
+          dispatch({ type: "SET_LOADING", payload: false });
+        });
     }
-  }, [user]);
+  }, [user, authLoading, dispatch, state.userGroups]);
 
   useEffect(() => {
     if (currentStep === 4 && groupId) {
@@ -79,16 +68,16 @@ const GroupManager = () => {
     setIsLoading(true);
     try {
       const fetchedGroups = await fetchUserGroups(user.email);
-      setUserGroups(fetchedGroups);
+      dispatch({ type: "SET_USER_GROUPS", payload: fetchedGroups });
     } catch (error) {
       console.error("Erreur lors de la récupération des groupes :", error);
+      dispatch({ type: "SET_ERROR", payload: error.message });
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleShowOptions = () => {
-    setShowOptions(true);
     setCurrentStep(2);
   };
 
@@ -102,10 +91,14 @@ const GroupManager = () => {
       const newGroupId = await createGroup(newGroupName, user.uid, user.email);
       setGroupId(newGroupId);
       setCurrentStep(4);
-      fetchGroups();
+      dispatch({ type: "SET_LOADING", payload: true });
+      const updatedGroups = await fetchUserGroups(user.email);
+      dispatch({ type: "SET_USER_GROUPS", payload: updatedGroups });
+      dispatch({ type: "SET_LOADING", payload: false });
       return newGroupId;
     } catch (error) {
       console.error("Erreur lors de la création du groupe:", error);
+      dispatch({ type: "SET_ERROR", payload: error.message });
       throw error;
     }
   };
@@ -131,24 +124,34 @@ const GroupManager = () => {
     navigate(`/groups/${groupId}`);
   };
 
-  const filteredGroups = userGroups.filter((group) =>
-    group.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredGroups = state.userGroups ? state.userGroups.filter((group) =>
+    group.name.toLowerCase().includes(searchTerm.toLowerCase())
+  ) : [];
 
-  const renderGroupList = () => (
-    <ul className={styles.groupList}>
-      {filteredGroups.map((group) => (
-        <li
-          key={group.id}
-          className={styles.groupItem}
-          onClick={() => handleGroupClick(group.id)}
-        >
-          <h3>{group.name}</h3>
-          <p>{group.members.length} membres</p>
-        </li>
-      ))}
-    </ul>
-  );
+  const renderGroupList = () => {
+    if (!state.userGroups) {
+      return <div className={styles.loading}>Chargement des groupes...</div>;
+    }
+
+    return (
+      <ul className={styles.groupList}>
+        {filteredGroups.length > 0 ? (
+          filteredGroups.map((group) => (
+            <li
+              key={group.id}
+              className={styles.groupItem}
+              onClick={() => handleGroupClick(group.id)}
+            >
+              <h3>{group.name}</h3>
+              <p>{group.members.length} membres</p>
+            </li>
+          ))
+        ) : (
+          <li>Aucun groupe trouvé</li>
+        )}
+      </ul>
+    );
+  };
 
   const renderStep = () => {
     switch (currentStep) {
@@ -236,10 +239,28 @@ const GroupManager = () => {
     }
   };
 
+  const renderContent = () => {
+    if (authLoading) {
+      return <div className={styles.loadingIndicator}><FontAwesomeIcon icon={faSpinner} spin /> Chargement de l'authentification...</div>;
+    }
+
+    if (!user) {
+      navigate("/login");
+      return null;
+    }
+
+    return (
+      <>
+        <h2>Gestion des Groupes</h2>
+        {state.error && <div className={styles.error}>Erreur : {state.error}</div>}
+        {renderStep()}
+      </>
+    );
+  };
+
   return (
     <div className={styles.groupManager}>
-      <h2>Gestion des Groupes</h2>
-      {renderStep()}
+      {renderContent()}
     </div>
   );
 };

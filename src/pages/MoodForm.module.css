@@ -1,0 +1,473 @@
+.progress-bar {
+  height: 4px;
+  background: linear-gradient(to right, #667eea, #764ba2);
+  margin-bottom: 20px;
+  border-radius: 2px;
+}
+
+.versus-container {
+  padding: 2rem;
+  text-align: center;
+}
+
+.versus-cards {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  margin: 2rem 0;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.versus-card {
+  flex: 0 1 45%;
+  max-width: 350px;
+  background: #F5E6D3;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.versus-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(245, 230, 211, 0.2) 0%, rgba(238, 220, 198, 0.2) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.versus-card-image {
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.versus-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.versus-card-content {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: #F5E6D3;
+}
+
+.versus-card.winner {
+  transform: scale(1.02);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  border: 2px solid #2C3E50;
+  z-index: 2;
+  background: #F3D5B5;
+}
+
+.versus-card.winner::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: radial-gradient(
+    circle at center,
+    rgba(72, 187, 120, 0.2) 0%,
+    rgba(72, 187, 120, 0) 70%
+  );
+  border-radius: 25px;
+  z-index: -1;
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+}
+
+.versus-card.winner::after {
+  content: '✓';
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 30px;
+  height: 30px;
+  background: #48bb78;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 16px;
+  animation: checkmark 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.versus-card:not(.winner) {
+  transform: scale(0.95);
+}
+
+@keyframes checkmark {
+  0% {
+    transform: scale(0) rotate(-45deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
+.versus-card.winner .versus-card-image::after {
+  opacity: 1;
+}
+
+.versus-card.winner .versus-card-content {
+  transform: translateY(-5px);
+}
+
+.versus-card-icon {
+  font-size: 2rem;
+  color: #2C3E50;
+  margin-bottom: 0.5rem;
+}
+
+.versus-divider {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  z-index: 10;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.versus-divider:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+.versus-card h6 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #2C3E50;
+}
+
+.versus-card p {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+.mood-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.mood-button {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: white;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mood-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.mood-button.selected {
+  border-color: #667eea;
+  background: #f0f3ff;
+}
+
+.mood-icon {
+  font-size: 2rem;
+  color: #667eea;
+}
+
+.mood-label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.energy-slider {
+  margin: 2rem 0;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+.nav-button {
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.nav-button.primary {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+}
+
+.nav-button.secondary {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.nav-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .versus-container {
+    padding: 1rem;
+  }
+
+  .versus-cards {
+    flex-direction: row;
+    gap: 1rem;
+    padding: 1rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .versus-card {
+    flex: 1;
+    min-width: calc(50% - 2rem);
+    max-width: none;
+    transform: none;
+  }
+
+  .versus-divider {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    background: #F5E6D3;
+    color: #2C3E50;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+  }
+
+  .versus-card-image {
+    height: 150px;
+  }
+
+  .versus-card-content {
+    padding: 1rem;
+  }
+
+  .versus-card-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .versus-card.winner {
+    transform: scale(1.02);
+  }
+
+  .versus-card:not(.winner) {
+    transform: scale(0.98);
+    opacity: 0.8;
+  }
+
+  .versus-card {
+    position: relative;
+  }
+
+  .versus-card-description {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(245, 230, 211, 0.95);
+    padding: 1rem;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .versus-card.pressed .versus-card-description {
+    display: block;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .versus-container {
+    padding: 0.5rem;
+  }
+
+  .versus-cards {
+    gap: 0.5rem;
+  }
+
+  .versus-card {
+    min-width: calc(50% - 1rem);
+  }
+
+  .versus-card-image {
+    height: 120px;
+  }
+
+  .versus-card-content {
+    padding: 0.75rem;
+  }
+
+  .versus-card-icon {
+    font-size: 1.25rem;
+  }
+
+  .versus-card h6 {
+    font-size: 1rem;
+  }
+
+  .versus-card p {
+    font-size: 0.8rem;
+  }
+}
+
+/* Ajout de styles pour améliorer l'expérience tactile sur mobile */
+@media (hover: none) {
+  .versus-card:hover {
+    transform: none;
+  }
+
+  .versus-card:active {
+    transform: scale(0.98);
+  }
+
+  .versus-card {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .versus-card:active .versus-card-description {
+    display: block;
+    transform: translateY(0);
+  }
+}
+
+/* Modifier les styles de la flèche de retour */
+.backArrow {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  z-index: 1000;
+  background: #F5E6D3;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.backArrow:hover {
+  transform: translateY(-50%) translateX(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Ajuster la marge du titre pour laisser de l'espace à la flèche */
+.formTitle {
+  margin-left: 60px;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .backArrow {
+    width: 35px;
+    height: 35px;
+    left: 15px;
+  }
+  
+  .formTitle {
+    margin-left: 50px;
+  }
+}
+
+/* Ajouter une position relative au container pour le positionnement absolu */
+.formContainer {
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .backArrow {
+    top: 15px;
+    left: 15px;
+    width: 35px;
+    height: 35px;
+  }
+} 

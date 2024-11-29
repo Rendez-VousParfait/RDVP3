@@ -1,20 +1,16 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useSwipeable } from "react-swipeable";
 import { useNavigate } from "react-router-dom";
 import styles from "./Swiper.module.css";
 import {
-  FaHeart,
-  FaTimes,
   FaUtensils,
   FaMoneyBillWave,
-  FaBed,
-  FaWalking,
-  FaBook,
   FaMapMarkerAlt,
   FaStar,
   FaClock,
   FaWheelchair,
   FaSmile,
+  FaExchangeAlt,
 } from "react-icons/fa";
 import {
   doc,
@@ -25,37 +21,105 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { db, auth } from "../firebase";
+import BurgerMenu from "./BurgerMenu";
+import { 
+  IoClose,
+  IoBookmark,
+  IoHeartSharp
+} from "react-icons/io5";
 
-const Swiper = ({ formData, handleInputChange, nextStep }) => {
+const Swiper = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [offers, setOffers] = useState([]);
   const [userPreferences, setUserPreferences] = useState({});
   const [swipeCount, setSwipeCount] = useState(0);
   const [direction, setDirection] = useState("");
   const [isActive, setIsActive] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isVersusMode, setIsVersusMode] = useState(false);
+  const [versusPair, setVersusPair] = useState([null, null]);
+  const [showPlusOne, setShowPlusOne] = useState(false);
+  const [plusOnePosition, setPlusOnePosition] = useState({ x: 0, y: 0 });
+  const [isBookmarkReceiving, setIsBookmarkReceiving] = useState(false);
   const navigate = useNavigate();
 
+  // Utilisez useMemo pour mémoriser les offres chargées
+  const memoizedOffers = useMemo(() => {
+    return [
+      {
+        id: "initial1",
+        type: "ActivityPreferences",
+        name_activty: "Activité de chargement",
+        description: "Chargement en cours...",
+        image1: "https://via.placeholder.com/400x300?text=Chargement...",
+        price: "...",
+        location: "Chargement...",
+      },
+    ];
+  }, []);
+
   useEffect(() => {
-    loadOffers();
-    loadUserPreferences();
+    const initializeSwiper = async () => {
+      await loadOffers();
+      await loadUserPreferences();
+    };
+    initializeSwiper();
   }, []);
 
   const loadOffers = async () => {
-    const allOffers = [];
-    const collections = [
-      "ActivityPreferences",
-      "AccomodationPreferences",
-      "RestaurantPreferences",
-    ];
+    setIsLoading(true);
+    try {
+      const allOffers = [];
+      const collections = [
+        "ActivityPreferences",
+        "AccomodationPreferences",
+        "RestaurantPreferences",
+      ];
 
-    for (const collectionName of collections) {
-      const querySnapshot = await getDocs(collection(db, collectionName));
-      querySnapshot.forEach((doc) => {
-        allOffers.push({ id: doc.id, ...doc.data(), type: collectionName });
-      });
+      for (const collectionName of collections) {
+        const querySnapshot = await getDocs(collection(db, collectionName));
+        querySnapshot.forEach((doc) => {
+          allOffers.push({ id: doc.id, ...doc.data(), type: collectionName });
+        });
+      }
+
+      // Mélanger les offres
+      const shuffledOffers = allOffers.sort(() => Math.random() - 0.5);
+      setOffers(shuffledOffers);
+
+      // Préparer la première paire pour le mode versus
+      if (shuffledOffers.length >= 2) {
+        // Grouper les offres par type et caractéristiques similaires
+        const offersByType = shuffledOffers.reduce((acc, offer) => {
+          const key = offer.type;
+          if (!acc[key]) acc[key] = [];
+          acc[key].push(offer);
+          return acc;
+        }, {});
+
+        // Trouver deux offres similaires pour la comparaison
+        for (const type of Object.keys(offersByType)) {
+          const typeOffers = offersByType[type];
+          if (typeOffers.length >= 2) {
+            // Trier les offres par prix pour trouver des offres similaires
+            const sortedOffers = typeOffers.sort((a, b) => {
+              const priceA = parseFloat(a.price || a.budget || 0);
+              const priceB = parseFloat(b.price || b.budget || 0);
+              return priceA - priceB;
+            });
+
+            // Sélectionner deux offres consécutives (donc similaires en prix)
+            const randomIndex = Math.floor(Math.random() * (sortedOffers.length - 1));
+            setVersusPair([sortedOffers[randomIndex], sortedOffers[randomIndex + 1]]);
+            break;
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Erreur lors du chargement des offres:", error);
+    } finally {
+      setIsLoading(false);
     }
-
-    setOffers(allOffers.sort(() => Math.random() - 0.5));
   };
 
   const loadUserPreferences = async () => {
@@ -74,8 +138,36 @@ const Swiper = ({ formData, handleInputChange, nextStep }) => {
     }
   };
 
+  // Modifier la fonction showPlusOneAnimation en supprimant les paramètres inutilisés
+  const showPlusOneAnimation = () => {
+    const likeButton = document.querySelector(`.${styles["like-button"]}`);
+    const catalogButton = document.querySelector(`.${styles["catalog-button"]}`);
+    
+    if (likeButton && catalogButton) {
+      const likeRect = likeButton.getBoundingClientRect();
+      
+      setPlusOnePosition({
+        x: likeRect.left + likeRect.width / 2,
+        y: likeRect.top + likeRect.height / 2
+      });
+      
+      setShowPlusOne(true);
+      setIsBookmarkReceiving(true);
+      
+      // Reset les états après l'animation
+      setTimeout(() => {
+        setShowPlusOne(false);
+        setIsBookmarkReceiving(false);
+      }, 800); // Correspond à la durée de l'animation
+    }
+  };
+
+  // Modifier handleSwipe pour inclure l'animation
   const handleSwipe = useCallback(
     async (isLike) => {
+      if (isLike) {
+        showPlusOneAnimation();
+      }
       setDirection(isLike ? "right" : "left");
       setTimeout(async () => {
         const currentOffer = offers[currentIndex];
@@ -120,6 +212,84 @@ const Swiper = ({ formData, handleInputChange, nextStep }) => {
     [currentIndex, offers, userPreferences],
   );
 
+  const handleVersusChoice = async (chosenIndex) => {
+    // Ajouter les classes pour l'animation
+    const winnerCard = document.querySelector(`.${styles["versus-card"]}[data-index="${chosenIndex}"]`);
+    const loserCard = document.querySelector(`.${styles["versus-card"]}[data-index="${1 - chosenIndex}"]`);
+    
+    if (winnerCard && loserCard) {
+      winnerCard.classList.add(styles["winner"]);
+      loserCard.classList.add(styles["loser"]);
+    }
+
+    // Attendre que l'animation se termine
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    const chosenOffer = versusPair[chosenIndex];
+    const rejectedOffer = versusPair[1 - chosenIndex];
+    
+    // Mettre à jour les préférences
+    const newPreferences = { ...userPreferences };
+    if (!newPreferences[chosenOffer.type]) {
+      newPreferences[chosenOffer.type] = { likes: 0, dislikes: 0 };
+    }
+    newPreferences[chosenOffer.type].likes += 1;
+
+    // Sauvegarder le choix
+    if (auth.currentUser) {
+      await addDoc(collection(db, "userLikes"), {
+        userId: auth.currentUser.uid,
+        offer: chosenOffer,
+        comparedTo: rejectedOffer.id, // Ajouter l'information de comparaison
+        versusChoice: true
+      });
+      
+      const userPreferencesRef = doc(db, "userPreferences", auth.currentUser.uid);
+      await setDoc(userPreferencesRef, newPreferences, { merge: true });
+    }
+
+    // Trouver la prochaine paire
+    const sameTypeOffers = offers.filter(
+      offer => 
+        offer.type === chosenOffer.type && 
+        !versusPair.some(o => o.id === offer.id)
+    );
+
+    if (sameTypeOffers.length >= 2) {
+      // Retirer les classes d'animation avant de changer les cartes
+      if (winnerCard && loserCard) {
+        winnerCard.classList.remove(styles["winner"]);
+        loserCard.classList.remove(styles["loser"]);
+      }
+
+      const sortedOffers = sameTypeOffers.sort((a, b) => {
+        const priceA = parseFloat(a.price || a.budget || 0);
+        const priceB = parseFloat(b.price || b.budget || 0);
+        return priceA - priceB;
+      });
+
+      const randomIndex = Math.floor(Math.random() * (sortedOffers.length - 1));
+      setVersusPair([sortedOffers[randomIndex], sortedOffers[randomIndex + 1]]);
+    } else {
+      await loadOffers();
+    }
+
+    setSwipeCount(prev => prev + 1);
+  };
+
+  const getTypeIcon = (type) => {
+    switch (type) {
+      case "AccomodationPreferences":
+        return <FaUtensils className={styles["offer-icon"]} />;
+      case "RestaurantPreferences":
+        return <FaUtensils className={styles["offer-icon"]} />;
+      case "ActivityPreferences":
+        return <FaSmile className={styles["offer-icon"]} />;
+      default:
+        return null;
+    }
+  };
+
   const handlers = useSwipeable({
     onSwipedLeft: () => handleSwipe(false),
     onSwipedRight: () => handleSwipe(true),
@@ -135,26 +305,9 @@ const Swiper = ({ formData, handleInputChange, nextStep }) => {
     navigate("/catalog");
   };
 
-  if (offers.length === 0) {
-    return <div>Chargement des offres...</div>;
-  }
-
-  const currentOffer = offers[currentIndex];
-
-  const getTypeIcon = (type) => {
-    switch (type) {
-      case "AccomodationPreferences":
-        return <FaBed className={styles["offer-icon"]} />;
-      case "RestaurantPreferences":
-        return <FaUtensils className={styles["offer-icon"]} />;
-      case "ActivityPreferences":
-        return <FaWalking className={styles["offer-icon"]} />;
-      default:
-        return null;
-    }
-  };
-
-  const renderOfferCard = (offer) => {
+  const renderOfferCard = useCallback((offer) => {
+    if (!offer) return null;
+    
     return (
       <div
         className={`${styles["offer-card"]} ${styles[direction]} ${isActive ? styles["active"] : ""}`}
@@ -170,12 +323,12 @@ const Swiper = ({ formData, handleInputChange, nextStep }) => {
           }
           className={styles["offer-image"]}
         />
-        <h3 className={styles["offer-title"]}>
+        <div className={styles["offer-title"]}>
           {offer.name_hotel ||
             offer.name_restaurant ||
             offer.name_activty ||
             "Offre sans nom"}
-        </h3>
+        </div>
         <div className={styles["offer-info"]}>
           <p className={styles["offer-description"]}>
             {offer.description || "Aucune description disponible"}
@@ -255,31 +408,100 @@ const Swiper = ({ formData, handleInputChange, nextStep }) => {
         </div>
       </div>
     );
+  }, [direction, isActive, getTypeIcon]);
+
+  const toggleMode = () => {
+    setIsVersusMode(!isVersusMode);
   };
+
+  if (isLoading || offers.length === 0) {
+    return (
+      <div className={styles["search-step"]}>
+        <div className={styles["swiper-container"]}>
+          {renderOfferCard(memoizedOffers[0])}
+        </div>
+        {/* Ajoutez ici les boutons de swipe si nécessaire */}
+      </div>
+    );
+  }
+
+  const currentOffer = offers[currentIndex] || memoizedOffers[0];
 
   return (
     <div className={styles["search-step"]}>
-      <div className={styles["swiper-container"]} {...handlers}>
-        {renderOfferCard(currentOffer)}
-      </div>
-      <div className={styles["swiper-buttons"]}>
-        <button
-          className={styles["dislike-button"]}
-          onClick={() => handleSwipe(false)}
-        >
-          <FaTimes />
-        </button>
-        <button className={styles["catalog-button"]} onClick={goToCatalog}>
-          <FaBook />
-        </button>
-        <button
-          className={styles["like-button"]}
-          onClick={() => handleSwipe(true)}
-        >
-          <FaHeart />
+      <BurgerMenu />
+      <div className={styles["mode-switch"]}>
+        <button onClick={toggleMode} className={styles["switch-button"]}>
+          <FaExchangeAlt />
+          {isVersusMode ? "Mode Swipe" : "Mode Versus"}
         </button>
       </div>
-      <p className={styles["swipe-count"]}>Nombre de swipes : {swipeCount}</p>
+
+      {isVersusMode ? (
+        <div className={styles["versus-container"]}>
+          {versusPair[0] && versusPair[1] && (
+            <>
+              <div className={styles["versus-cards"]}>
+                <div 
+                  className={styles["versus-card"]} 
+                  onClick={() => handleVersusChoice(0)}
+                  data-index="0"
+                >
+                  {renderOfferCard(versusPair[0])}
+                </div>
+                <div className={styles["versus-divider"]}>VS</div>
+                <div 
+                  className={styles["versus-card"]} 
+                  onClick={() => handleVersusChoice(1)}
+                  data-index="1"
+                >
+                  {renderOfferCard(versusPair[1])}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      ) : (
+        <div className={styles["swiper-window"]}>
+          <div className={styles["swiper-container"]} {...handlers}>
+            {currentOffer && renderOfferCard(currentOffer)}
+          </div>
+          <div className={styles["swiper-controls"]}>
+            <div className={styles["swiper-buttons"]}>
+              <button
+                className={styles["dislike-button"]}
+                onClick={() => handleSwipe(false)}
+              >
+                <IoClose />
+              </button>
+              <button 
+                className={`${styles["catalog-button"]} ${isBookmarkReceiving ? styles.receiving : ""}`}
+                onClick={goToCatalog}
+              >
+                <IoBookmark />
+              </button>
+              <button
+                className={styles["like-button"]}
+                onClick={() => handleSwipe(true)}
+              >
+                <IoHeartSharp />
+              </button>
+            </div>
+            <p className={styles["swipe-count"]}>Nombre de swipes : {swipeCount}</p>
+          </div>
+        </div>
+      )}
+      {showPlusOne && (
+        <div 
+          className={`${styles["plus-one"]} ${styles.animate}`}
+          style={{
+            left: `${plusOnePosition.x}px`,
+            top: `${plusOnePosition.y}px`
+          }}
+        >
+          +1 Ajouté
+        </div>
+      )}
     </div>
   );
 };

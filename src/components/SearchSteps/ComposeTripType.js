@@ -30,15 +30,11 @@ const ComposeTripType = React.memo(
     );
 
     const [showPersonCount, setShowPersonCount] = useState(false);
-    const [showGroupCreation, setShowGroupCreation] = useState(false);
     const [error, setError] = useState("");
 
     useEffect(() => {
       setShowPersonCount(
         formData.tripType !== "solo" && formData.tripType !== "",
-      );
-      setShowGroupCreation(
-        !isGroupSearch && ["amis", "famille"].includes(formData.tripType),
       );
 
       if (formData.tripType === "couple") {
@@ -120,24 +116,6 @@ const ComposeTripType = React.memo(
           setError("");
         } else {
           setError("Le nombre de personnes doit être supérieur à 0");
-        }
-      },
-      [handleInputChange],
-    );
-
-    const handleInvitedUsersChange = useCallback(
-      (e) => {
-        const emails = e.target.value.split(",").map((email) => email.trim());
-        const validEmails = emails.filter((email) =>
-          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
-        );
-        handleInputChange({
-          target: { name: "invitedUsers", value: validEmails },
-        });
-        if (validEmails.length !== emails.length) {
-          setError("Certains emails ne sont pas valides");
-        } else {
-          setError("");
         }
       },
       [handleInputChange],
